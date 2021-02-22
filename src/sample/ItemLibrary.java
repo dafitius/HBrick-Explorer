@@ -27,4 +27,32 @@ public class ItemLibrary implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getRoot(){
+        boolean foundRoot = false;
+        String rootString = "";
+        for(Item item : items){
+            if(item.getParent().contains("0xffffffff")){
+
+                rootString = item.getName();
+                if(foundRoot){
+                    System.out.println(item.getName() + " and " + rootString + "might both be root files");
+                    System.out.println("Multiple contenders for a root file have been found, this file might not work as e");
+                }
+                foundRoot = true;
+
+            }
+
+
+        }
+        if(foundRoot) {
+            System.out.println("Root " + rootString + " has been located");
+        }
+        else{
+            System.out.println("error, no root could be located");
+        }
+
+        return rootString;
+
+    }
 }

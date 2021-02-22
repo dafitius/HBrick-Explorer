@@ -112,7 +112,7 @@ def readData(file, type, fromOffset, toOffset):
 		blockSize = 0x60
 		d = {'key':'value'}
 		originalOffset = atOffset
-		
+
 		for f in range(numFiles):
 
 			string = readStrFromOffset(file, atOffset + 0x40)
@@ -139,7 +139,7 @@ def readData(file, type, fromOffset, toOffset):
 			string = readStrFromOffset(file, atOffset + 0x40)
 			writeToJson('    "string": "' + string + '"')
 			writeToCSV(str(f) + "," + "M" + str(type) + "," + str(item[80:96]) + "," + "" + "," + str(parent) + "," + entityType + "," + string + "," + "" + "," + "" + "," + "" + "," + "" + "\n")
-			
+
 
 			atOffset += (blockSize - 0x18)
 
@@ -384,7 +384,7 @@ def readSubItemInfo(file, itemType, fromOffset):
 				writeToJson('",\n')
 			else:
 				writeToJson('"\n')
-			
+
 			atOffset += 0x20
 
 

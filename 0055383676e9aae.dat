@@ -1,0 +1,409 @@
+EditorGroup#00000000#833ac2c93f54e6e0#ValueBool_Operation
+Bed#01000000#ab910dd8d704e91e#Sequence
+Pacify Counter#02000000#c2b302415251b566#ActorAliveCondition 20
+DramaSituation#03000000#bc95fd5b88253634#Act_MR_Stand_Basic_03
+Altar Logic#04000000#13485e1553ab84e7#HeroStateConditionEntity
+0xfffffffe#02000000#e31ec1fa7eb1838e#ActorAliveCondition
+Opuntia Orsons#05000000#4d66c14bb55ce8ca#ActorProxy 2
+0xfffffffe#06000000#fac9ad3f749518c7#Keyword
+0xfffffffe#07000000#1554d477413a0f50#DisplayHint
+Pacify Counter#08000000#b27e3a2bd93afad6#ValueInt_StepCount
+EditorGroup#04000000#abfbf5f3ba4831e5#47 Is Dragging
+Opuntia Orsons#09000000#2c6d5670882f3f0f#Level 3 Kill 2
+Pacify Counter#0a000000#95c75549d0f815ee#ValueBool_Basic
+0xfffffffe#0b000000#c29ca51a0564e0ef#CHAR_Sheep_Guard_Bodyguard_M_33
+0xfffffffe#00000000#ffa4ca328f57f6bc#Should be visible overall
+EditorGroup#09000000#38c225dc3971006b#ObjectiveStateEntity 1
+EditorGroup#0c000000#d1b69f75d97f1d4a#Spatial 2
+0xfffffffe#0d000000#bbab380452616102#LD_MapTracker_CustomObjective_06
+0xfffffffe#00000000#235f81c09d0622e6#Should be visible overall
+Pacify Counter#02000000#f3942e4059709ba9#ActorAliveCondition 23
+Closet Near Altar#0a000000#d24cdf215b454950#Container Full
+Opuntia Orsons#09000000#c12d01fe2dd715cb#Level 1 Kill 1
+EditorGroup#0e000000#e66be3d95e06b9fa#R_Hand
+Opuntia Orsons#0f000000#258043aac7d4f588#Orson Death Detection Logic
+0xfffffffe#07000000#b298e7337903de0b#DisplayHint
+Bed#0c000000#573c16f7e41283b9#Spatial
+EditorGroup#0e000000#a6c039ee0e76e317#ActorBoneAttachEntity 2
+0xfffffffe#00000000#25ae9c30d2b7653e#Should be visible overall
+Pacify Counter#10000000#70579da7598344a5#AllGuardsDown 2
+Pacify Counter#02000000#e044f9bd7c8d82e4#ActorAliveCondition 17
+InvertedCondition 3#11000000#cb593ed7766ad2ed#HeroItemCondition 2
+0xfffffffe#12000000#a1819a030e11684b#ItemSpawner 32
+DramaSituation 5#13000000#d75e8e36546f2bb1#Act_MR_Guard_Stand_ArmsCrossed
+0xfffffffe#00000000#34727d383490b9f8#Should be visible overall
+0xfffffffe#14000000#01611d29d48331eb#Ledge28
+0xfffffffe#00000000#90014cc3263254a4#Should be visible overall
+0xfffffffe#0d000000#9722736cb035ad87#LD_MapTracker_CustomObjective_18
+EditorGroup#10000000#8b67b53144874381#ContractsEvent
+EntityTrack_ FX_PF_PostfilterController#15000000#571b4880de41a446# Track
+0xfffffffe#0d000000#ca88fb45a73f1f0f#LD_MapTracker_CustomObjective_19
+0xfffffffe#00000000#04902909e3c96c8d#Should be visible overall
+0xfffffffe#02000000#a1e90eeda6ac6b56#ActorAliveCondition
+Closet Near Altar#10000000#e56981b5c5d8d30f#ContractsEvent
+EditorGroup#09000000#ffc1a3cb410d92f4#Level 3 Kill 3
+0xfffffffe#02000000#30eb6b5fcf4216e5#ActorAliveCondition
+Opuntia Orsons#05000000#846bcb8a7d701880#ActorProxy 1
+0xfffffffe#02000000#e19402cfa1279711#ActorAliveCondition
+0xfffffffe#16000000#96bf5165afa87bfe#ScatterContainer_SouthWest_03
+0xfffffffe#0a000000#ae9c22210e492c06#Should be visible globally
+bed_metal_a#17000000#5942e2cb1843dd6b#DarkLight 3
+0xfffffffe#0f000000#749dcfeecd7d7ae0#Bed
+0xfffffffe#00000000#f0ba50a971f3b23e#Should be visible overall
+0xfffffffe#07000000#ecd1d2c1d26a72d4#DisplayHint
+Sequence#18000000#116d2641d6d3925e#EntityTrack_ Camera_Dummy
+Altar Logic#19000000#b8c0fb6c4bfccbdb#TimerConditional
+0xfffffffe#02000000#9d0872f08af4b6f5#ActorAliveCondition
+0xfffffffe#0a000000#a7d02328b42d3207#Should be visible globally
+CHAR_Sheep_Guard_Bodyguard_M_34#0a000000#f90257231b65f0f9#Should be visible globally
+0xfffffffe#02000000#6770a25dd5f36057#ActorAliveCondition
+Orson Death Detection Logic#10000000#77acc1bd3582a7df#Orson Down
+Bed#0a000000#2182b9ba4c75b767#ValueBool_Basic
+0xfffffffe#00000000#d6af613a1f8452a6#Should be visible overall
+DramaSituation 1#0a000000#b0f8994daac1e127#ValueBool_Basic
+EditorGroup#09000000#a999f6acebeaedde#ObjectiveStateEntity
+0xfffffffe#1a000000#2aec82c712befab1#ItemKey_Melee_Fish_B
+Opuntia Orsons#1b000000#212d545ec26d3974#DramaSituation 1
+0xfffffffe#00000000#dc4c72999689857c#Should be visible overall
+Opuntia Orsons#0f000000#0bd7877e2bb8188a#Altar Logic
+0xfffffffe#0a000000#87e0f8b3780cab49#Should be visible globally
+Closet Near Altar#1c000000#2013b4713980cab9#SetPiece_Container_Body_Closet_Antique_A
+0xfffffffe#0a000000#0cfbbdf8bd8472e3#Should be visible globally
+0xfffffffe#12000000#05e6489c8d12d424#ItemSpawner 28
+0xfffffffe#1d000000#f963fa1ac94628ff#VariantConverter_void_
+DramaSituation#03000000#750ece62cc151ac3#Act_MR_Stand_Basic
+DramaSituation 1#1e000000#7189e9e8c40e01f0#Act_MR_Stand_Shaman
+0xfffffffe#12000000#873124bf300699e7#ItemSpawner 21
+Bed#1f000000#2413b93408e0cb26#Setpiece_LIP_Lie_Bed_Sleep
+0xfffffffe#10000000#eea4b42a7ae95e2f#ContractsEvent
+0xfffffffe#07000000#b796d534c4466916#DisplayHint
+EditorGroup#0e000000#f90d06dc891437f8#ActorBoneAttachEntity 4
+Pacify Counter#02000000#d358387021aeb325#ActorAliveCondition 22
+0xfffffffe#1b000000#71af4b19fe75bbea#DramaSituation 9
+0xfffffffe#00000000#a6d5242bde754fbc#Should be visible overall
+EditorGroup#0a000000#b454ffc79f7344cc#Objective Complete
+Is It Level 1#20000000#6e79e41dd9363ecc#Level 1
+Pacify Counter#02000000#2721b73ad33dbd34#ActorAliveCondition 3
+0xfffffffe#0a000000#5e554204f797758b#Should be visible globally
+0xfffffffe#00000000#33e40ed4671c51c4#Should be visible overall
+0xfffffffe#12000000#59dbe22cb6c1698d#ItemSpawner 3
+0xfffffffe#0a000000#a2caeee48c585b0a#Should be visible globally
+CHAR_Sheep_Guard_Bodyguard_M_32#07000000#45603c55a27f193f#DisplayHint
+0xfffffffe#0d000000#73905550a436a1c8#LD_MapTracker_CustomObjective_16
+Pacify Counter#02000000#d5188d67f0d4daa9#ActorAliveCondition 4
+DramaSituation 6#13000000#5198b7b663b37ff0#Act_MR_Guard_Stand_ArmsCrossed
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#21000000#9dd8b69858623a2d#GameEventListener
+0xfffffffe#0d000000#87ec2ef976b977d4#LD_MapTracker_CustomObjective_15
+EntityTrack_ Agent47_Default#22000000#148f1e98e85e73c2#TrajectoryTrack
+DramaSituation 1#23000000#7090212e5a34b32d#DramaSituationProxy
+0xfffffffe#16000000#4b6115d054e3012c#ScatterContainer_SouthWest_02
+Pacify Counter#24000000#4f4f59ab1fb2d729#Only 10 guards remaining 2
+0xfffffffe#0b000000#b2e0755f21232fed#CHAR_Sheep_Guard_Bodyguard_M_32
+0xfffffffe#00000000#fd882f7897d390ea#Should be visible overall
+0xfffffffe#12000000#100d2ecfa757880f#ItemSpawner 19
+0xfffffffe#0b000000#192b2d6fb786f386#CHAR_Sheep_Guard_Bodyguard_M_34
+0xfffffffe#00000000#a4ba3c10a8907928#Should be visible overall
+EditorGroup#09000000#7731f0a11b7a6500#ObjectiveStateEntity 2
+0xfffffffe#02000000#4778a6dc557c6cbf#ActorAliveCondition
+DramaSituation#03000000#d0ee1f8713182f2e#Act_MR_Stand_Basic_05
+0xfffffffe#07000000#90e0a2250b882876#DisplayHint
+North West Guard 3#23000000#b073fa12a1372858#DramaSituationProxy
+Pacify Counter#25000000#f9238ac8ec42c448#ValueBool_Poll
+0xfffffffe#02000000#3432d2b54e5ae77d#ActorAliveCondition
+Pacify Counter#26000000#ce1abaac2e297b47#ValueInt 3
+Opuntia Orsons#27000000#bbc6c43eeebbbc07#SignalFork_Void_04
+Opuntia Orsons#28000000#aac57fd9df29fa1a#ActorKeywordProxy
+0xfffffffe#07000000#b2b35efaaf83c483#DisplayHint
+CHAR_Sheep_Guard_Bodyguard_M_34#02000000#900209b6c7697107#ActorAliveCondition
+0xfffffffe#0d000000#a56d618de72f66d4#LD_MapTracker_CustomObjective_10
+Pacify Counter#02000000#00fbbe334a9573a8#ActorAliveCondition 9
+0xfffffffe#0a000000#666185c329decef7#Should be visible globally
+EditorGroup#0e000000#1c94af281c9264d5#L_Hand
+0xfffffffe#0a000000#92464e005828760e#Should be visible globally
+0xfffffffe#1b000000#f33fab870d2d2a25#North West Guard 3
+Bed#29000000#47724f1b4ade7862#Pillow_Silk_A
+0xfffffffe#0a000000#f409a0b6b53f1112#Should be visible globally
+0xfffffffe#02000000#5cb9b3b121c243be#ActorAliveCondition
+0xfffffffe#07000000#09fd30f877879dca#DisplayHint
+CHAR_Sheep_Guard_Bodyguard_M_32#2a000000#f1e93c075861ba7a#Flashlight Setup
+0xfffffffe#12000000#3e87b8172562f062#ItemSpawner 20
+DramaSituation 6#2b000000#cb64a40141a83c05#Role
+Pacify Counter#02000000#94d4b188cb8022fa#ActorAliveCondition 13
+0xfffffffe#02000000#b9daeb9a0ff6221c#ActorAliveCondition
+0xfffffffe#02000000#70a801abb972fd0e#ActorAliveCondition
+Pacify Counter#2c000000#e60383f45829ceca#SignalPipe_Void
+0xfffffffe#1b000000#3f04b0825adde57a#North West Guard 2
+DramaSituation 6#23000000#5a87ae9c886372b2#DramaSituationProxy
+0xfffffffe#0a000000#7c8899390c55f760#Should be visible globally
+Pacify Counter#02000000#6a05b3bf1763c819#ActorAliveCondition 16
+EditorGroup#2d000000#20ba2b1e1f11a2a2#VolumeBox 2
+0xfffffffe#02000000#780ecf4a49cfc399#ActorAliveCondition
+0xfffffffe#0d000000#a25890a156b0baa1#LD_MapTracker_CustomObjective_24
+EditorGroup#0a000000#a7ae47280daacb5e#pacify all done
+0xfffffffe#07000000#2137af64bd3cbe20#DisplayHint
+Closet Near Grave#0a000000#a72d11089eaaf15c#Container Full
+0xfffffffe#1b000000#3d1e8d90cd97aef5#DramaSituation 5
+CHAR_Sheep_Guard_Bodyguard_M_32#0d000000#7397b1b7c66e331e#LD_MapTracker_CustomObjective_22
+CHAR_Sheep_Unique_Orson_M#0a000000#e5b19519e7795425#Orson dead or unconscious
+Altar Logic#00000000#436493c45ee7b370#ValueBool_Operation
+0xfffffffe#07000000#623ca182fbde74ab#DisplayHint
+CHAR_Sheep_Guard_Bodyguard_M_32#00000000#ea203be5ee9b2d67#Should be visible overall
+Opuntia Orsons#05000000#043c4c5d2061988b#ActorProxy
+Sequence#18000000#a1fb93306d12ea52#EntityTrack_ FX_PF_PostfilterController
+EditorGroup#0a000000#212b480af581da8c#l3k3 done
+0xfffffffe#0a000000#4c48427b16d4549c#Should be visible globally
+Pacify Counter#2e000000#823126245b1a04de#TimerSimple
+0xfffffffe#1a000000#8e1c8f60fb02d43e#DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky
+0xfffffffe#12000000#e660e30a39a43be3#ItemSpawner 18
+0xfffffffe#1b000000#38f31a642cb5a919#DramaSituation 6
+0xfffffffe#07000000#a8239555e9cc2fbe#DisplayHint
+Closet Near Grave#20000000#9c0ee1ab9322530a#ContractIdComparer
+Closet Near Grave#25000000#4063ac21125270ab#Is It Level 3
+0xfffffffe#07000000#eba082c3ce6db2f1#DisplayHint
+DramaSituation 2#23000000#a1f95012deb999e4#DramaSituationProxy
+Pacify Counter#02000000#8440bd19bec9dcaa#ActorAliveCondition
+EntityTrack_ Camera_Dummy#22000000#955d3644a5b72b3e#TrajectoryTrack
+0xfffffffe#0d000000#2198713a4a46f8e8#LD_MapTracker_CustomObjective_02
+0xfffffffe#07000000#cb5b5383ede5f166#DisplayHint
+Altar Logic#2f000000#3a9edd81ea1cdc6e#VolumeSphere
+0xfffffffe#0d000000#c501c9c099ea5472#LD_MapTracker_CustomObjective_09
+Sequence#30000000#54d45b2897d718bd#Active Camera Track
+0xfffffffe#12000000#cc18f5665017e153#ItemSpawner 7
+CHAR_Sheep_Unique_Orson_M#00000000#ac277d09b7fb5e58#ValueBool_Operation
+DramaSituation 5#2b000000#9bdaf525c73939ea#Role
+Bed#31000000#7f11db963c582178#bed_metal_a
+Opuntia Orsons#0a000000#15941e61b8b61dbf#L2K1 Done
+Orson Death Detection Logic#25000000#3338b47e4a6d15e0#Is L2K1 Complete
+0xfffffffe#0f000000#10f2063aba71abf9#Opuntia Orsons
+North West Guard 4#2b000000#81f7914b1cc49dbf#Role
+Opuntia Orsons#09000000#a497ad336de43b4d#Level 2 Kill 1
+Orson Death Detection Logic#32000000#27a6732d80acc714#Orson 1
+0xfffffffe#0a000000#dfe01242392fd233#Should be visible globally
+Closet Near Altar#33000000#d292912ae6c7ad47#Exit_PushButton
+Opuntia Orsons#0b000000#4578268f67272ba3#CHAR_Sheep_Unique_Orson_M_02
+Pacify Counter#26000000#67c5ca807a11d327#ValueInt 4
+Orson Death Detection Logic#32000000#83c7e0fd2b7e4299#Orson 2
+Pacify Counter#02000000#40173394d08dd0b6#ActorAliveCondition 19
+CHAR_Sheep_Guard_Bodyguard_M_33#0d000000#644b395af082b499#LD_MapTracker_CustomObjective_20
+Opuntia Orsons#0a000000#00daab1588578d6a#L3K1 Done
+Orson Death Detection Logic#25000000#36e668e9115c42a2#Is L3K1 Complete
+CHAR_Sheep_Unique_Orson_M#32000000#334a56f374c1f129#ActorDeath
+0xfffffffe#0f000000#2b0f41e1ccacf64e#Closets
+0xfffffffe#02000000#794ed15436558b70#ActorAliveCondition
+Closets#0f000000#8abd4b481f07ebd6#EditorGroup
+DramaSituation#03000000#a9e415e9e954b879#Act_MR_Stand_Basic_04
+DramaSituation 5#23000000#43791a3704c939dd#DramaSituationProxy
+0xfffffffe#12000000#5ef123d507fd738d#ItemSpawner 27
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#34000000#e56ffc530b3f3343#InvertedCondition 3
+EditorGroup#0c000000#6fadc861e346785f#Spatial 4
+0xfffffffe#1a000000#0397a8f85a484734#ItemKey_Pumpkin _small_
+0xfffffffe#00000000#a23695633e62e860#Should be visible overall
+0xfffffffe#09000000#42388a8d75b4e3ec#L3
+0xfffffffe#12000000#4f468d7dc638ff30#ItemSpawner 30
+0xfffffffe#02000000#a8eefef88693b603#ActorAliveCondition
+0xfffffffe#0d000000#35f2fd4c801e32c3#LD_MapTracker_CustomObjective_04
+0xfffffffe#12000000#82ed9f01274b7e0e#ItemSpawner 31
+DramaSituation 2#35000000#dc2ca2fdad5a90c4#Act_MR_Sit_Ground_Groggy
+EditorGroup#0e000000#6dbd20e493997ef0#ActorBoneAttachEntity 5
+0xfffffffe#02000000#3a19e70bebea37dc#ActorAliveCondition
+EditorGroup#0e000000#aed0528f07676eb3#ActorBoneAttachEntity 3
+0xfffffffe#09000000#e7e0bf00c653e293#L2
+Pacify Counter#1d000000#ecc8ba6e2f85de87#VariantConverter_void__01
+0xfffffffe#16000000#ad91b168e1bc3811#ScatterContainer_SouthWest_01
+Opuntia Orsons#27000000#94b768ef31af2212#SignalFork_Void_03
+Pacify Counter#02000000#dd55ff0c83a97dc1#ActorAliveCondition 7
+0xfffffffe#00000000#9c755d1592ecde30#Should be visible overall
+0xfffffffe#12000000#678956a51b41cb04#ItemSpawner 23
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#00000000#451686cdfa9ecade#ValueBool_Operation_01
+0xfffffffe#12000000#8c8b423760431fd7#ItemSpawner 2
+North West Guard 3#2b000000#d03ce28101ff1871#Role
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#00000000#b2c05a309d793760#ValueBool_Operation
+Opuntia Orsons#27000000#25c8dd9a06ed3554#SignalFork_Void_02
+0xfffffffe#1a000000#41b8183658eac593#ItemKey_Squeaky Toy Kiwi
+DramaSituation#2b000000#89e1e2225ee9e937#Role
+Pacify Counter#02000000#6f7275137496d258#ActorAliveCondition 1
+Altar Logic#36000000#4366d22f5b5ffd2c#EventTransmitter_bool_
+0xfffffffe#02000000#8db079efad59ca29#ActorAliveCondition
+CHAR_Sheep_Guard_Bodyguard_M_33#00000000#2f9dd6b58c197991#Should be visible overall
+0xfffffffe#0a000000#81f6980ca0ad1c04#Should be visible globally
+DramaSituation 1#37000000#59f41cd10565c814#VolumeTriggerCharacter
+0xfffffffe#02000000#1520318a6c858a83#ActorAliveCondition
+0xfffffffe#2e000000#1c9a413c0311f0f1#TimerSimple
+Altar Logic#10000000#4aa70b3882282dd0#ContractsEvent
+Altar Logic#37000000#a6c26a2644ef3b63#VolumeTriggerCharacter
+Pacify Counter#02000000#39b6696ea0adeaa4#ActorAliveCondition 6
+CHAR_Sheep_Guard_Bodyguard_M_34#07000000#62a79880d049b625#DisplayHint
+0xfffffffe#0d000000#8dccf87ee43602e6#LD_MapTracker_CustomObjective_13
+0xfffffffe#0a000000#dbd612d2d2afd816#Should be visible globally
+Opuntia Orsons#0a000000#c3347f5d27587931#L1K1 Done
+Closet Near Altar#20000000#fac9925df21b8825#ContractIdComparer
+Opuntia Orsons#09000000#d6fe5bd38c5fa025#Level 3 Kill 1
+Orson Death Detection Logic#25000000#ccbb53bf5eadc2cd#Is L1K1 Complete
+0xfffffffe#0d000000#047f489f90fe3582#LD_MapTracker_CustomObjective_07
+Pacify Counter#02000000#0f4c170924874a49#ActorAliveCondition 5
+Pacify Counter#02000000#ae329615e2a4782b#ActorAliveCondition 21
+CHAR_Sheep_Guard_Bodyguard_M_33#02000000#efdc9d7996a9e7a0#ActorAliveCondition
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#0a000000#f625746cfe679e61#ValueBool_Basic_02
+DramaSituation 9#2b000000#88fc772c135551d2#Role
+0xfffffffe#12000000#cb7d623a1c6613f8#ItemSpawner
+EditorGroup#0c000000#2a434f52d7ed10dd#Spatial
+0xfffffffe#07000000#4b1d3bb9454f7a35#DisplayHint
+Closet Near Altar#38000000#3cac5816b47b04c2#BodyDumpCondition
+Closet Near Altar#25000000#2580c32b8412037b#Did he hide Orsons body in the closet
+Pacify Counter#02000000#23d5a6a3cf2e036a#ActorAliveCondition 10
+0xffffffff#0c000000#feffffffffffffff#Scene
+0xfffffffe#1a000000#f34806229daf7726#ItemKey_Melee_Torch
+DramaSituation 9#39000000#8e85e49d9b36f6fb#Act_MR_Guard_Stand_ArmsBack
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#20000000#2702b89afed1cab4#ContractIdComparer
+0xfffffffe#14000000#1f1891b1250534fb#Ledge27
+Pacify Counter#02000000#3342c956446c25f3#ActorAliveCondition 11
+Closet Near Grave#1c000000#a1e7a48f62d635d0#SetPiece_Container_Body_Closet_Antique_A
+0xfffffffe#0d000000#e7290523c05fb514#LD_MapTracker_CustomObjective_08
+0xfffffffe#00000000#92c7e5999fa8527a#Should be visible overall
+0xfffffffe#16000000#cbd2150b0ed89a51#ScatterContainer_SouthEast_03
+EditorGroup#00000000#1f656f22954d7228#both final obj on l3 done
+DramaSituation 1#3a000000#c9a772a46444912d#LookAtTrigger
+Pacify Counter#3b000000#4c3d3c03765acf41#ValueInt_Changed
+Sequence#18000000#ca4c5a6fec6e65bd#EntityTrack_ Agent47_Default
+0xfffffffe#00000000#f8dd1387e561c455#Should be visible overall
+0xfffffffe#07000000#00a30a0854cafd77#DisplayHint
+0xfffffffe#3c000000#a5504654d0910b55#VariantConverter_IActor_
+0xfffffffe#0d000000#4456246ef73e343a#LD_MapTracker_CustomObjective_06
+0xfffffffe#1a000000#bee7709875bcb3e9#ItemKey_Prop_Melee_Meat_Item
+DramaSituation 1#2d000000#3168a7b934fe97b0#VolumeBox
+Opuntia Orsons#27000000#b2d5616fe92f6e7b#SignalFork_Void_01
+0xfffffffe#02000000#1ef8599b2dad196b#ActorAliveCondition
+CHAR_Sheep_Guard_Bodyguard_M_34#2a000000#57933ce3c27dc4ed#Flashlight Setup
+0xfffffffe#0a000000#60e52fdbdbdfdf40#Should be visible globally
+EditorGroup#0c000000#eda16471378e3a52#Spatial 3
+0xfffffffe#0d000000#7e84af9859561887#LD_MapTracker_CustomObjective_01
+Bed#3d000000#b83ec04d0f5750b5#Box
+Bed#3e000000#84633768dd6d6c53#HeroSpawn Bed
+Bed#3f000000#bbf0323421f94dcc#HeroSpawnSequenceDirector
+0xfffffffe#02000000#63561ab2d6373a30#ActorAliveCondition
+Pacify Counter#02000000#f1c2511784fbfe64#ActorAliveCondition 14
+0xfffffffe#12000000#78d27e4925e45337#ItemSpawner 6
+North West Guard 2#2b000000#acad5988af99a3d1#Role
+Active Camera Track#40000000#07d006f9c6e95e7b#ActiveCameraItem
+DramaSituation 2#2b000000#bfab3acaf27cf3ee#Role
+CHAR_Sheep_Guard_Bodyguard_M_34#00000000#488f0a7be87bdf01#Should be visible overall
+Pacify Counter#02000000#eb6a0d4f859e087b#ActorAliveCondition 12
+Opuntia Orsons#0b000000#a81455122721a7c2#CHAR_Sheep_Unique_Orson_M
+Opuntia Orsons#0a000000#fe9b294bf564ced7#L2K2 Done
+Orson Death Detection Logic#25000000#3ab918e69f42158c#Is L2K2 Done
+CHAR_Sheep_Guard_Bodyguard_M_32#02000000#59e61677ddc01721#ActorAliveCondition
+0xfffffffe#00000000#e506039181f2a1d0#Should be visible overall
+0xfffffffe#0d000000#2c4d951fdab405be#LD_MapTracker_CustomObjective_21
+DramaSituation#23000000#83d80d79eacbae25#DramaSituationProxy
+CHAR_Sheep_Guard_Bodyguard_M_34#0d000000#181d0a498b40d93f#LD_MapTracker_CustomObjective_05
+Opuntia Orsons#1b000000#9ac5d71c6c607275#DramaSituation 2
+0xfffffffe#0d000000#2c4128b21f0f2a0c#LD_MapTracker_CustomObjective
+0xfffffffe#07000000#d764bd8558d216f9#DisplayHint
+North West Guard 4#23000000#90aea597389045dc#DramaSituationProxy
+0xfffffffe#16000000#183ade51f7b6ff52#ScatterContainer_SouthEast_01
+Pacify Counter#10000000#ecd8c3b03eca6cea#GuardDown 2
+EditorGroup#41000000#a1fbcb65bd6be31f#Holding Hands with Orson
+Orson Death Detection Logic#25000000#f8c427707f78d7fe#Is It Level 1
+DramaSituation 1#2b000000#786cc65359725e5a#Role
+0xfffffffe#07000000#0c0de47d42ad489d#DisplayHint
+Pacify Counter#02000000#32ba4b9a8536b8dd#ActorAliveCondition 2
+Pacify Counter#02000000#6beb2b82ec5f616e#ActorAliveCondition 15
+Closet Near Grave#10000000#0886c5695ca53d6b#ContractsEvent
+DramaSituation 9#42000000#189114600a3c0f37#Act_MR_Guard_Stand_ArmsSide_01
+0xfffffffe#00000000#a5b5b0aed4d812fb#Should be visible overall
+0xfffffffe#0d000000#258a54e920689bc9#LD_MapTracker_CustomObjective_17
+0xfffffffe#07000000#7ee3e3f19ea584b8#DisplayHint
+0xfffffffe#07000000#14a821c1be69c525#DisplayHint
+EditorGroup#00000000#f5a439a0d3cedea2#Either done on level or open up for orson to be dumped
+Opuntia Orsons#27000000#387672a74d98ebda#SignalFork_Void
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#0d000000#f496702166882acd#LD_MapTracker_CustomObjective
+0xfffffffe#12000000#a3f767f206fedcc1#ItemSpawner 4
+0xfffffffe#02000000#77a3a36d26bd91eb#ActorAliveCondition
+EditorGroup#2d000000#0a12e49ccfe41f3b#VolumeBox 1
+DramaSituation#03000000#6b182db8d9885772#Act_MR_Stand_Basic_01
+0xfffffffe#0a000000#adbe150f3cc37d6c#Should be visible globally
+0xfffffffe#12000000#bcda8dd1923f2e46#ItemSpawner 29
+Closet Near Altar#25000000#f585b2ad16b672da#Is It Level 3
+North West Guard 4#43000000#f0724f4f66665ae0#Act_MR_Military_Stand_Shotgun_02
+0xfffffffe#0f000000#ece80ee9b1fcaebf#Pacify Counter
+Is It Level 3x2#20000000#dd396f3796c38d62#Level 3
+Orson Death Detection Logic#25000000#6ad3a544a76ea639#Is It Level 3x2
+Pacify Counter#02000000#4164f7fb38f6c42e#ActorAliveCondition 18
+Opuntia Orsons#1b000000#5f92b01f17d8bd55#DramaSituation
+0xfffffffe#16000000#d402342de80283eb#ScatterContainer_SouthEast_02
+Opuntia Orsons#0a000000#6e21427924c45b33#L3K2 Done
+Orson Death Detection Logic#25000000#a399f56bf0bbbdc2#Is L3K2 Done
+0xfffffffe#07000000#505ba19f3a14ed48#DisplayHint
+CHAR_Sheep_Unique_Orson_M#05000000#53d99657d4698c86#ActorProxy
+EditorGroup#09000000#a14631403aab98f6#Level 3 Pacify All
+TrajectoryTrack#44000000#36440a51d133a424#CurveTrajectoryItem
+0xfffffffe#0a000000#4bf6cd98cb4bccdd#Should be visible globally
+Pacify Counter#02000000#8f90c3199f44a42d#ActorAliveCondition 8
+North West Guard 2#23000000#c0d4d31628ca0c40#DramaSituationProxy
+Bed#45000000#a7e6cb030a01265b#Camera_Dummy
+CHAR_Sheep_Guard_Bodyguard_M_32#0a000000#171ed9c7c54aa5ed#Should be visible globally
+0xfffffffe#0a000000#24e5a71b3f43d225#Should be visible globally
+Orson Death Detection Logic#32000000#157742c162eba564#Orson 3
+0xfffffffe#0d000000#953a5409792e45a0#LD_MapTracker_CustomObjective_12
+CHAR_Sheep_Guard_Bodyguard_M_33#2a000000#e12a2c5172e861a4#Flashlight Setup
+0xfffffffe#14000000#ac661c53373390ca#Ledge29
+0xfffffffe#0d000000#cebffe18858ddd08#LD_MapTracker_CustomObjective_14
+DramaSituation 1#19000000#845e0ce2cb2821a3#TimerConditional
+EditorGroup#0a000000#09a84b8457a39c27#ValueBool_Basic
+0xfffffffe#12000000#9aa9950c81a5ab3e#ItemSpawner 25
+Opuntia Orsons#06000000#025495c07f91549a#Keyword
+EditorGroup#00000000#f8a4f0bdef199c05#One of the exit conditions met
+Opuntia Orsons#09000000#a73642e452a8003f#Level 2 Kill 2
+0xfffffffe#12000000#10ac820340451d05#ItemSpawner 26
+0xfffffffe#02000000#5d1c03390a52ce40#ActorAliveCondition
+ Track#46000000#ade6f4f2782bc1ce#CurveItem
+0xfffffffe#0d000000#ccc6c30cc85cc648#LD_MapTracker_CustomObjective_23
+0xfffffffe#47000000#915c1e15246dbc6b#ActorKeywordCondition
+0xfffffffe#12000000#1cd9cf2052156e49#ItemSpawner 22
+0xfffffffe#1b000000#5fa0b578b0835756#North West Guard 4
+Pacify Counter#21000000#f6d6e747160020ef#GameEventListener
+EditorGroup#48000000#fd366d8888d6468b#Holding Hands Delayed
+North West Guard 3#43000000#ecbfc457d8c0bc98#Act_MR_Military_Stand_Shotgun_02
+0xfffffffe#12000000#19877049a3e9c146#ItemSpawner 24
+Is It Level 2x2#20000000#efa9ac36157d433d#Level 2
+0xfffffffe#0d000000#174bee7b2f6e89a9#LD_MapTracker_CustomObjective_11
+CHAR_Sheep_Guard_Bodyguard_M_33#07000000#d4a1ff759e05ddba#DisplayHint
+Pacify Counter#26000000#9b028e1d007cb5bf#Guards Alive
+Is It Level 3#20000000#cd6540245a738d73#Level 3
+Orson Death Detection Logic#25000000#b64d1845110d31e5#Is It Level 3
+0xfffffffe#0a000000#09694dec8aa4b244#Objective Active
+Is It Level 2#20000000#3f76d9bc972eb0a6#Level 2
+Orson Death Detection Logic#25000000#1cc863c6f031a034#Is It Level 2
+CHAR_Sheep_Guard_Bodyguard_M_33#0a000000#31496b3f2007096d#Should be visible globally
+Altar Logic#34000000#95e011954c834a01#InvertedCondition
+0xfffffffe#00000000#fc8bca67e58da2c8#Should be visible overall
+0xfffffffe#0a000000#d4d74c43bdd7634b#Should be visible globally
+Closet Near Grave#33000000#a2dd73470fefc3e9#Exit_PushButton
+Closets#0f000000#c07d4c0b22d19208#Closet Near Altar
+Opuntia Orsons#0b000000#22c48b482b132d45#CHAR_Sheep_Unique_Orson_M_01
+0xfffffffe#02000000#fce823c9a53361e7#ActorAliveCondition
+Orson Death Detection Logic#25000000#7ef5c9a4746337f5#Is It Level 2x2
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#12000000#0dbbdd0eb7fc1eae#ItemSpawner
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#0a000000#d7ee658270e0b4ea#ValueBool_Basic
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#0d000000#a3f3ef524e745122#LD_MapTracker_CustomObjective_01
+0xfffffffe#07000000#0184056442e5e87d#DisplayHint
+Pacify Counter#24000000#3757a24090e71287#Is it zero 2
+DramaSituation 1#49000000#d8b8c795c1dfacd9#AIModifierActor
+Opuntia Orsons#10000000#4240222473d91bff#ContractsEvent
+TrajectoryTrack#44000000#d2601bb9577b0e79#CurveTrajectoryItem
+0xfffffffe#0a000000#e92116bc5d1d8803#Should be visible globally
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#12000000#5db6713e7c0d947c#ItemSpawner 2
+0xfffffffe#07000000#a1cc06e677f860d0#DisplayHint
+Pacify Counter#36000000#4fd91a654067a3e7#EventTransmitter_void__01
+DramaSituation 9#23000000#ec965bd186061433#DramaSituationProxy
+DramaSituation#03000000#528bf5a8fbcd9989#Act_MR_Stand_Basic_02
+Pacify Counter#10000000#3a829d661568b3c2#GuardUp
+DramaSituation 9#42000000#586f07bd72e52720#Act_MR_Guard_Stand_ArmsSide
+DramaSituation 2#49000000#0cbeefc4f08674c8#AIModifierActor
+DONT_USE_ON_LEVEL_ItemKey_Melee_BaseballBat_Spooky#25000000#f27716bebca60804#Is It Level 1
+0xfffffffe#0a000000#531fac153ca4cac6#Should be visible globally
+0xfffffffe#00000000#6e7c03bcc2ce5d8b#Should be visible overall
+North West Guard 2#43000000#c9bb5fe8dbd07a2f#Act_MR_Military_Stand_Shotgun_02
+Closet Near Grave#38000000#c9559d10ffefc4e1#BodyDumpCondition
+Closet Near Grave#25000000#38ed69a636c8f0be#Did he hide Orsons body in the closet
+Closets#0f000000#a5fe8494df5c3829#Closet Near Grave

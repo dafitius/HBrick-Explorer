@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -24,11 +25,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        //Read the file
-        //File fl = new File("D:\\David\\Hitman-modding\\decoders\\TBLU\\006DE61CDCE4C98D.TBLU.BIN1decoded.JSON");
-        //File fl = new File("D:\\David\\Hitman-modding\\decoders\\TBLU\\00EB0F411D23E481.TBLU.BIN1decoded.JSON");
-        File fl = new File("D:\\David\\Hitman-modding\\decoders\\TBLU\\002592c25898cc8a.TBLU.BIN1decoded.JSON");
-        int LoD = 2;
+        File selectedFile = getFile();
+
+        File fl = convertFileToJson(selectedFile);
+
+        int LoD = 4;
         String filename = fl.getName().substring(0, 15);
         Scanner lineCounter = new Scanner(fl);
         int linecount = 0;
@@ -100,8 +101,11 @@ public class Main extends Application {
 
             TreeView<Item> treeView = new TreeView<>();
             TreeItem<Item> root = new TreeItem<Item>();
+
+
+
             for (Item item : itemLibrary.getItems()) {
-                if (item.getName().equals("Scene")) {
+                if (item.getName().equals(itemLibrary.getRoot())) {
                     root = item.getViewItem();
                 }
             }
@@ -249,8 +253,67 @@ public class Main extends Application {
         return itemLibrary;
     }
 
+    public File getFile(){
+        Stage selectFile = new Stage();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select a TBLU file");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("TBLU files", "*.TBLU");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setSelectedExtensionFilter(filter);
+        File selectedFile = fileChooser.showOpenDialog(selectFile);
+        System.out.println(selectedFile);
+        return selectedFile;
+    }
+
+    public InputStream excCommand(String command){
+        Runtime rt = Runtime.getRuntime();
+
+        try {
+            return rt.exec(command).getInputStream();
+        }
+        catch (Exception e){
+            System.out.println("failed to execute command");
+        }
+        return  null;
+    }
+
+    public File convertFileToJson(File selectedFile){
+        Stage convertStage = new Stage();
+        BorderPane borderPane = new BorderPane();
+        TextArea textArea = new TextArea();
+        borderPane.setCenter(new TextArea());
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \"C:\\Users\\david\\Documents\\Github projects\\Hitman_TBLU_viewer\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                textArea.appendText(line + "\n");
+            }
+            Scene scene = new Scene(textArea);
+            convertStage.setScene(scene);
+            convertStage.show();
+
+            if(reader.readLine() == null){
+                  convertStage.close();
+                try{
+                    return new File(selectedFile.getPath() + ".BIN1decoded.JSON");
+                }
+                catch (Exception e){
+                    System.out.println("an error occured while converting the TBLU to a JSON file");
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public static void main(String[] args) {
+
+
+
+
         launch(args);
     }
 
