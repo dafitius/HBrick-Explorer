@@ -24,7 +24,7 @@ public class Main extends Application {
     private String selectedItemName;
 
     //settings
-    int LoD = 2;
+    int LoD = 4;
     boolean useCache = false;
     boolean useOldJsons = false;
 
