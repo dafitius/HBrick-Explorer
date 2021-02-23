@@ -28,13 +28,15 @@ public class ItemLibrary implements Serializable {
         this.name = name;
     }
 
-    public String getRoot(){
+    public Item getRoot(){
         boolean foundRoot = false;
+        Item root = new Item("","","","No root found");
         String rootString = "";
         for(Item item : items){
-            if(item.getParent().contains("0xffffffff")){
+            if(item.getParent().contains("root")){
 
                 rootString = item.getName();
+                root = item;
                 if(foundRoot){
                     System.out.println(item.getName() + " and " + rootString + "might both be root files");
                     System.out.println("Multiple contenders for a root file have been found, this file might not work as e");
@@ -52,7 +54,14 @@ public class ItemLibrary implements Serializable {
             System.out.println("error, no root could be located");
         }
 
-        return rootString;
+        return root;
 
     }
+
+    public void sortAllItems(){
+        for (Item item : items){
+            item.sort();
+        }
+    }
+
 }

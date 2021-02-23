@@ -29,8 +29,8 @@ public class Main extends Application {
 
         File fl = convertFileToJson(selectedFile);
 
-        int LoD = 4;
-        String filename = fl.getName().substring(0, 15);
+        int LoD = 5;
+        String filename = fl.getName().substring(0, 16);
         Scanner lineCounter = new Scanner(fl);
         int linecount = 0;
 
@@ -82,7 +82,13 @@ public class Main extends Application {
                 String name = parts[3].split("\"")[3];
                 this.itemLibrary.add(new Item(parent, type, hash, name));
             }
+
+
         }
+
+            //Add a root node
+            this.itemLibrary.add(new Item("root", "", "", filename));
+
 
             //find the children
             for (Item itemToFill : this.itemLibrary.getItems()) {
@@ -91,10 +97,15 @@ public class Main extends Application {
                         itemToFill.addChild(item);
                         System.out.println("added child" + item.getChildren().toString());
                     }
+                    if (itemToFill.getParent().equals("root") && item.getParent().contains("0xff")){
+                        itemToFill.addChild(item);
+                    }
                 }
 
             }
             System.out.println("found and added all children");
+            this.itemLibrary.sortAllItems();
+        System.out.println("sorted all items");
             serializeItemsArray(this.itemLibrary);
 
             //Add info to GUI
@@ -104,11 +115,8 @@ public class Main extends Application {
 
 
 
-            for (Item item : itemLibrary.getItems()) {
-                if (item.getName().equals(itemLibrary.getRoot())) {
-                    root = item.getViewItem();
-                }
-            }
+
+            root = itemLibrary.getRoot().getViewItem();
         if(LoD >= 0){
             for (TreeItem<Item> treeview : root.getChildren()) {
                 treeview.getChildren().addAll(treeview.getValue().getViewItem().getChildren());
@@ -284,7 +292,7 @@ public class Main extends Application {
         borderPane.setCenter(new TextArea());
 
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \"C:\\Users\\david\\Documents\\Github projects\\Hitman_TBLU_viewer\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \"C:\\Users\\david\\Documents\\git projects\\Hitman_TBLU_viewer\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
             String line = "";
             while ((line = reader.readLine()) != null) {
                 textArea.appendText(line + "\n");

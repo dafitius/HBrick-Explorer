@@ -4,6 +4,7 @@ import javafx.scene.control.TreeItem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Item implements Serializable {
 
@@ -63,8 +64,18 @@ public class Item implements Serializable {
         return treeItem;
     }
 
+    public void sort(){
+        Collections.sort(children, new ItemTypeComparator());
+        Collections.sort(children, new ItemNameComparator());
+    }
+
     @Override
     public String toString() {
         return name;
     }
+
+
+
+
+
 }
