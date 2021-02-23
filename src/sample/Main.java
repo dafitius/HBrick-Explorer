@@ -200,8 +200,21 @@ public class Main extends Application {
             //Extract the parts with directory structure
             ArrayList<String> lines = new ArrayList<>();
             for (String line : file.split("},")) {
+                //System.out.println(line);
                 if (line.contains("parent")) {
                     lines.add(line);
+                }
+                if (line.contains("Activatable_NormalGameplay, IEntity")) {
+                    //line.split("\"Activatable_NormalGameplay, IEntity\":");
+                    System.out.println("Activatable_NormalGameplay, IEntity = " + line.split("\"Activatable_NormalGameplay, IEntity\":")[1]);
+                }
+                if (line.contains("AudioEmitters")) {
+                    //line.split("\"Activatable_NormalGameplay, IEntity\":");
+                    System.out.println("AudioEmitters = " + line.split("\"AudioEmitters\":")[1]);
+                }
+                if (line.contains("Replicable")) {
+                    //line.split("\"Activatable_NormalGameplay, IEntity\":");
+                    System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
                 }
             }
             System.out.println("extracted items from JSON");

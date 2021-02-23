@@ -99,6 +99,13 @@ def scanForAdress(file, fromOffset):
 	except:
 		return "null"
 
+
+#make dict
+d = {'key':'value'}
+
+
+
+
 def readData(file, type, fromOffset, toOffset):
 	atOffset = fromOffset
 	numFiles = readHexFromBIN1File(file, atOffset, 0x4)
@@ -110,7 +117,7 @@ def readData(file, type, fromOffset, toOffset):
 
 	if type == 0:
 		blockSize = 0x60
-		d = {'key':'value'}
+		
 		originalOffset = atOffset
 
 		for f in range(numFiles):
@@ -361,9 +368,17 @@ def readSubItemInfo(file, itemType, fromOffset):
 	print("       amount: " + str(numFiles))
 
 	if itemType != 1:
+
 		for f in range(numFiles):
-			subItemLink = readPartFromBIN1File(file, atOffset, atOffset + 0x4)
-			writeToJson('          "' + str(subItemLink))
+			subItemLink = readHexFromBIN1File(file, atOffset, 0x4)
+			ID = int(subItemLink,16)
+			if str(ID) in d:
+				parent = d.get(str(ID))
+			else:
+				ID = hex(ID)
+				parent = ID
+
+			writeToJson('          "' + str(parent))
 			if (f + 1) != numFiles:
 				writeToJson('",\n')
 			else:
