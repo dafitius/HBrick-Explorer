@@ -47,10 +47,7 @@ public class ItemLibrary implements Serializable {
 
 
         }
-        if(foundRoot) {
-            System.out.println("Root " + rootString + " has been located");
-        }
-        else{
+        if(!foundRoot) {
             System.out.println("error, no root could be located");
         }
 

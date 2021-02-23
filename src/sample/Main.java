@@ -19,104 +19,44 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Main extends Application {
 
+    String filename;
     ItemLibrary itemLibrary;
     private String selectedItemName;
+
+    //settings
+    int LoD = 2;
+    boolean useCache = false;
+    boolean useOldJsons = false;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+
+        //ask for file to extract
         File selectedFile = getFile();
+        File jsonFile = new File(selectedFile.getPath() + ".BIN1decoded.JSON");
 
-        File fl = convertFileToJson(selectedFile);
-
-        int LoD = 5;
-        String filename = fl.getName().substring(0, 16);
-        Scanner lineCounter = new Scanner(fl);
-        int linecount = 0;
-
-        File fileToCheck = new File(System.getProperty("user.dir") + "\\" + filename + ".dat");
-
-        if(Files.exists(fileToCheck.toPath())){
-                this.itemLibrary = deserializeItemsArray(filename);
+        //see if file has been decoded before
+        File fl;
+        if(jsonFile.exists() && useOldJsons){
+             fl = jsonFile;
         }
-        else {
+        else fl = convertFileToJson(selectedFile);
 
-            while (lineCounter.hasNextLine()) {
-                lineCounter.nextLine();
-                linecount++;
-            }
-            lineCounter.close();
-            System.out.println(linecount + " lines counted");
+        //set level of detail in the treeview
 
+        //get a filename from the file
+        this.filename = fl.getName().substring(0, 16);
 
-            Scanner sc = new Scanner(fl);
-            String file = "";
-            int i = 0;
-            while (sc.hasNextLine()) {
-                String line = sc.nextLine();
-                file += line;
-                if (i % (linecount / 30) == 0) {
-                    System.out.println("read " + i + " of " + linecount + " lines");
-                }
-                i++;
-            }
-            sc.close();
-
-            this.itemLibrary = new ItemLibrary(filename);
-            //Extract the parts with directory structure
-            ArrayList<String> lines = new ArrayList<>();
-            for (String line : file.split("},")) {
-                if (line.contains("parent")) {
-                    lines.add(line);
-                    System.out.println("added line");
-                }
-            }
-            //create the objects from the JSON
-            for (String line : lines) {
-                line = line.substring(1);
-                String[] parts = line.split(",");
-                System.out.println("have split line");
-                String parent = parts[0].split("\"")[3];
-                String type = parts[1].split("\"")[3];
-                String hash = parts[2].split("\"")[3];
-                String name = parts[3].split("\"")[3];
-                this.itemLibrary.add(new Item(parent, type, hash, name));
-            }
+        //Build the ItemLibrary with the information from the file
+        buildItemLibrary(fl);
 
 
-        }
+        //Add info to GUI
+        TreeView<Item> treeView = new TreeView<>();
+        TreeItem<Item> root = itemLibrary.getRoot().getViewItem();
+        treeView.setRoot(root);
 
-            //Add a root node
-            this.itemLibrary.add(new Item("root", "", "", filename));
-
-
-            //find the children
-            for (Item itemToFill : this.itemLibrary.getItems()) {
-                for (Item item : this.itemLibrary.getItems()) {
-                    if (item.getParent().equals(itemToFill.getName())) {
-                        itemToFill.addChild(item);
-                        System.out.println("added child" + item.getChildren().toString());
-                    }
-                    if (itemToFill.getParent().equals("root") && item.getParent().contains("0xff")){
-                        itemToFill.addChild(item);
-                    }
-                }
-
-            }
-            System.out.println("found and added all children");
-            this.itemLibrary.sortAllItems();
-        System.out.println("sorted all items");
-            serializeItemsArray(this.itemLibrary);
-
-            //Add info to GUI
-
-            TreeView<Item> treeView = new TreeView<>();
-            TreeItem<Item> root = new TreeItem<Item>();
-
-
-
-
-            root = itemLibrary.getRoot().getViewItem();
         if(LoD >= 0){
             for (TreeItem<Item> treeview : root.getChildren()) {
                 treeview.getChildren().addAll(treeview.getValue().getViewItem().getChildren());
@@ -177,13 +117,13 @@ public class Main extends Application {
                 }
             }
         }
-
-
+        System.out.println("added all items inside the tree");
+        //create a panel on the left for details
         HBox hbox = new HBox();
         ListView itemDetails = new ListView();
-        treeView.setMinWidth(300);
+        treeView.setMinWidth(500);
 
-
+        //get selected item from the tree
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 selectedItemName = newValue.getValue().toString();
                 Item selectedItem = new Item();
@@ -193,22 +133,14 @@ public class Main extends Application {
                     }
                 }
             System.out.println(selectedItem.getName());
-            Label name = new Label(selectedItem.getName());
-            Label type = new Label(selectedItem.getType());
-            Label hash = new Label(selectedItem.getHash());
+
+            Label name = new Label("Name:   " + selectedItem.getName());
+            Label type = new Label("Type:   " + selectedItem.getType());
+            Label hash = new Label("Hash:   " + selectedItem.getHash());
+            Label parent = new Label("Parent: " + selectedItem.getParent());
             itemDetails.getItems().clear();
-            itemDetails.getItems().addAll(name, type, hash);
+            itemDetails.getItems().addAll(name, type, hash, parent);
         });
-
-
-
-
-
-
-
-
-
-        treeView.setRoot(root);
 
         BorderPane borderpane = new BorderPane();
         hbox.getChildren().addAll(treeView, itemDetails);
@@ -216,18 +148,109 @@ public class Main extends Application {
         primaryStage.setTitle("TBLU tree viewer");
         primaryStage.setScene(new Scene(borderpane, 660, 675));
         primaryStage.show();
+        System.out.println("launch the app");
     }
 
-    public static void serializeItemsArray(ItemLibrary itemLibrary){
+    public void buildItemLibrary(File fl){
+
+        File cacheFile = new File(System.getProperty("user.dir") + "\\cache\\" + filename + ".dat");
+        //check if file is already serialized
+        if(cacheFile.exists() && useCache){
+            this.itemLibrary = deserializeItemsArray(filename);
+        }
+        else {
+
+            int linecount = 0;
+
+            try {
+                Scanner lineCounter = new Scanner(fl);
+                while (lineCounter.hasNextLine()) {
+                    lineCounter.nextLine();
+                    linecount++;
+                }
+                lineCounter.close();
+            }catch (FileNotFoundException e){
+                System.out.println("file was not found");
+            }
+
+            String file = "";
+            try {
+            Scanner sc = new Scanner(fl);
+            int i = 0;
+            int percentRead = 0;
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                file += line;
+
+                if (i % (linecount / 10) == 0) {
+                    System.out.println("read " + percentRead + "% of the file");
+                    percentRead += 10;
+                }
+                i++;
+            }
+            sc.close();
+            }catch (FileNotFoundException e){
+                System.out.println("file was not found");
+            }
+
+
+            this.itemLibrary = new ItemLibrary(filename);
+
+
+            //Extract the parts with directory structure
+            ArrayList<String> lines = new ArrayList<>();
+            for (String line : file.split("},")) {
+                if (line.contains("parent")) {
+                    lines.add(line);
+                }
+            }
+            System.out.println("extracted items from JSON");
+            //create the objects from the JSON
+            for (String line : lines) {
+                line = line.substring(1);
+                String[] parts = line.split(",");
+                String parent = parts[0].split("\"")[3];
+                String type = parts[1].split("\"")[3];
+                String hash = parts[2].split("\"")[3];
+                String name = parts[3].split("\"")[3];
+                this.itemLibrary.add(new Item(parent, type, hash, name));
+            }
+        }
+
+        //Add a root node
+        this.itemLibrary.add(new Item("root", "", "", filename));
+        System.out.println("Put all items inside ItemLibrary");
+
+        //find the children
+        for (Item itemToFill : this.itemLibrary.getItems()) {
+            for (Item item : this.itemLibrary.getItems()) {
+                if (item.getParent().equals(itemToFill.getName())) {
+                    itemToFill.addChild(item);
+                }
+                if (itemToFill.getParent().equals("root") && item.getParent().contains("0xff")){
+                    itemToFill.addChild(item);
+                }
+            }
+
+        }
+        System.out.println("found and added all children");
+        //sort the children
+        this.itemLibrary.sortAllItems();
+        System.out.println("sorted all items");
+        //serialize the itemsArray
+        serializeItemsArray(this.itemLibrary);
+
+    }
+
+    public void serializeItemsArray(ItemLibrary itemLibrary){
         try {
-            FileWriter itemsWriter = new FileWriter(itemLibrary.getName() + ".dat");
-            System.out.println("Successfully wrote to the file.");
+            FileWriter itemsWriter = new FileWriter("cache\\" + itemLibrary.getName() + ".dat");
             for(Item item : itemLibrary.getItems()){
                 itemsWriter.write(item.getParent() + "#" + item.getType() + "#" + item.getHash() + "#" + item.getName() + "\n");
             }
             itemsWriter.close();
 
-            System.out.println("printed all items ");
+            System.out.println(this.filename + " was succesfully serialized");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -235,9 +258,9 @@ public class Main extends Application {
     }
 
 
-    public static ItemLibrary deserializeItemsArray(String name){
+    public ItemLibrary deserializeItemsArray(String name){
         ItemLibrary itemLibrary = new ItemLibrary(name);
-        try(BufferedReader br = new BufferedReader(new FileReader(name + ".dat"))) {
+        try(BufferedReader br = new BufferedReader(new FileReader("cache\\" + name + ".dat"))) {
 
             String line = br.readLine();
 
@@ -252,7 +275,7 @@ public class Main extends Application {
                 line = br.readLine();
 
             }
-            System.out.println("succesfully deserialized Array");
+            System.out.println(this.filename + " was succesfully deserialized");
 
         }
         catch (Exception e){
@@ -273,10 +296,12 @@ public class Main extends Application {
         return selectedFile;
     }
 
+
     public InputStream excCommand(String command){
         Runtime rt = Runtime.getRuntime();
 
         try {
+
             return rt.exec(command).getInputStream();
         }
         catch (Exception e){
@@ -289,20 +314,26 @@ public class Main extends Application {
         Stage convertStage = new Stage();
         BorderPane borderPane = new BorderPane();
         TextArea textArea = new TextArea();
-        borderPane.setCenter(new TextArea());
-
+        borderPane.setCenter(textArea);
+        Scene scene = new Scene(borderPane);
+        convertStage.setScene(scene);
+        convertStage.show();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \"C:\\Users\\david\\Documents\\git projects\\Hitman_TBLU_viewer\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
             String line = "";
-            while ((line = reader.readLine()) != null) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \".\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
+            System.out.println("line" + line);
+            while (line != null) {
+                line = reader.readLine();
+                System.out.println("line" + line);
                 textArea.appendText(line + "\n");
+
+
             }
-            Scene scene = new Scene(textArea);
-            convertStage.setScene(scene);
-            convertStage.show();
+
+
 
             if(reader.readLine() == null){
-                  convertStage.close();
+                convertStage.close();
                 try{
                     return new File(selectedFile.getPath() + ".BIN1decoded.JSON");
                 }
