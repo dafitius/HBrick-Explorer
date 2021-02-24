@@ -8,14 +8,27 @@ import java.util.Collections;
 
 public class Item implements Serializable {
 
+    //pre-set
     private String parent;
     private String Type;
     private String hash;
     private String name;
-    private ArrayList<Item> children;
-    private ArrayList<String> audioEmitters;
     private ArrayList<String> ANG_IEntity;
+    private ArrayList<String> audioEmitters;
+    private ArrayList<String> audioVolumetric;
+    private ArrayList<String> gates;
     private ArrayList<String> replicable;
+    private ArrayList<String> rooms;
+
+    //set later
+    private ArrayList<Item> children;
+    private boolean isANG_IEntity = false;
+    private boolean isAudioEmitter = false;
+    private boolean isAudioVolumetric = false;
+    private boolean isGate = false;
+    private boolean isReplicable = false;
+    private boolean isRoom = false;
+
 
     public  TreeItem<Item> treeItem = new TreeItem<Item>(this);
 
@@ -29,18 +42,20 @@ public class Item implements Serializable {
         ANG_IEntity = new ArrayList<String>();
         replicable = new ArrayList<String>();
     }
-
-    public Item(String parent, String type, String hash, String name, ArrayList<String> audioEmitters, ArrayList<String> ANG_IEntity, ArrayList<String> replicable) {
+    public Item(String parent, String type, String hash, String name, ArrayList<String> ANG_IEntity, ArrayList<String> audioEmitters, ArrayList<String> audioVolumetric, ArrayList<String> gates, ArrayList<String> replicable, ArrayList<String> rooms) {
         this.parent = parent;
         this.Type = type;
         this.hash = hash;
         this.name = name;
-        children = new ArrayList<>();
-        this.audioEmitters = audioEmitters;
         this.ANG_IEntity = ANG_IEntity;
+        this.audioEmitters = audioEmitters;
+        this.audioVolumetric = audioVolumetric;
+        this.gates = gates;
         this.replicable = replicable;
-    }
+        this.rooms = rooms;
+        children = new ArrayList<>();
 
+    }
 
     public Item(){
         this.parent = "null";
@@ -49,6 +64,7 @@ public class Item implements Serializable {
         this.name = "null";
         children = new ArrayList<>();
     }
+
 
     public String getParent() {
         return parent;
@@ -88,16 +104,42 @@ public class Item implements Serializable {
         return replicable;
     }
 
-    public void addAudioEmitters(String ae){
-        this.audioEmitters.add(ae);
+    public void setANG_IEntity(boolean ANG_IEntity) {
+        isANG_IEntity = ANG_IEntity;
+    }
+    public void setAudioEmitter(boolean audioEmitter) {
+        isAudioEmitter = audioEmitter;
+    }
+    public void setAudioVolumetric(boolean audioVolumetric) {
+        isAudioVolumetric = audioVolumetric;
+    }
+    public void setGate(boolean gate) {
+        isGate = gate;
+    }
+    public void setReplicable(boolean replicable) {
+        isReplicable = replicable;
+    }
+    public void setRoom(boolean room) {
+        isRoom = room;
     }
 
-    public void addANG_IEntity(String angie){
-        this.audioEmitters.add(angie);
+    public boolean isANG_IEntity() {
+        return isANG_IEntity;
     }
-
-    public void addreplicable(String rep){
-        this.audioEmitters.add(rep);
+    public boolean isAudioEmitter() {
+        return isAudioEmitter;
+    }
+    public boolean isAudioVolumetric() {
+        return isAudioVolumetric;
+    }
+    public boolean isGate() {
+        return isGate;
+    }
+    public boolean isReplicable() {
+        return isReplicable;
+    }
+    public boolean isRoom() {
+        return isRoom;
     }
 
     public TreeItem<Item> getViewItem(){
