@@ -24,7 +24,7 @@ public class Main extends Application {
     private String selectedItemName;
 
     //settings
-    int LoD = 4;
+    int LoD = 3;
     boolean useCache = false;
     boolean useOldJsons = false;
 
@@ -199,22 +199,138 @@ public class Main extends Application {
 
             //Extract the parts with directory structure
             ArrayList<String> lines = new ArrayList<>();
+            String lastItemName = "";
+            ArrayList<ArrayList> linkedDataArrays = new ArrayList<>();
             for (String line : file.split("},")) {
                 //System.out.println(line);
                 if (line.contains("parent")) {
                     lines.add(line);
+                    line = line.substring(1);
+                    String[] parts = line.split(",");
+                    String name = parts[3].split("\"")[3];
+                    lastItemName = name;
                 }
-                if (line.contains("Activatable_NormalGameplay, IEntity")) {
+                if (line.contains("\"Activatable_NormalGameplay, IEntity\":")) {
                     //line.split("\"Activatable_NormalGameplay, IEntity\":");
-                    System.out.println("Activatable_NormalGameplay, IEntity = " + line.split("\"Activatable_NormalGameplay, IEntity\":")[1]);
+                    ArrayList<String> ANG_IEntity = new ArrayList<>();
+                    ANG_IEntity.add("ANG");
+                    ANG_IEntity.add(lastItemName);
+                    for(String string : line.split("\"Activatable_NormalGameplay, IEntity\":")[1].split("\"")){
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if(string.length() >= 3){
+                            ANG_IEntity.add(string);
+                        }
+                    }
+                    System.out.println("ANG " + ANG_IEntity.toString());
+                    linkedDataArrays.add(ANG_IEntity);
+                    //System.out.println("Activatable_NormalGameplay, IEntity = " + line.split("\"Activatable_NormalGameplay, IEntity\":")[1]);
                 }
-                if (line.contains("AudioEmitters")) {
-                    //line.split("\"Activatable_NormalGameplay, IEntity\":");
-                    System.out.println("AudioEmitters = " + line.split("\"AudioEmitters\":")[1]);
+                if (line.contains("\"AudioEmitters\":")) {
+                    ArrayList<String> audioEmitters = new ArrayList<>();
+                    audioEmitters.add("AE");
+                    audioEmitters.add(lastItemName);
+                    for(String string : line.split("\"AudioEmitters\":")[1].split("\"")){
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if(string.length() >= 3){
+                            audioEmitters.add(string);
+                        }
+                    }
+                    System.out.println("AE " + audioEmitters.toString());
+                    linkedDataArrays.add(audioEmitters);
+                    //System.out.println("AudioEmitters = " + line.split("\"AudioEmitters\":")[1]);
                 }
-                if (line.contains("Replicable")) {
-                    //line.split("\"Activatable_NormalGameplay, IEntity\":");
-                    System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
+                if (line.contains("\"AudioVolumetricGeom\":")) {
+                    ArrayList<String> audioVolumetricGeom = new ArrayList<>();
+                    audioVolumetricGeom.add("AVG");
+                    audioVolumetricGeom.add(lastItemName);
+                    for(String string : line.split("\"AudioVolumetricGeom\":")[1].split("\"")){
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if(string.length() >= 3){
+                            audioVolumetricGeom.add(string);
+                        }
+                    }
+                    System.out.println("AVG " + audioVolumetricGeom.toString());
+                    linkedDataArrays.add(audioVolumetricGeom);
+                    //System.out.println("AudioEmitters = " + line.split("\"AudioEmitters\":")[1]);
+                }
+                if (line.contains("\"Gates\":")) {
+                    ArrayList<String> gates = new ArrayList<>();
+                    gates.add("GATE");
+                    gates.add(lastItemName);
+                    for(String string : line.split("\"Gates\":")[1].split("\"")){
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if(string.length() >= 3){
+                            gates.add(string);
+                        }
+                    }
+                    System.out.println("GATE " + gates.toString());
+                    linkedDataArrays.add(gates);
+                    //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
+                }
+
+                if (line.contains("\"Replicable\":")) {
+                    ArrayList<String> replicable = new ArrayList<>();
+                    replicable.add("REP");
+                    replicable.add(lastItemName);
+                    for(String string : line.split("\"Replicable\":")[1].split("\"")){
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if(string.length() >= 3){
+                            replicable.add(string);
+                        }
+                    }
+                    System.out.println("REP " + replicable.toString());
+                    linkedDataArrays.add(replicable);
+                    //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
+                }
+                if (line.contains("\"Rooms\":")) {
+                    ArrayList<String> rooms = new ArrayList<>();
+                    rooms.add("ROOM");
+                    rooms.add(lastItemName);
+                    for(String string : line.split("\"Rooms\":")[1].split("\"")){
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if(string.length() >= 3){
+                            rooms.add(string);
+                        }
+                    }
+                    System.out.println("ROOM " + rooms.toString());
+                    linkedDataArrays.add(rooms);
+                    //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
                 }
             }
             System.out.println("extracted items from JSON");
@@ -226,7 +342,48 @@ public class Main extends Application {
                 String type = parts[1].split("\"")[3];
                 String hash = parts[2].split("\"")[3];
                 String name = parts[3].split("\"")[3];
-                this.itemLibrary.add(new Item(parent, type, hash, name));
+
+                //add linked data
+                ArrayList<String> ANG_IEntity = new ArrayList<>();
+                ArrayList<String> audioEmitters = new ArrayList<>();
+                ArrayList<String> audioVolumetricGeom = new ArrayList<>();
+                ArrayList<String> gates = new ArrayList<>();
+                ArrayList<String> replicable = new ArrayList<>();
+                ArrayList<String> rooms = new ArrayList<>();
+
+                for(ArrayList arrayList : linkedDataArrays){
+                    if(arrayList.size() > 2) {
+                        if (arrayList.get(1).equals(name)) {
+                            arrayList.remove(name);
+                            if (arrayList.get(0).equals("ANG")) {
+                                arrayList.remove("ANG");
+                                ANG_IEntity.addAll(arrayList);
+                            }
+                            if (arrayList.get(0).equals("AE")) {
+                                arrayList.remove("AE");
+                                audioEmitters.addAll(arrayList);
+                            }
+                            if (arrayList.get(0).equals("AVG")) {
+                                arrayList.remove("AVG");
+                                audioVolumetricGeom.addAll(arrayList);
+                            }
+                            if (arrayList.get(0).equals("GATE")) {
+                                arrayList.remove("GATE");
+                                gates.addAll(arrayList);
+                            }
+                            if (arrayList.get(0).equals("REP")) {
+                                arrayList.remove("REP");
+                                replicable.addAll(arrayList);
+                            }
+                            if (arrayList.get(0).equals("ROOM")) {
+                                arrayList.remove("ROOM");
+                                rooms.addAll(arrayList);
+                            }
+                        }
+                    }
+                }
+
+                this.itemLibrary.add(new Item(parent, type, hash, name, audioEmitters, ANG_IEntity, replicable));
             }
         }
 
