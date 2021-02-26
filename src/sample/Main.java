@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -21,6 +22,7 @@ public class Main extends Application {
     String filename;
     ItemLibrary itemLibrary;
     private String selectedItemName;
+    ArrayList<Stage> openPopUps;
 
     //settings
     int LoD = 1;
@@ -29,6 +31,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        openPopUps = new ArrayList<>();
+
 
 
         //ask for file to extract
@@ -163,6 +167,12 @@ public class Main extends Application {
                 isROOM.setStyle("-fx-font-weight: bold");
             }
 
+
+            for(Stage popup : openPopUps){
+                popup.close();
+            }
+            openPopUps.clear();
+
             itemDetails.getItems().clear();
             if (!selectedItem.isANG_IEntity() && !selectedItem.isAudioEmitter() && !selectedItem.isAudioVolumetric() && !selectedItem.isGate() && !selectedItem.isReplicable() && !selectedItem.isRoom()) {
                 itemDetails.getItems().addAll(name, type, hash, parent);
@@ -170,7 +180,15 @@ public class Main extends Application {
                 itemDetails.getItems().addAll(name, type, hash, parent, isANG, isAE, isAVG, isGATE, isREP, isROOM);
             }
 
+            if(selectedItem.getANG_IEntity().size() > 0) arraylistPopUp("Activatable IEntitys:", selectedItem.getANG_IEntity());
+            if(selectedItem.getAudioEmitters().size() > 0) arraylistPopUp("Audio Emitters:", selectedItem.getAudioEmitters());
+            if(selectedItem.getAudioVolumetric().size() > 0) arraylistPopUp("Audio Volumetric Geomerties:", selectedItem.getAudioVolumetric());
+            if(selectedItem.getGates().size() > 0) arraylistPopUp("Gates:", selectedItem.getGates());
+            if(selectedItem.getReplicable().size() > 0) arraylistPopUp("Replicables:", selectedItem.getReplicable());
+            if(selectedItem.getRooms().size() > 0) arraylistPopUp("Rooms:", selectedItem.getRooms());
+
         });
+
 
         BorderPane borderpane = new BorderPane();
         hbox.getChildren().addAll(treeView, itemDetails);
@@ -178,6 +196,10 @@ public class Main extends Application {
         primaryStage.setTitle("TBLU tree viewer");
         primaryStage.setScene(new Scene(borderpane, 850, 675));
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(event -> {
+            Platform.exit();
+        });
         System.out.println("launch the app");
     }
 
@@ -410,6 +432,7 @@ public class Main extends Application {
                         }
                     }
                 }
+
                 this.itemLibrary.add(new Item(parent, type, hash, name, ANG_IEntity, audioEmitters, audioVolumetricGeom, gates, replicable, rooms));
 
                 for (Item item : itemLibrary.getItems()) {
@@ -421,6 +444,17 @@ public class Main extends Application {
                     if (rooms.contains(item.getName())) item.setRoom(true);
                 }
 
+                ANG_IEntity = new ArrayList<>();
+                audioEmitters = new ArrayList<>();
+                audioVolumetricGeom = new ArrayList<>();
+                gates = new ArrayList<>();
+                replicable = new ArrayList<>();
+                rooms = new ArrayList<>();
+
+
+            }
+            for(Item item : itemLibrary.getItems()){
+                item.sortLinkedArrays();
             }
 
         }
@@ -551,6 +585,22 @@ public class Main extends Application {
         }
         return null;
     }
+
+    public void arraylistPopUp(String name, ArrayList<String> arrayList){
+
+        ListView listView = new ListView();
+        listView.getItems().addAll(arrayList);
+
+        Scene scene = new Scene(listView, 250, 750);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle(name);
+        stage.setX(250 * openPopUps.size());
+        stage.setY(150);
+        stage.show();
+        openPopUps.add(stage);
+    }
+
 
     public static void main(String[] args) {
 

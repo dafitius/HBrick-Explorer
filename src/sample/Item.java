@@ -104,6 +104,18 @@ public class Item implements Serializable {
         return replicable;
     }
 
+    public ArrayList<String> getAudioVolumetric() {
+        return audioVolumetric;
+    }
+
+    public ArrayList<String> getGates() {
+        return gates;
+    }
+
+    public ArrayList<String> getRooms() {
+        return rooms;
+    }
+
     public void setANG_IEntity(boolean ANG_IEntity) {
         isANG_IEntity = ANG_IEntity;
     }
@@ -152,6 +164,15 @@ public class Item implements Serializable {
     public void sort(){
         Collections.sort(children, new ItemTypeComparator());
         Collections.sort(children, new ItemNameComparator());
+    }
+
+    public void sortLinkedArrays(){
+        Collections.sort(ANG_IEntity);
+        Collections.sort(audioEmitters);
+        Collections.sort(audioVolumetric);
+        Collections.sort(gates);
+        Collections.sort(replicable);
+        Collections.sort(rooms);
     }
 
     @Override
