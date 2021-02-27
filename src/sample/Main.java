@@ -1,11 +1,13 @@
 package sample;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
@@ -19,24 +21,34 @@ import java.util.Scanner;
 
 public class Main extends Application {
 
+    File selectedFile;
     String filename;
     ItemLibrary itemLibrary;
     private String selectedItemName;
     ArrayList<Stage> openPopUps;
 
     //settings
-    int LoD = 1;
-    boolean useCache = false;
-    boolean useOldJsons = false;
+    int LoD;
+    boolean useCache;
+    boolean useOldJsons;
+    boolean enablePopups;
+
+    public static void main(String[] args) {
+
+        launch(args);
+    }
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        getSettings();
+
         openPopUps = new ArrayList<>();
 
 
 
         //ask for file to extract
-        File selectedFile = getFile();
+        this.selectedFile = getFile();
         File jsonFile = new File(selectedFile.getPath() + ".BIN1decoded.JSON");
 
         //see if file has been decoded before
@@ -45,13 +57,13 @@ public class Main extends Application {
             fl = jsonFile;
         } else fl = convertFileToJson(selectedFile);
 
-        //set level of detail in the treeview
+
 
         //get a filename from the file
         this.filename = fl.getName().substring(0, 16);
 
         //Build the ItemLibrary with the information from the file
-        buildItemLibrary(fl);
+        buildItemLibrary(fl, primaryStage);
 
 
         //Add info to GUI
@@ -174,18 +186,29 @@ public class Main extends Application {
             openPopUps.clear();
 
             itemDetails.getItems().clear();
-            if (!selectedItem.isANG_IEntity() && !selectedItem.isAudioEmitter() && !selectedItem.isAudioVolumetric() && !selectedItem.isGate() && !selectedItem.isReplicable() && !selectedItem.isRoom()) {
+            if (!selectedItem.isANG_IEntity() &&
+                    !selectedItem.isAudioEmitter() &&
+                    !selectedItem.isAudioVolumetric() &&
+                    !selectedItem.isGate() &&
+                    !selectedItem.isReplicable() &&
+                    !selectedItem.isRoom()) {
                 itemDetails.getItems().addAll(name, type, hash, parent);
             } else {
                 itemDetails.getItems().addAll(name, type, hash, parent, isANG, isAE, isAVG, isGATE, isREP, isROOM);
             }
 
-            if(selectedItem.getANG_IEntity().size() > 0) arraylistPopUp("Activatable IEntitys:", selectedItem.getANG_IEntity());
-            if(selectedItem.getAudioEmitters().size() > 0) arraylistPopUp("Audio Emitters:", selectedItem.getAudioEmitters());
-            if(selectedItem.getAudioVolumetric().size() > 0) arraylistPopUp("Audio Volumetric Geomerties:", selectedItem.getAudioVolumetric());
-            if(selectedItem.getGates().size() > 0) arraylistPopUp("Gates:", selectedItem.getGates());
-            if(selectedItem.getReplicable().size() > 0) arraylistPopUp("Replicables:", selectedItem.getReplicable());
-            if(selectedItem.getRooms().size() > 0) arraylistPopUp("Rooms:", selectedItem.getRooms());
+            if(enablePopups) {
+                if (selectedItem.getANG_IEntity().size() > 0)
+                    arraylistPopUp("Activatable IEntitys:", selectedItem.getANG_IEntity());
+                if (selectedItem.getAudioEmitters().size() > 0)
+                    arraylistPopUp("Audio Emitters:", selectedItem.getAudioEmitters());
+                if (selectedItem.getAudioVolumetric().size() > 0)
+                    arraylistPopUp("Audio Volumetric Geomerties:", selectedItem.getAudioVolumetric());
+                if (selectedItem.getGates().size() > 0) arraylistPopUp("Gates:", selectedItem.getGates());
+                if (selectedItem.getReplicable().size() > 0)
+                    arraylistPopUp("Replicables:", selectedItem.getReplicable());
+                if (selectedItem.getRooms().size() > 0) arraylistPopUp("Rooms:", selectedItem.getRooms());
+            }
 
         });
 
@@ -203,16 +226,22 @@ public class Main extends Application {
         System.out.println("launch the app");
     }
 
-    public void buildItemLibrary(File fl) {
+    public void buildItemLibrary(File fl, Stage primaryStage) {
+
+
+        TextField loadingField = new TextField("ifno here bruh");
+        loadingField.setEditable(false);
+        primaryStage.setTitle("Loading");
+        primaryStage.setScene(new Scene(loadingField));
+
 
         File cacheFile = new File(System.getProperty("user.dir") + "\\cache\\" + filename + ".dat");
         //check if file is already serialized
         if (cacheFile.exists() && useCache) {
             this.itemLibrary = deserializeItemsArray(filename);
         } else {
-
+            //count the amount of lines
             int linecount = 0;
-
             try {
                 Scanner lineCounter = new Scanner(fl);
                 while (lineCounter.hasNextLine()) {
@@ -223,27 +252,32 @@ public class Main extends Application {
             } catch (FileNotFoundException e) {
                 System.out.println("file was not found");
             }
-
-            String file = "";
+            primaryStage.show();
+            //put the entire file inside a string
+            String fileAsString = "";
             try {
-                Scanner sc = new Scanner(fl);
+
+                BufferedReader reader = new BufferedReader(new FileReader(fl));
                 int i = 0;
                 int percentRead = 0;
-                while (sc.hasNextLine()) {
-                    String line = sc.nextLine();
-                    file += line;
+                String line;
+                while((line = reader.readLine()) != null) {
+                    fileAsString+= line;
 
                     if (i % (linecount / 10) == 0) {
-                        System.out.println("read " + percentRead + "% of the file");
+
+                        loadingField.setText("read " + percentRead + "% of the file");
+
+                        System.out.println(loadingField.getText());
                         percentRead += 10;
                     }
+
                     i++;
+
                 }
-                sc.close();
-            } catch (FileNotFoundException e) {
+            } catch(IOException e) {
                 System.out.println("file was not found");
             }
-
 
             this.itemLibrary = new ItemLibrary(filename);
 
@@ -252,7 +286,7 @@ public class Main extends Application {
             ArrayList<String> lines = new ArrayList<>();
             String lastItemName = "";
             ArrayList<ArrayList> linkedDataArrays = new ArrayList<>();
-            for (String line : file.split("},")) {
+            for (String line : fileAsString.split("},")) {
                 //System.out.println(line);
                 if (line.contains("parent")) {
                     lines.add(line);
@@ -484,47 +518,6 @@ public class Main extends Application {
 
     }
 
-    public void serializeItemsArray(ItemLibrary itemLibrary) {
-        try {
-            FileWriter itemsWriter = new FileWriter("cache\\" + itemLibrary.getName() + ".dat");
-            for (Item item : itemLibrary.getItems()) {
-                itemsWriter.write(item.getParent() + "#" + item.getType() + "#" + item.getHash() + "#" + item.getName() + "\n");
-            }
-            itemsWriter.close();
-
-            System.out.println(this.filename + " was succesfully serialized");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    public ItemLibrary deserializeItemsArray(String name) {
-        ItemLibrary itemLibrary = new ItemLibrary(name);
-        try (BufferedReader br = new BufferedReader(new FileReader("cache\\" + name + ".dat"))) {
-
-            String line = br.readLine();
-
-            while (line != null) {
-                String[] itemInfo = line.split("#");
-                String parent = itemInfo[0];
-                String type = itemInfo[1];
-                String hash = itemInfo[2];
-                String string = itemInfo[3];
-                itemLibrary.add(new Item(parent, type, hash, string));
-
-                line = br.readLine();
-
-            }
-            System.out.println(this.filename + " was succesfully deserialized");
-
-        } catch (Exception e) {
-            System.out.println(e.getStackTrace());
-        }
-        return itemLibrary;
-    }
-
     public File getFile() {
         Stage selectFile = new Stage();
         FileChooser fileChooser = new FileChooser();
@@ -536,7 +529,6 @@ public class Main extends Application {
         System.out.println(selectedFile);
         return selectedFile;
     }
-
 
     public InputStream excCommand(String command) {
         Runtime rt = Runtime.getRuntime();
@@ -553,20 +545,27 @@ public class Main extends Application {
     public File convertFileToJson(File selectedFile) {
         Stage convertStage = new Stage();
         BorderPane borderPane = new BorderPane();
-        TextArea textArea = new TextArea();
-        borderPane.setCenter(textArea);
+
+        Label loadingLabel = new Label("Please hold on while the file is being decoded");
+        loadingLabel.setStyle("-fx-font-weight: bold; -fx-font-fill: Black");
+        if ((selectedFile.length() / 1024) > 1000){
+            loadingLabel.setText(loadingLabel.getText() + "\n Big file detected conversion might take longer then expected");
+        }
+
+        borderPane.setCenter(loadingLabel);
         Scene scene = new Scene(borderPane);
         convertStage.setScene(scene);
         convertStage.show();
+
+
         try {
+
             String line = "";
             BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \".\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
-            System.out.println("line" + line);
             while (line != null) {
                 line = reader.readLine();
-                System.out.println("line" + line);
-                textArea.appendText(line + "\n");
 
+                //System.out.println(line);
 
             }
 
@@ -601,12 +600,72 @@ public class Main extends Application {
         openPopUps.add(stage);
     }
 
+    public void serializeItemsArray(ItemLibrary itemLibrary) {
+        try {
+            FileWriter itemsWriter = new FileWriter("cache\\" + itemLibrary.getName() + ".dat");
+            for (Item item : itemLibrary.getItems()) {
+                itemsWriter.write(item.getParent() + "#" + item.getType() + "#" + item.getHash() + "#" + item.getName() + "\n");
+            }
+            itemsWriter.close();
 
-    public static void main(String[] args) {
+            System.out.println(this.filename + " was succesfully serialized");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-
-        launch(args);
     }
 
+    public ItemLibrary deserializeItemsArray(String name) {
+        ItemLibrary itemLibrary = new ItemLibrary(name);
+        try (BufferedReader br = new BufferedReader(new FileReader("cache\\" + name + ".dat"))) {
+
+            String line = br.readLine();
+
+            while (line != null) {
+                String[] itemInfo = line.split("#");
+                String parent = itemInfo[0];
+                String type = itemInfo[1];
+                String hash = itemInfo[2];
+                String string = itemInfo[3];
+                itemLibrary.add(new Item(parent, type, hash, string));
+
+                line = br.readLine();
+
+            }
+            System.out.println(this.filename + " was succesfully deserialized");
+
+        } catch (Exception e) {
+            System.out.println(e.getStackTrace());
+        }
+        return itemLibrary;
+    }
+
+
+    public void getSettings(){
+        try(BufferedReader br = new BufferedReader(new FileReader("settings.txt"))) {
+            String line = br.readLine();
+
+            while (line != null) {
+                if(line.contains("Level of detail")) this.LoD = Integer.parseInt(line.split(": ")[1]);
+                if(line.contains("use cache")) this.useCache = Boolean.parseBoolean(line.split(": ")[1]);
+                if(line.contains("use old jsons")) this.useOldJsons = Boolean.parseBoolean(line.split(": ")[1]);
+                if(line.contains("enable popups")) this.enablePopups = Boolean.parseBoolean(line.split(": ")[1]);
+
+
+
+                line = br.readLine();
+            }
+
+            System.out.println("[SETTINGS]");
+            System.out.println("Level of detail: " + this.LoD);
+            System.out.println("use cache: " + this.useCache);
+            System.out.println("use old jsons: " + this.useOldJsons);
+            System.out.println("enable popups: " + this.enablePopups);
+            System.out.println(" ");
+        }
+        catch (IOException e){
+            System.out.println("could not find settings.txt file");
+        }
+    }
 
 }
