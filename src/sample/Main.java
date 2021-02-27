@@ -1,55 +1,69 @@
 package sample;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Observable;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReference;
+
 
 public class Main extends Application {
 
+    File selectedFile;
     String filename;
     ItemLibrary itemLibrary;
     private String selectedItemName;
+    ArrayList<Stage> openPopUps;
 
     //settings
-    int LoD = 4;
-    boolean useCache = false;
-    boolean useOldJsons = false;
+    int LoD;
+    boolean useCache;
+    boolean useOldJsons;
+    boolean enablePopups;
+
+    public static void main(String[] args) {
+
+        launch(args);
+    }
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        getSettings();
+
+        openPopUps = new ArrayList<>();
+
 
 
         //ask for file to extract
-        File selectedFile = getFile();
+        this.selectedFile = getFile();
         File jsonFile = new File(selectedFile.getPath() + ".BIN1decoded.JSON");
 
         //see if file has been decoded before
         File fl;
-        if(jsonFile.exists() && useOldJsons){
-             fl = jsonFile;
-        }
-        else fl = convertFileToJson(selectedFile);
+        if (jsonFile.exists() && useOldJsons) {
+            fl = jsonFile;
+        } else fl = convertFileToJson(selectedFile);
 
-        //set level of detail in the treeview
+
 
         //get a filename from the file
         this.filename = fl.getName().substring(0, 16);
 
         //Build the ItemLibrary with the information from the file
-        buildItemLibrary(fl);
+        buildItemLibrary(fl, primaryStage);
 
 
         //Add info to GUI
@@ -57,10 +71,10 @@ public class Main extends Application {
         TreeItem<Item> root = itemLibrary.getRoot().getViewItem();
         treeView.setRoot(root);
 
-        if(LoD >= 0){
+        if (LoD >= 0) {
             for (TreeItem<Item> treeview : root.getChildren()) {
                 treeview.getChildren().addAll(treeview.getValue().getViewItem().getChildren());
-                if(LoD >= 1) {
+                if (LoD >= 1) {
                     for (TreeItem<Item> treeview2 : treeview.getChildren()) {
                         treeview2.getChildren().addAll(treeview2.getValue().getViewItem().getChildren());
                         if (LoD >= 2) {
@@ -125,43 +139,109 @@ public class Main extends Application {
 
         //get selected item from the tree
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                selectedItemName = newValue.getValue().toString();
-                Item selectedItem = new Item();
-                for(Item item : itemLibrary.getItems()){
-                    if(item.getName().equals(selectedItemName)){
-                        selectedItem = item;
-                    }
+            selectedItemName = newValue.getValue().toString();
+            Item selectedItem = new Item();
+            for (Item item : itemLibrary.getItems()) {
+                if (item.getName().equals(selectedItemName)) {
+                    selectedItem = item;
                 }
+            }
+
             System.out.println(selectedItem.getName());
 
-            Label name = new Label("Name:   " + selectedItem.getName());
-            Label type = new Label("Type:   " + selectedItem.getType());
-            Label hash = new Label("Hash:   " + selectedItem.getHash());
+            Label name = new Label("Name: " + selectedItem.getName());
+            Label type = new Label("Type: " + selectedItem.getType());
+            Label hash = new Label("Hash: " + selectedItem.getHash());
             Label parent = new Label("Parent: " + selectedItem.getParent());
+            Label isANG = new Label("is ActivatableIEntity: " + selectedItem.isANG_IEntity());
+            Label isAE = new Label("is AudioEmitter: " + selectedItem.isAudioEmitter());
+            Label isAVG = new Label("is AudioVolumetricGeom: " + selectedItem.isAudioVolumetric());
+            Label isGATE = new Label("is Gate: " + selectedItem.isGate());
+            Label isREP = new Label("is Replicable: " + selectedItem.isReplicable());
+            Label isROOM = new Label("is Room: " + selectedItem.isRoom());
+
+            if (selectedItem.isANG_IEntity()) {
+                isANG.setStyle("-fx-font-weight: bold");
+            }
+            if (selectedItem.isAudioEmitter()) {
+                isAE.setStyle("-fx-font-weight: bold");
+            }
+            if (selectedItem.isAudioVolumetric()) {
+                isAVG.setStyle("-fx-font-weight: bold");
+            }
+            if (selectedItem.isGate()) {
+                isGATE.setStyle("-fx-font-weight: bold");
+            }
+            if (selectedItem.isReplicable()) {
+                isREP.setStyle("-fx-font-weight: bold");
+            }
+            if (selectedItem.isRoom()) {
+                isROOM.setStyle("-fx-font-weight: bold");
+            }
+
+
+            for(Stage popup : openPopUps){
+                popup.close();
+            }
+            openPopUps.clear();
+
             itemDetails.getItems().clear();
-            itemDetails.getItems().addAll(name, type, hash, parent);
+            if (!selectedItem.isANG_IEntity() &&
+                    !selectedItem.isAudioEmitter() &&
+                    !selectedItem.isAudioVolumetric() &&
+                    !selectedItem.isGate() &&
+                    !selectedItem.isReplicable() &&
+                    !selectedItem.isRoom()) {
+                itemDetails.getItems().addAll(name, type, hash, parent);
+            } else {
+                itemDetails.getItems().addAll(name, type, hash, parent, isANG, isAE, isAVG, isGATE, isREP, isROOM);
+            }
+
+            if(enablePopups) {
+                if (selectedItem.getANG_IEntity().size() > 0)
+                    arraylistPopUp("Activatable IEntitys:", selectedItem.getANG_IEntity());
+                if (selectedItem.getAudioEmitters().size() > 0)
+                    arraylistPopUp("Audio Emitters:", selectedItem.getAudioEmitters());
+                if (selectedItem.getAudioVolumetric().size() > 0)
+                    arraylistPopUp("Audio Volumetric Geomerties:", selectedItem.getAudioVolumetric());
+                if (selectedItem.getGates().size() > 0) arraylistPopUp("Gates:", selectedItem.getGates());
+                if (selectedItem.getReplicable().size() > 0)
+                    arraylistPopUp("Replicables:", selectedItem.getReplicable());
+                if (selectedItem.getRooms().size() > 0) arraylistPopUp("Rooms:", selectedItem.getRooms());
+            }
+
         });
+
 
         BorderPane borderpane = new BorderPane();
         hbox.getChildren().addAll(treeView, itemDetails);
         borderpane.setCenter(hbox);
         primaryStage.setTitle("TBLU tree viewer");
-        primaryStage.setScene(new Scene(borderpane, 660, 675));
+        primaryStage.setScene(new Scene(borderpane, 850, 675));
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(event -> {
+            Platform.exit();
+        });
         System.out.println("launch the app");
     }
 
-    public void buildItemLibrary(File fl){
+    public void buildItemLibrary(File fl, Stage primaryStage) {
+
+
+        TextField loadingField = new TextField("ifno here bruh");
+        loadingField.setEditable(false);
+        primaryStage.setTitle("Loading");
+        primaryStage.setScene(new Scene(loadingField));
+
 
         File cacheFile = new File(System.getProperty("user.dir") + "\\cache\\" + filename + ".dat");
         //check if file is already serialized
-        if(cacheFile.exists() && useCache){
+        if (cacheFile.exists() && useCache) {
             this.itemLibrary = deserializeItemsArray(filename);
-        }
-        else {
-
+        } else {
+            //count the amount of lines
             int linecount = 0;
-
             try {
                 Scanner lineCounter = new Scanner(fl);
                 while (lineCounter.hasNextLine()) {
@@ -169,43 +249,183 @@ public class Main extends Application {
                     linecount++;
                 }
                 lineCounter.close();
-            }catch (FileNotFoundException e){
+            } catch (FileNotFoundException e) {
                 System.out.println("file was not found");
             }
-
-            String file = "";
+            primaryStage.show();
+            //put the entire file inside a string
+            String fileAsString = "";
             try {
-            Scanner sc = new Scanner(fl);
-            int i = 0;
-            int percentRead = 0;
-            while (sc.hasNextLine()) {
-                String line = sc.nextLine();
-                file += line;
 
-                if (i % (linecount / 10) == 0) {
-                    System.out.println("read " + percentRead + "% of the file");
-                    percentRead += 10;
+                BufferedReader reader = new BufferedReader(new FileReader(fl));
+                int i = 0;
+                int percentRead = 0;
+                String line;
+                while((line = reader.readLine()) != null) {
+                    fileAsString+= line;
+
+                    if (i % (linecount / 10) == 0) {
+
+                        loadingField.setText("read " + percentRead + "% of the file");
+
+                        System.out.println(loadingField.getText());
+                        percentRead += 10;
+                    }
+
+                    i++;
+
                 }
-                i++;
-            }
-            sc.close();
-            }catch (FileNotFoundException e){
+            } catch(IOException e) {
                 System.out.println("file was not found");
             }
-
 
             this.itemLibrary = new ItemLibrary(filename);
 
 
             //Extract the parts with directory structure
             ArrayList<String> lines = new ArrayList<>();
-            for (String line : file.split("},")) {
+            String lastItemName = "";
+            ArrayList<ArrayList> linkedDataArrays = new ArrayList<>();
+            for (String line : fileAsString.split("},")) {
+                //System.out.println(line);
                 if (line.contains("parent")) {
                     lines.add(line);
+                    line = line.substring(1);
+                    String[] parts = line.split(",");
+                    String name = parts[3].split("\"")[3];
+                    lastItemName = name;
+                }
+                if (line.contains("\"Activatable_NormalGameplay, IEntity\":")) {
+                    //line.split("\"Activatable_NormalGameplay, IEntity\":");
+                    ArrayList<String> ANG_IEntity = new ArrayList<>();
+                    ANG_IEntity.add("ANG");
+                    ANG_IEntity.add(lastItemName);
+                    for (String string : line.split("\"Activatable_NormalGameplay, IEntity\":")[1].split("\"")) {
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if (string.length() >= 3) {
+                            ANG_IEntity.add(string);
+                        }
+                    }
+                    System.out.println("ANG " + ANG_IEntity.toString());
+                    linkedDataArrays.add(ANG_IEntity);
+                    //System.out.println("Activatable_NormalGameplay, IEntity = " + line.split("\"Activatable_NormalGameplay, IEntity\":")[1]);
+                }
+                if (line.contains("\"AudioEmitters\":")) {
+                    ArrayList<String> audioEmitters = new ArrayList<>();
+                    audioEmitters.add("AE");
+                    audioEmitters.add(lastItemName);
+                    for (String string : line.split("\"AudioEmitters\":")[1].split("\"")) {
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if (string.length() >= 3) {
+                            audioEmitters.add(string);
+                        }
+                    }
+                    System.out.println("AE " + audioEmitters.toString());
+                    linkedDataArrays.add(audioEmitters);
+                    //System.out.println("AudioEmitters = " + line.split("\"AudioEmitters\":")[1]);
+                }
+                if (line.contains("\"AudioVolumetricGeom\":")) {
+                    ArrayList<String> audioVolumetricGeom = new ArrayList<>();
+                    audioVolumetricGeom.add("AVG");
+                    audioVolumetricGeom.add(lastItemName);
+                    for (String string : line.split("\"AudioVolumetricGeom\":")[1].split("\"")) {
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if (string.length() >= 3) {
+                            audioVolumetricGeom.add(string);
+                        }
+                    }
+                    System.out.println("AVG " + audioVolumetricGeom.toString());
+                    linkedDataArrays.add(audioVolumetricGeom);
+                    //System.out.println("AudioEmitters = " + line.split("\"AudioEmitters\":")[1]);
+                }
+                if (line.contains("\"Gates\":")) {
+                    ArrayList<String> gates = new ArrayList<>();
+                    gates.add("GATE");
+                    gates.add(lastItemName);
+                    for (String string : line.split("\"Gates\":")[1].split("\"")) {
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if (string.length() >= 3) {
+                            gates.add(string);
+                        }
+                    }
+                    System.out.println("GATE " + gates.toString());
+                    linkedDataArrays.add(gates);
+                    //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
+                }
+                if (line.contains("\"Replicable\":")) {
+                    ArrayList<String> replicable = new ArrayList<>();
+                    replicable.add("REP");
+                    replicable.add(lastItemName);
+                    for (String string : line.split("\"Replicable\":")[1].split("\"")) {
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if (string.length() >= 3) {
+                            replicable.add(string);
+                        }
+                    }
+                    System.out.println("REP " + replicable.toString());
+                    linkedDataArrays.add(replicable);
+                    //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
+                }
+                if (line.contains("\"Rooms\":")) {
+                    ArrayList<String> rooms = new ArrayList<>();
+                    rooms.add("ROOM");
+                    rooms.add(lastItemName);
+                    for (String string : line.split("\"Rooms\":")[1].split("\"")) {
+                        string = string.replaceAll(",", "");
+                        string = string.replaceAll("]", "");
+                        string = string.replaceAll("}", "");
+                        string = string.replaceAll("\\{", "");
+                        string = string.replaceAll("\\[", "");
+                        string = string.replaceAll("\\\\s+", "");
+                        string = string.replaceAll(" ", "");
+                        if (string.length() >= 3) {
+                            rooms.add(string);
+                        }
+                    }
+                    System.out.println("ROOM " + rooms.toString());
+                    linkedDataArrays.add(rooms);
+                    //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
                 }
             }
             System.out.println("extracted items from JSON");
             //create the objects from the JSON
+            ArrayList<String> ANG_IEntity = new ArrayList<>();
+            ArrayList<String> audioEmitters = new ArrayList<>();
+            ArrayList<String> audioVolumetricGeom = new ArrayList<>();
+            ArrayList<String> gates = new ArrayList<>();
+            ArrayList<String> replicable = new ArrayList<>();
+            ArrayList<String> rooms = new ArrayList<>();
+
             for (String line : lines) {
                 line = line.substring(1);
                 String[] parts = line.split(",");
@@ -213,8 +433,64 @@ public class Main extends Application {
                 String type = parts[1].split("\"")[3];
                 String hash = parts[2].split("\"")[3];
                 String name = parts[3].split("\"")[3];
-                this.itemLibrary.add(new Item(parent, type, hash, name));
+
+                //add linked data
+                for (ArrayList arrayList : linkedDataArrays) {
+                    if (arrayList.size() > 2) {
+                        if (arrayList.get(1).equals(name)) {
+                            arrayList.remove(name);
+                            if (arrayList.get(0).equals("ANG")) {
+                                arrayList.remove("ANG");
+                                ANG_IEntity.addAll(arrayList);
+                            }
+                            if (arrayList.get(0).equals("AE")) {
+                                arrayList.remove("AE");
+                                audioEmitters.addAll(arrayList);
+                            }
+                            if (arrayList.get(0).equals("AVG")) {
+                                arrayList.remove("AVG");
+                                audioVolumetricGeom.addAll(arrayList);
+                            }
+                            if (arrayList.get(0).equals("GATE")) {
+                                arrayList.remove("GATE");
+                                gates.addAll(arrayList);
+                            }
+                            if (arrayList.get(0).equals("REP")) {
+                                arrayList.remove("REP");
+                                replicable.addAll(arrayList);
+                            }
+                            if (arrayList.get(0).equals("ROOM")) {
+                                arrayList.remove("ROOM");
+                                rooms.addAll(arrayList);
+                            }
+                        }
+                    }
+                }
+
+                this.itemLibrary.add(new Item(parent, type, hash, name, ANG_IEntity, audioEmitters, audioVolumetricGeom, gates, replicable, rooms));
+
+                for (Item item : itemLibrary.getItems()) {
+                    if (ANG_IEntity.contains(item.getName())) item.setANG_IEntity(true);
+                    if (audioEmitters.contains(item.getName())) item.setAudioEmitter(true);
+                    if (audioVolumetricGeom.contains(item.getName())) item.setAudioVolumetric(true);
+                    if (gates.contains(item.getName())) item.setGate(true);
+                    if (replicable.contains(item.getName())) item.setReplicable(true);
+                    if (rooms.contains(item.getName())) item.setRoom(true);
+                }
+
+                ANG_IEntity = new ArrayList<>();
+                audioEmitters = new ArrayList<>();
+                audioVolumetricGeom = new ArrayList<>();
+                gates = new ArrayList<>();
+                replicable = new ArrayList<>();
+                rooms = new ArrayList<>();
+
+
             }
+            for(Item item : itemLibrary.getItems()){
+                item.sortLinkedArrays();
+            }
+
         }
 
         //Add a root node
@@ -227,7 +503,7 @@ public class Main extends Application {
                 if (item.getParent().equals(itemToFill.getName())) {
                     itemToFill.addChild(item);
                 }
-                if (itemToFill.getParent().equals("root") && item.getParent().contains("0xff")){
+                if (itemToFill.getParent().equals("root") && item.getParent().contains("0xff")) {
                     itemToFill.addChild(item);
                 }
             }
@@ -242,10 +518,92 @@ public class Main extends Application {
 
     }
 
-    public void serializeItemsArray(ItemLibrary itemLibrary){
+    public File getFile() {
+        Stage selectFile = new Stage();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select a TBLU file");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("TBLU files", "*.TBLU");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setSelectedExtensionFilter(filter);
+        File selectedFile = fileChooser.showOpenDialog(selectFile);
+        System.out.println(selectedFile);
+        return selectedFile;
+    }
+
+    public InputStream excCommand(String command) {
+        Runtime rt = Runtime.getRuntime();
+
+        try {
+
+            return rt.exec(command).getInputStream();
+        } catch (Exception e) {
+            System.out.println("failed to execute command");
+        }
+        return null;
+    }
+
+    public File convertFileToJson(File selectedFile) {
+        Stage convertStage = new Stage();
+        BorderPane borderPane = new BorderPane();
+
+        Label loadingLabel = new Label("Please hold on while the file is being decoded");
+        loadingLabel.setStyle("-fx-font-weight: bold; -fx-font-fill: Black");
+        if ((selectedFile.length() / 1024) > 1000){
+            loadingLabel.setText(loadingLabel.getText() + "\n Big file detected conversion might take longer then expected");
+        }
+
+        borderPane.setCenter(loadingLabel);
+        Scene scene = new Scene(borderPane);
+        convertStage.setScene(scene);
+        convertStage.show();
+
+
+        try {
+
+            String line = "";
+            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \".\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
+            while (line != null) {
+                line = reader.readLine();
+
+                //System.out.println(line);
+
+            }
+
+
+            if (reader.readLine() == null) {
+                convertStage.close();
+                try {
+                    return new File(selectedFile.getPath() + ".BIN1decoded.JSON");
+                } catch (Exception e) {
+                    System.out.println("an error occured while converting the TBLU to a JSON file");
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void arraylistPopUp(String name, ArrayList<String> arrayList){
+
+        ListView listView = new ListView();
+        listView.getItems().addAll(arrayList);
+
+        Scene scene = new Scene(listView, 250, 750);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle(name);
+        stage.setX(250 * openPopUps.size());
+        stage.setY(150);
+        stage.show();
+        openPopUps.add(stage);
+    }
+
+    public void serializeItemsArray(ItemLibrary itemLibrary) {
         try {
             FileWriter itemsWriter = new FileWriter("cache\\" + itemLibrary.getName() + ".dat");
-            for(Item item : itemLibrary.getItems()){
+            for (Item item : itemLibrary.getItems()) {
                 itemsWriter.write(item.getParent() + "#" + item.getType() + "#" + item.getHash() + "#" + item.getName() + "\n");
             }
             itemsWriter.close();
@@ -257,10 +615,9 @@ public class Main extends Application {
 
     }
 
-
-    public ItemLibrary deserializeItemsArray(String name){
+    public ItemLibrary deserializeItemsArray(String name) {
         ItemLibrary itemLibrary = new ItemLibrary(name);
-        try(BufferedReader br = new BufferedReader(new FileReader("cache\\" + name + ".dat"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("cache\\" + name + ".dat"))) {
 
             String line = br.readLine();
 
@@ -277,86 +634,38 @@ public class Main extends Application {
             }
             System.out.println(this.filename + " was succesfully deserialized");
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getStackTrace());
         }
         return itemLibrary;
     }
 
-    public File getFile(){
-        Stage selectFile = new Stage();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select a TBLU file");
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("TBLU files", "*.TBLU");
-        fileChooser.getExtensionFilters().add(filter);
-        fileChooser.setSelectedExtensionFilter(filter);
-        File selectedFile = fileChooser.showOpenDialog(selectFile);
-        System.out.println(selectedFile);
-        return selectedFile;
-    }
 
+    public void getSettings(){
+        try(BufferedReader br = new BufferedReader(new FileReader("settings.txt"))) {
+            String line = br.readLine();
 
-    public InputStream excCommand(String command){
-        Runtime rt = Runtime.getRuntime();
-
-        try {
-
-            return rt.exec(command).getInputStream();
-        }
-        catch (Exception e){
-            System.out.println("failed to execute command");
-        }
-        return  null;
-    }
-
-    public File convertFileToJson(File selectedFile){
-        Stage convertStage = new Stage();
-        BorderPane borderPane = new BorderPane();
-        TextArea textArea = new TextArea();
-        borderPane.setCenter(textArea);
-        Scene scene = new Scene(borderPane);
-        convertStage.setScene(scene);
-        convertStage.show();
-        try {
-            String line = "";
-            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \".\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
-            System.out.println("line" + line);
             while (line != null) {
-                line = reader.readLine();
-                System.out.println("line" + line);
-                textArea.appendText(line + "\n");
+                if(line.contains("Level of detail")) this.LoD = Integer.parseInt(line.split(": ")[1]);
+                if(line.contains("use cache")) this.useCache = Boolean.parseBoolean(line.split(": ")[1]);
+                if(line.contains("use old jsons")) this.useOldJsons = Boolean.parseBoolean(line.split(": ")[1]);
+                if(line.contains("enable popups")) this.enablePopups = Boolean.parseBoolean(line.split(": ")[1]);
 
 
+
+                line = br.readLine();
             }
 
-
-
-            if(reader.readLine() == null){
-                convertStage.close();
-                try{
-                    return new File(selectedFile.getPath() + ".BIN1decoded.JSON");
-                }
-                catch (Exception e){
-                    System.out.println("an error occured while converting the TBLU to a JSON file");
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("[SETTINGS]");
+            System.out.println("Level of detail: " + this.LoD);
+            System.out.println("use cache: " + this.useCache);
+            System.out.println("use old jsons: " + this.useOldJsons);
+            System.out.println("enable popups: " + this.enablePopups);
+            System.out.println(" ");
         }
-        return null;
+        catch (IOException e){
+            System.out.println("could not find settings.txt file");
+        }
     }
-
-    public static void main(String[] args) {
-
-
-
-
-        launch(args);
-    }
-
-
-
 
 }
