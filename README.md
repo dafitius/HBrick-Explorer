@@ -31,9 +31,9 @@ TBLUviewer uses a Python script to decode the TBLU files. After decoding the fil
 
 internal flow:
 
-```mermaid
-graph LR
-A[TBLU file] -- TBLUdecode.py --> B[decodedFile.json]
-B -- Java --> C((ItemLibrary))
-C --> D((Treeviewer))
-```
+![image](https://user-images.githubusercontent.com/70489995/109419230-bf050a80-79cc-11eb-9f65-a9327b04ed6a.png)
+
+
+
+> Efficiency?
+> More like I-Wish-ency..
