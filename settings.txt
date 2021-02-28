@@ -2,7 +2,7 @@
 //Setting this too high can result in the application hanging.
 //min: 0
 //max: 11
-Level of detail: 1
+Level of detail: 4
 
 //should make loading a file faster.
 //not working correctly atm do not set true
@@ -10,7 +10,7 @@ use cache: false
 
 //set true to use the already decoded files if possible.
 //slightly decreases load time
-use old jsons: false
+use old jsons: true
 
 //disables all popups.
 //this will result in a less detailed display of information

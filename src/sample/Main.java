@@ -15,8 +15,14 @@ import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 
 public class Main extends Application {
@@ -63,7 +69,7 @@ public class Main extends Application {
         this.filename = fl.getName().substring(0, 16);
 
         //Build the ItemLibrary with the information from the file
-        buildItemLibrary(fl, primaryStage);
+        buildItemLibrary(fl);
 
 
         //Add info to GUI
@@ -71,42 +77,44 @@ public class Main extends Application {
         TreeItem<Item> root = itemLibrary.getRoot().getViewItem();
         treeView.setRoot(root);
 
-        if (LoD >= 0) {
-            for (TreeItem<Item> treeview : root.getChildren()) {
-                treeview.getChildren().addAll(treeview.getValue().getViewItem().getChildren());
-                if (LoD >= 1) {
-                    for (TreeItem<Item> treeview2 : treeview.getChildren()) {
-                        treeview2.getChildren().addAll(treeview2.getValue().getViewItem().getChildren());
-                        if (LoD >= 2) {
-                            for (TreeItem<Item> treeview3 : treeview2.getChildren()) {
-                                treeview3.getChildren().addAll(treeview3.getValue().getViewItem().getChildren());
-                                if (LoD >= 3) {
-                                    for (TreeItem<Item> treeview4 : treeview3.getChildren()) {
-                                        treeview4.getChildren().addAll(treeview4.getValue().getViewItem().getChildren());
-                                        if (LoD >= 4) {
-                                            for (TreeItem<Item> treeview5 : treeview4.getChildren()) {
-                                                treeview5.getChildren().addAll(treeview5.getValue().getViewItem().getChildren());
-                                                if (LoD >= 5) {
-                                                    for (TreeItem<Item> treeview6 : treeview5.getChildren()) {
-                                                        treeview6.getChildren().addAll(treeview6.getValue().getViewItem().getChildren());
-                                                        if (LoD >= 6) {
-                                                            for (TreeItem<Item> treeview7 : treeview6.getChildren()) {
-                                                                treeview7.getChildren().addAll(treeview7.getValue().getViewItem().getChildren());
-                                                                if (LoD >= 7) {
-                                                                    for (TreeItem<Item> treeview8 : treeview7.getChildren()) {
-                                                                        treeview8.getChildren().addAll(treeview8.getValue().getViewItem().getChildren());
-                                                                        if (LoD >= 8) {
-                                                                            for (TreeItem<Item> treeview9 : treeview8.getChildren()) {
-                                                                                treeview9.getChildren().addAll(treeview9.getValue().getViewItem().getChildren());
-                                                                                if (LoD >= 9) {
-                                                                                    for (TreeItem<Item> treeview10 : treeview9.getChildren()) {
-                                                                                        treeview10.getChildren().addAll(treeview10.getValue().getViewItem().getChildren());
-                                                                                        if (LoD >= 10) {
-                                                                                            for (TreeItem<Item> treeview11 : treeview10.getChildren()) {
-                                                                                                treeview11.getChildren().addAll(treeview11.getValue().getViewItem().getChildren());
-                                                                                                if (LoD >= 11) {
-                                                                                                    for (TreeItem<Item> treeview12 : treeview11.getChildren()) {
-                                                                                                        treeview12.getChildren().addAll(treeview12.getValue().getViewItem().getChildren());
+        try {
+            if (LoD >= 0) {
+                for (TreeItem<Item> treeview : root.getChildren()) {
+                    treeview.getChildren().addAll(treeview.getValue().getViewItem().getChildren());
+                    if (LoD >= 1) {
+                        for (TreeItem<Item> treeview2 : treeview.getChildren()) {
+                            treeview2.getChildren().addAll(treeview2.getValue().getViewItem().getChildren());
+                            if (LoD >= 2) {
+                                for (TreeItem<Item> treeview3 : treeview2.getChildren()) {
+                                    treeview3.getChildren().addAll(treeview3.getValue().getViewItem().getChildren());
+                                    if (LoD >= 3) {
+                                        for (TreeItem<Item> treeview4 : treeview3.getChildren()) {
+                                            treeview4.getChildren().addAll(treeview4.getValue().getViewItem().getChildren());
+                                            if (LoD >= 4) {
+                                                for (TreeItem<Item> treeview5 : treeview4.getChildren()) {
+                                                    treeview5.getChildren().addAll(treeview5.getValue().getViewItem().getChildren());
+                                                    if (LoD >= 5) {
+                                                        for (TreeItem<Item> treeview6 : treeview5.getChildren()) {
+                                                            treeview6.getChildren().addAll(treeview6.getValue().getViewItem().getChildren());
+                                                            if (LoD >= 6) {
+                                                                for (TreeItem<Item> treeview7 : treeview6.getChildren()) {
+                                                                    treeview7.getChildren().addAll(treeview7.getValue().getViewItem().getChildren());
+                                                                    if (LoD >= 7) {
+                                                                        for (TreeItem<Item> treeview8 : treeview7.getChildren()) {
+                                                                            treeview8.getChildren().addAll(treeview8.getValue().getViewItem().getChildren());
+                                                                            if (LoD >= 8) {
+                                                                                for (TreeItem<Item> treeview9 : treeview8.getChildren()) {
+                                                                                    treeview9.getChildren().addAll(treeview9.getValue().getViewItem().getChildren());
+                                                                                    if (LoD >= 9) {
+                                                                                        for (TreeItem<Item> treeview10 : treeview9.getChildren()) {
+                                                                                            treeview10.getChildren().addAll(treeview10.getValue().getViewItem().getChildren());
+                                                                                            if (LoD >= 10) {
+                                                                                                for (TreeItem<Item> treeview11 : treeview10.getChildren()) {
+                                                                                                    treeview11.getChildren().addAll(treeview11.getValue().getViewItem().getChildren());
+                                                                                                    if (LoD >= 11) {
+                                                                                                        for (TreeItem<Item> treeview12 : treeview11.getChildren()) {
+                                                                                                            treeview12.getChildren().addAll(treeview12.getValue().getViewItem().getChildren());
+                                                                                                        }
                                                                                                     }
                                                                                                 }
                                                                                             }
@@ -130,6 +138,8 @@ public class Main extends Application {
                     }
                 }
             }
+        }catch (StackOverflowError e){
+            showMessageDialog(null, "The stack has overflown \n Level of detail could be lower then expected?\"");
         }
         System.out.println("added all items inside the tree");
         //create a panel on the left for details
@@ -226,13 +236,7 @@ public class Main extends Application {
         System.out.println("launch the app");
     }
 
-    public void buildItemLibrary(File fl, Stage primaryStage) {
-
-
-        TextField loadingField = new TextField("ifno here bruh");
-        loadingField.setEditable(false);
-        primaryStage.setTitle("Loading");
-        primaryStage.setScene(new Scene(loadingField));
+    public void buildItemLibrary(File fl) {
 
 
         File cacheFile = new File(System.getProperty("user.dir") + "\\cache\\" + filename + ".dat");
@@ -241,43 +245,15 @@ public class Main extends Application {
             this.itemLibrary = deserializeItemsArray(filename);
         } else {
             //count the amount of lines
-            int linecount = 0;
-            try {
-                Scanner lineCounter = new Scanner(fl);
-                while (lineCounter.hasNextLine()) {
-                    lineCounter.nextLine();
-                    linecount++;
-                }
-                lineCounter.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("file was not found");
-            }
-            primaryStage.show();
-            //put the entire file inside a string
             String fileAsString = "";
             try {
-
-                BufferedReader reader = new BufferedReader(new FileReader(fl));
-                int i = 0;
-                int percentRead = 0;
-                String line;
-                while((line = reader.readLine()) != null) {
-                    fileAsString+= line;
-
-                    if (i % (linecount / 10) == 0) {
-
-                        loadingField.setText("read " + percentRead + "% of the file");
-
-                        System.out.println(loadingField.getText());
-                        percentRead += 10;
-                    }
-
-                    i++;
-
-                }
-            } catch(IOException e) {
-                System.out.println("file was not found");
+                fileAsString = readTextFile(fl.getPath(), StandardCharsets.US_ASCII);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+
+
 
             this.itemLibrary = new ItemLibrary(filename);
 
@@ -587,6 +563,7 @@ public class Main extends Application {
 
     public void arraylistPopUp(String name, ArrayList<String> arrayList){
 
+        arrayList.remove(0);
         ListView listView = new ListView();
         listView.getItems().addAll(arrayList);
 
@@ -640,6 +617,12 @@ public class Main extends Application {
         return itemLibrary;
     }
 
+    static String readTextFile(String path, Charset encoding)
+            throws IOException
+    {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding);
+    }
 
     public void getSettings(){
         try(BufferedReader br = new BufferedReader(new FileReader("settings.txt"))) {
