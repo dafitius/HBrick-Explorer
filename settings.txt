@@ -15,3 +15,6 @@ use old jsons: true
 //disables all popups.
 //this will result in a less detailed display of information
 enable popups: true
+
+//prints the output of the python script
+enable decoder prints: true

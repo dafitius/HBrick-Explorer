@@ -38,6 +38,7 @@ public class Main extends Application {
     boolean useCache;
     boolean useOldJsons;
     boolean enablePopups;
+    boolean printDecoder;
 
     public static void main(String[] args) {
 
@@ -52,7 +53,6 @@ public class Main extends Application {
         openPopUps = new ArrayList<>();
 
 
-
         //ask for file to extract
         this.selectedFile = getFile();
         File jsonFile = new File(selectedFile.getPath() + ".BIN1decoded.JSON");
@@ -62,7 +62,6 @@ public class Main extends Application {
         if (jsonFile.exists() && useOldJsons) {
             fl = jsonFile;
         } else fl = convertFileToJson(selectedFile);
-
 
 
         //get a filename from the file
@@ -138,8 +137,8 @@ public class Main extends Application {
                     }
                 }
             }
-        }catch (StackOverflowError e){
-            showMessageDialog(null, "The stack has overflown \n Level of detail could be lower then expected?\"");
+        } catch (StackOverflowError e) {
+            showMessageDialog(null, "The stack has overflown \n Level of detail could be lower then expected!\"");
         }
         System.out.println("added all items inside the tree");
         //create a panel on the left for details
@@ -148,78 +147,84 @@ public class Main extends Application {
         treeView.setMinWidth(500);
 
         //get selected item from the tree
+
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            selectedItemName = newValue.getValue().toString();
-            Item selectedItem = new Item();
-            for (Item item : itemLibrary.getItems()) {
-                if (item.getName().equals(selectedItemName)) {
-                    selectedItem = item;
+            try {
+                selectedItemName = newValue.getValue().toString();
+                Item selectedItem = new Item();
+                for (Item item : itemLibrary.getItems()) {
+                    if (item.getName().equals(selectedItemName)) {
+                        selectedItem = item;
+                    }
                 }
-            }
 
-            System.out.println(selectedItem.getName());
+                System.out.println("selected: " + selectedItem.getName());
 
-            Label name = new Label("Name: " + selectedItem.getName());
-            Label type = new Label("Type: " + selectedItem.getType());
-            Label hash = new Label("Hash: " + selectedItem.getHash());
-            Label parent = new Label("Parent: " + selectedItem.getParent());
-            Label isANG = new Label("is ActivatableIEntity: " + selectedItem.isANG_IEntity());
-            Label isAE = new Label("is AudioEmitter: " + selectedItem.isAudioEmitter());
-            Label isAVG = new Label("is AudioVolumetricGeom: " + selectedItem.isAudioVolumetric());
-            Label isGATE = new Label("is Gate: " + selectedItem.isGate());
-            Label isREP = new Label("is Replicable: " + selectedItem.isReplicable());
-            Label isROOM = new Label("is Room: " + selectedItem.isRoom());
+                Label name = new Label("Name: " + selectedItem.getName());
+                Label type = new Label("Type: " + selectedItem.getType());
+                Label hash = new Label("Hash: " + selectedItem.getHash());
+                Label parent = new Label("Parent: " + selectedItem.getParent());
+                Label isANG = new Label("is ActivatableIEntity: " + selectedItem.isANG_IEntity());
+                Label isAE = new Label("is AudioEmitter: " + selectedItem.isAudioEmitter());
+                Label isAVG = new Label("is AudioVolumetricGeom: " + selectedItem.isAudioVolumetric());
+                Label isGATE = new Label("is Gate: " + selectedItem.isGate());
+                Label isREP = new Label("is Replicable: " + selectedItem.isReplicable());
+                Label isROOM = new Label("is Room: " + selectedItem.isRoom());
 
-            if (selectedItem.isANG_IEntity()) {
-                isANG.setStyle("-fx-font-weight: bold");
-            }
-            if (selectedItem.isAudioEmitter()) {
-                isAE.setStyle("-fx-font-weight: bold");
-            }
-            if (selectedItem.isAudioVolumetric()) {
-                isAVG.setStyle("-fx-font-weight: bold");
-            }
-            if (selectedItem.isGate()) {
-                isGATE.setStyle("-fx-font-weight: bold");
-            }
-            if (selectedItem.isReplicable()) {
-                isREP.setStyle("-fx-font-weight: bold");
-            }
-            if (selectedItem.isRoom()) {
-                isROOM.setStyle("-fx-font-weight: bold");
-            }
+                if (selectedItem.isANG_IEntity()) {
+                    isANG.setStyle("-fx-font-weight: bold");
+                }
+                if (selectedItem.isAudioEmitter()) {
+                    isAE.setStyle("-fx-font-weight: bold");
+                }
+                if (selectedItem.isAudioVolumetric()) {
+                    isAVG.setStyle("-fx-font-weight: bold");
+                }
+                if (selectedItem.isGate()) {
+                    isGATE.setStyle("-fx-font-weight: bold");
+                }
+                if (selectedItem.isReplicable()) {
+                    isREP.setStyle("-fx-font-weight: bold");
+                }
+                if (selectedItem.isRoom()) {
+                    isROOM.setStyle("-fx-font-weight: bold");
+                }
 
 
-            for(Stage popup : openPopUps){
-                popup.close();
-            }
-            openPopUps.clear();
+                for (Stage popup : openPopUps) {
+                    popup.close();
+                }
+                openPopUps.clear();
 
-            itemDetails.getItems().clear();
-            if (!selectedItem.isANG_IEntity() &&
-                    !selectedItem.isAudioEmitter() &&
-                    !selectedItem.isAudioVolumetric() &&
-                    !selectedItem.isGate() &&
-                    !selectedItem.isReplicable() &&
-                    !selectedItem.isRoom()) {
-                itemDetails.getItems().addAll(name, type, hash, parent);
-            } else {
-                itemDetails.getItems().addAll(name, type, hash, parent, isANG, isAE, isAVG, isGATE, isREP, isROOM);
-            }
+                itemDetails.getItems().clear();
+                if (!selectedItem.isANG_IEntity() &&
+                        !selectedItem.isAudioEmitter() &&
+                        !selectedItem.isAudioVolumetric() &&
+                        !selectedItem.isGate() &&
+                        !selectedItem.isReplicable() &&
+                        !selectedItem.isRoom()) {
+                    itemDetails.getItems().addAll(name, type, hash, parent);
+                } else {
+                    itemDetails.getItems().addAll(name, type, hash, parent, isANG, isAE, isAVG, isGATE, isREP, isROOM);
+                }
 
-            if(enablePopups) {
-                if (selectedItem.getANG_IEntity().size() > 0)
-                    arraylistPopUp("Activatable IEntitys:", selectedItem.getANG_IEntity());
-                if (selectedItem.getAudioEmitters().size() > 0)
-                    arraylistPopUp("Audio Emitters:", selectedItem.getAudioEmitters());
-                if (selectedItem.getAudioVolumetric().size() > 0)
-                    arraylistPopUp("Audio Volumetric Geomerties:", selectedItem.getAudioVolumetric());
-                if (selectedItem.getGates().size() > 0) arraylistPopUp("Gates:", selectedItem.getGates());
-                if (selectedItem.getReplicable().size() > 0)
-                    arraylistPopUp("Replicables:", selectedItem.getReplicable());
-                if (selectedItem.getRooms().size() > 0) arraylistPopUp("Rooms:", selectedItem.getRooms());
+                if (enablePopups) {
+                    if (selectedItem.getANG_IEntity().size() > 0)
+                        arraylistPopUp("Activatable IEntitys:", selectedItem.getANG_IEntity());
+                    if (selectedItem.getAudioEmitters().size() > 0)
+                        arraylistPopUp("Audio Emitters:", selectedItem.getAudioEmitters());
+                    if (selectedItem.getAudioVolumetric().size() > 0)
+                        arraylistPopUp("Audio Volumetric Geomerties:", selectedItem.getAudioVolumetric());
+                    if (selectedItem.getGates().size() > 0) arraylistPopUp("Gates:", selectedItem.getGates());
+                    if (selectedItem.getReplicable().size() > 0)
+                        arraylistPopUp("Replicables:", selectedItem.getReplicable());
+                    if (selectedItem.getRooms().size() > 0) arraylistPopUp("Rooms:", selectedItem.getRooms());
+                }
+            } catch (NullPointerException e) {
+                System.out.println("no information found on selected item");
+            } catch (Exception e) {
+                System.out.println("an error seems to have occured :(");
             }
-
         });
 
 
@@ -458,7 +463,7 @@ public class Main extends Application {
 
 
             }
-            for(Item item : itemLibrary.getItems()){
+            for (Item item : itemLibrary.getItems()) {
                 item.sortLinkedArrays();
             }
 
@@ -519,7 +524,7 @@ public class Main extends Application {
 
         Label loadingLabel = new Label("Please hold on while the file is being decoded");
         loadingLabel.setStyle("-fx-font-weight: bold; -fx-font-fill: Black");
-        if ((selectedFile.length() / 1024) > 1000){
+        if ((selectedFile.length() / 1024) > 1000) {
             loadingLabel.setText(loadingLabel.getText() + "\n Big file detected conversion might take longer then expected");
         }
 
@@ -533,14 +538,15 @@ public class Main extends Application {
 
             String line = "";
             BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \".\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
-            System.out.println("Running python script:");
-            System.out.println("-----------------------------------------------------------");
+
+            System.out.println("Running decoder");
+            if(printDecoder) System.out.println("-----------------------------------------------------------");
             while (line != null) {
                 line = reader.readLine();
-                System.out.println(line);
+                if(printDecoder) System.out.println(line);
 
             }
-            System.out.println("-----------------------------------------------------------");
+            if(printDecoder) System.out.println("-----------------------------------------------------------");
 
             if (reader.readLine() == null) {
                 convertStage.close();
@@ -557,7 +563,7 @@ public class Main extends Application {
         return null;
     }
 
-    public void arraylistPopUp(String name, ArrayList<String> arrayList){
+    public void arraylistPopUp(String name, ArrayList<String> arrayList) {
 
         arrayList.remove(0);
         ListView listView = new ListView();
@@ -614,22 +620,21 @@ public class Main extends Application {
     }
 
     static String readTextFile(String path, Charset encoding)
-            throws IOException
-    {
+            throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
     }
 
-    public void getSettings(){
-        try(BufferedReader br = new BufferedReader(new FileReader("settings.txt"))) {
+    public void getSettings() {
+        try (BufferedReader br = new BufferedReader(new FileReader("settings.txt"))) {
             String line = br.readLine();
 
             while (line != null) {
-                if(line.contains("Level of detail")) this.LoD = Integer.parseInt(line.split(": ")[1]);
-                if(line.contains("use cache")) this.useCache = Boolean.parseBoolean(line.split(": ")[1]);
-                if(line.contains("use old jsons")) this.useOldJsons = Boolean.parseBoolean(line.split(": ")[1]);
-                if(line.contains("enable popups")) this.enablePopups = Boolean.parseBoolean(line.split(": ")[1]);
-
+                if (line.contains("Level of detail")) this.LoD = Integer.parseInt(line.split(": ")[1]);
+                if (line.contains("use cache")) this.useCache = Boolean.parseBoolean(line.split(": ")[1]);
+                if (line.contains("use old jsons")) this.useOldJsons = Boolean.parseBoolean(line.split(": ")[1]);
+                if (line.contains("enable popups")) this.enablePopups = Boolean.parseBoolean(line.split(": ")[1]);
+                if (line.contains("enable decoder prints")) this.printDecoder = Boolean.parseBoolean(line.split(": ")[1]);
 
 
                 line = br.readLine();
@@ -640,9 +645,9 @@ public class Main extends Application {
             System.out.println("use cache: " + this.useCache);
             System.out.println("use old jsons: " + this.useOldJsons);
             System.out.println("enable popups: " + this.enablePopups);
+            System.out.println("enable decoder prints: " + this.printDecoder);
             System.out.println(" ");
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             System.out.println("could not find settings.txt file");
         }
     }
