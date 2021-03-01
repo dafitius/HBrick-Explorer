@@ -252,9 +252,6 @@ public class Main extends Application {
                 e.printStackTrace();
             }
 
-
-
-
             this.itemLibrary = new ItemLibrary(filename);
 
 
@@ -263,7 +260,6 @@ public class Main extends Application {
             String lastItemName = "";
             ArrayList<ArrayList> linkedDataArrays = new ArrayList<>();
             for (String line : fileAsString.split("},")) {
-                //System.out.println(line);
                 if (line.contains("parent")) {
                     lines.add(line);
                     line = line.substring(1);
@@ -272,7 +268,6 @@ public class Main extends Application {
                     lastItemName = name;
                 }
                 if (line.contains("\"Activatable_NormalGameplay, IEntity\":")) {
-                    //line.split("\"Activatable_NormalGameplay, IEntity\":");
                     ArrayList<String> ANG_IEntity = new ArrayList<>();
                     ANG_IEntity.add("ANG");
                     ANG_IEntity.add(lastItemName);
@@ -288,7 +283,7 @@ public class Main extends Application {
                             ANG_IEntity.add(string);
                         }
                     }
-                    System.out.println("ANG " + ANG_IEntity.toString());
+                    System.out.println(ANG_IEntity.size() + " Activatable_NormalGameplay, IEntity's found in " + ANG_IEntity.get(1));
                     linkedDataArrays.add(ANG_IEntity);
                     //System.out.println("Activatable_NormalGameplay, IEntity = " + line.split("\"Activatable_NormalGameplay, IEntity\":")[1]);
                 }
@@ -308,7 +303,7 @@ public class Main extends Application {
                             audioEmitters.add(string);
                         }
                     }
-                    System.out.println("AE " + audioEmitters.toString());
+                    System.out.println(audioEmitters.size() + " audioEmitters found in " + audioEmitters.get(1));
                     linkedDataArrays.add(audioEmitters);
                     //System.out.println("AudioEmitters = " + line.split("\"AudioEmitters\":")[1]);
                 }
@@ -328,7 +323,7 @@ public class Main extends Application {
                             audioVolumetricGeom.add(string);
                         }
                     }
-                    System.out.println("AVG " + audioVolumetricGeom.toString());
+                    System.out.println(audioVolumetricGeom.size() + " audioVolumetricGeometries found in " + audioVolumetricGeom.get(1));
                     linkedDataArrays.add(audioVolumetricGeom);
                     //System.out.println("AudioEmitters = " + line.split("\"AudioEmitters\":")[1]);
                 }
@@ -348,7 +343,7 @@ public class Main extends Application {
                             gates.add(string);
                         }
                     }
-                    System.out.println("GATE " + gates.toString());
+                    System.out.println(gates.size() + " gates found in " + gates.get(1));
                     linkedDataArrays.add(gates);
                     //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
                 }
@@ -368,7 +363,7 @@ public class Main extends Application {
                             replicable.add(string);
                         }
                     }
-                    System.out.println("REP " + replicable.toString());
+                    System.out.println(replicable.size() + " replicables found in " + replicable.get(1));
                     linkedDataArrays.add(replicable);
                     //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
                 }
@@ -388,12 +383,12 @@ public class Main extends Application {
                             rooms.add(string);
                         }
                     }
-                    System.out.println("ROOM " + rooms.toString());
+                    System.out.println(rooms.size() + " rooms found in " + rooms.get(1));
                     linkedDataArrays.add(rooms);
                     //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
                 }
             }
-            System.out.println("extracted items from JSON");
+
             //create the objects from the JSON
             ArrayList<String> ANG_IEntity = new ArrayList<>();
             ArrayList<String> audioEmitters = new ArrayList<>();
@@ -471,7 +466,7 @@ public class Main extends Application {
 
         //Add a root node
         this.itemLibrary.add(new Item("root", "", "", filename));
-        System.out.println("Put all items inside ItemLibrary");
+
 
         //find the children
         for (Item itemToFill : this.itemLibrary.getItems()) {
@@ -485,12 +480,12 @@ public class Main extends Application {
             }
 
         }
-        System.out.println("found and added all children");
+        System.out.println("succesfully constructed ItemLibrary");
         //sort the children
         this.itemLibrary.sortAllItems();
         System.out.println("sorted all items");
         //serialize the itemsArray
-        serializeItemsArray(this.itemLibrary);
+        //serializeItemsArray(this.itemLibrary);
 
     }
 
@@ -502,7 +497,7 @@ public class Main extends Application {
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         File selectedFile = fileChooser.showOpenDialog(selectFile);
-        System.out.println(selectedFile);
+        System.out.println("Selected file: " + selectedFile);
         return selectedFile;
     }
 
@@ -538,13 +533,14 @@ public class Main extends Application {
 
             String line = "";
             BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \".\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
+            System.out.println("Running python script:");
+            System.out.println("-----------------------------------------------------------");
             while (line != null) {
                 line = reader.readLine();
-
-                //System.out.println(line);
+                System.out.println(line);
 
             }
-
+            System.out.println("-----------------------------------------------------------");
 
             if (reader.readLine() == null) {
                 convertStage.close();

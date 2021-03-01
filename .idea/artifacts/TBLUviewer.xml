@@ -12,7 +12,7 @@
             <option name="windowsIcon" value="$PROJECT_DIR$/icon.ico" />
           </JavaFxApplicationIcons>
         </option>
-        <option name="title" value="" />
+        <option name="title" value="TBLUviewer" />
         <option name="vendor" value="" />
         <option name="version" value="" />
       </options>
