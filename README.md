@@ -10,7 +10,7 @@ Run **TBLUViewer.jar** and select a .TBLU file.
 
 The application can be configured inside of the setting.txt.
 
-##controls
+## controls
 
 Left clicking is all there is to it. When navigating the tree additional information about a selected item will be shown.
 Is an item contains arrays with other items linked to it those arrays will be shown as pop-up. 
