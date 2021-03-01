@@ -9,7 +9,14 @@ TBLU viewer is a javaFX application made to view the TBLU files found in the HIT
 Run **TBLUViewer.jar** and select a .TBLU file.
 
 The application can be configured inside of the setting.txt.
-The settings.txt has the following settings:
+
+##controls
+
+Left clicking is all there is to it. When navigating the tree additional information about a selected item will be shown.
+Is an item contains arrays with other items linked to it those arrays will be shown as pop-up. 
+> Popups can be disabled inside the settings.txt
+
+## settings
 
 ### Level of detail: <0 ~ 11>
 This defines how "deep" into the Treeview you can look. 
@@ -22,6 +29,9 @@ Decreases load time due to the application not having to decode the TBLU file.
 ### enable popups: <true/false>
 enables the popups that show up if an item with linked arrays is clicked.
 ![](https://i.imgur.com/R5ZoR9d.gif)
+
+### enable decoder prints: <true/false>
+allows the decoder to print debug information
 
 
 # internal workings
