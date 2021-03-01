@@ -2,6 +2,9 @@
 
 TBLU viewer is a javaFX application made to view the TBLU files found in the HITMAN™: World of Assasination series.
 
+## requirements
+- Java JRE 8
+- python
 
 
 # usage
@@ -13,7 +16,7 @@ The application can be configured inside of the setting.txt.
 ## controls
 
 Left clicking is all there is to it. When navigating the tree additional information about a selected item will be shown.
-Is an item contains arrays with other items linked to it those arrays will be shown as pop-up. 
+If an item contains arrays with other items linked to it those arrays will be shown as pop-up. 
 > Popups can be disabled inside the settings.txt
 
 ## settings
