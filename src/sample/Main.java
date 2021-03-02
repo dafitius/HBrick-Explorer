@@ -161,7 +161,7 @@ public class Main extends Application {
                 Label name = new Label("Name: " + selectedItem.getName());
                 Label type = new Label("Type: " + selectedItem.getType());
                 Label hash = new Label("Hash: " + selectedItem.getHash());
-                Label parent = new Label("Parent: " + selectedItem.getParent());
+                //Label parent = new Label("Parent: " + selectedItem.getParent());
                 Label isANG = new Label("is ActivatableIEntity: " + selectedItem.isANG_IEntity());
                 Label isAE = new Label("is AudioEmitter: " + selectedItem.isAudioEmitter());
                 Label isAVG = new Label("is AudioVolumetricGeom: " + selectedItem.isAudioVolumetric());
@@ -201,9 +201,9 @@ public class Main extends Application {
                         !selectedItem.isGate() &&
                         !selectedItem.isReplicable() &&
                         !selectedItem.isRoom()) {
-                    itemDetails.getItems().addAll(name, type, hash, parent);
+                    itemDetails.getItems().addAll(name, type, hash);
                 } else {
-                    itemDetails.getItems().addAll(name, type, hash, parent, isANG, isAE, isAVG, isGATE, isREP, isROOM);
+                    itemDetails.getItems().addAll(name, type, hash, isANG, isAE, isAVG, isGATE, isREP, isROOM);
                 }
 
                 if (enablePopups) {
@@ -476,7 +476,7 @@ public class Main extends Application {
         //find the children
         for (Item itemToFill : this.itemLibrary.getItems()) {
             for (Item item : this.itemLibrary.getItems()) {
-                if (item.getParent().equals(itemToFill.getName())) {
+                if (item.getParent().equals(itemToFill.getHash())) {
                     itemToFill.addChild(item);
                 }
                 if (itemToFill.getParent().equals("root") && item.getParent().contains("0xff")) {
@@ -625,8 +625,7 @@ public class Main extends Application {
         return itemLibrary;
     }
 
-    static String readTextFile(String path, Charset encoding)
-            throws IOException {
+    static String readTextFile(String path, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
     }
