@@ -34,11 +34,14 @@ public class Main extends Application {
     ArrayList<Stage> openPopUps;
 
     //settings
-    int LoD;
-    boolean useCache;
-    boolean useOldJsons;
-    boolean enablePopups;
-    boolean printDecoder;
+    private int LoD;
+    private String pythonPATHVar;
+    private boolean useCache;
+    private boolean useOldJsons;
+    private String TBLUfolderPATH;
+    private boolean enableDarkmode;
+    private boolean enablePopups;
+    private boolean printDecoder;
 
     public static void main(String[] args) {
 
@@ -47,7 +50,7 @@ public class Main extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage){
         getSettings();
 
         openPopUps = new ArrayList<>();
@@ -223,7 +226,7 @@ public class Main extends Application {
             } catch (NullPointerException e) {
                 System.out.println("no information found on selected item");
             } catch (Exception e) {
-                System.out.println("an error seems to have occured :(");
+                System.out.println("an error seems to have occured: \n" + e.getMessage());
             }
         });
 
@@ -233,6 +236,7 @@ public class Main extends Application {
         borderpane.setCenter(hbox);
         primaryStage.setTitle("TBLU tree viewer");
         primaryStage.setScene(new Scene(borderpane, 850, 675));
+        if(this.enableDarkmode) primaryStage.getScene().getStylesheets().add("./sample/darkmode.css");
         primaryStage.show();
 
         primaryStage.setOnCloseRequest(event -> {
@@ -497,6 +501,10 @@ public class Main extends Application {
     public File getFile() {
         Stage selectFile = new Stage();
         FileChooser fileChooser = new FileChooser();
+        if(!this.TBLUfolderPATH.isEmpty()){
+            File initialDir = new File(TBLUfolderPATH);
+            if(initialDir.exists()) fileChooser.setInitialDirectory(initialDir);
+        }
         fileChooser.setTitle("Select a TBLU file");
         FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("TBLU files", "*.TBLU");
         fileChooser.getExtensionFilters().add(filter);
@@ -513,7 +521,7 @@ public class Main extends Application {
 
             return rt.exec(command).getInputStream();
         } catch (Exception e) {
-            System.out.println("failed to execute command");
+            System.out.println("failed to execute command: \n"  + e.getMessage());
         }
         return null;
     }
@@ -536,12 +544,9 @@ public class Main extends Application {
 
         try {
 
-            String pythonCmdName = "python";
-            if (System.getProperty("os.name").startsWith("Windows"))
-                pythonCmdName = "py";
 
             String line = "";
-            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand(pythonCmdName + " \".\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand(this.pythonPATHVar + " \".\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
 
             System.out.println("Running decoder");
             if(printDecoder) System.out.println("-----------------------------------------------------------");
@@ -557,7 +562,7 @@ public class Main extends Application {
                 try {
                     return new File(selectedFile.getPath() + ".BIN1decoded.JSON");
                 } catch (Exception e) {
-                    System.out.println("an error occured while converting the TBLU to a JSON file");
+                    System.out.println("an error occured while converting the TBLU to a JSON file: \n" + e.getMessage());
                 }
             }
 
@@ -576,6 +581,7 @@ public class Main extends Application {
         Scene scene = new Scene(listView, 250, 750);
         Stage stage = new Stage();
         stage.setScene(scene);
+        if(this.enableDarkmode) stage.getScene().getStylesheets().add("./sample/darkmode.css");
         stage.setTitle(name);
         stage.setX(250 * openPopUps.size());
         stage.setY(150);
@@ -634,11 +640,24 @@ public class Main extends Application {
             String line = br.readLine();
 
             while (line != null) {
-                if (line.contains("Level of detail")) this.LoD = Integer.parseInt(line.split(": ")[1]);
-                if (line.contains("use cache")) this.useCache = Boolean.parseBoolean(line.split(": ")[1]);
-                if (line.contains("use old jsons")) this.useOldJsons = Boolean.parseBoolean(line.split(": ")[1]);
-                if (line.contains("enable popups")) this.enablePopups = Boolean.parseBoolean(line.split(": ")[1]);
-                if (line.contains("enable decoder prints")) this.printDecoder = Boolean.parseBoolean(line.split(": ")[1]);
+                try {
+                    if (line.contains("Level of detail")) this.LoD = Integer.parseInt(line.split(": ")[1]);
+                    if (line.contains("python PATH var")) this.pythonPATHVar = line.split(": ")[1];
+                    //if (line.contains("use cache")) this.useCache = Boolean.parseBoolean(line.split(": ")[1]);
+                    this.useCache = false;
+                    if (line.contains("use old jsons")) this.useOldJsons = Boolean.parseBoolean(line.split(": ")[1]);
+                    if (line.contains("default TBLU path")) {
+                        String[] splitLine = line.split(": ");
+                        if(splitLine.length > 1) this.TBLUfolderPATH = line.split(": ")[1];
+                        else this.TBLUfolderPATH = "";
+                    }
+                    if (line.contains("use dark-mode")) this.enableDarkmode = Boolean.parseBoolean(line.split(": ")[1]);
+                    if (line.contains("enable popups")) this.enablePopups = Boolean.parseBoolean(line.split(": ")[1]);
+                    if (line.contains("enable decoder prints"))
+                        this.printDecoder = Boolean.parseBoolean(line.split(": ")[1]);
+                }catch (NumberFormatException e){
+                    System.out.println("detected typo inside the setting.txt: \n" + e.getMessage());
+                }
 
 
                 line = br.readLine();
@@ -646,10 +665,14 @@ public class Main extends Application {
 
             System.out.println("[SETTINGS]");
             System.out.println("Level of detail: " + this.LoD);
-            System.out.println("use cache: " + this.useCache);
+            System.out.println("python PATH var: " + this.pythonPATHVar);
+            System.out.println("default TBLU path" + this.TBLUfolderPATH);
+            //System.out.println("use cache: " + this.useCache);
             System.out.println("use old jsons: " + this.useOldJsons);
+            System.out.println("use dark-mode: " + this.enableDarkmode);
             System.out.println("enable popups: " + this.enablePopups);
             System.out.println("enable decoder prints: " + this.printDecoder);
+
             System.out.println(" ");
         } catch (IOException e) {
             System.out.println("could not find settings.txt file");
