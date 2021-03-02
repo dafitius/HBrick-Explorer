@@ -6,9 +6,9 @@ python PATH var: py
 use old jsons: true
 
 //can be blank
-default TBLU path: D:\David\Hitman-modding\decoders\TBLU
+default TBLU path:
 
-use dark-mode: false
+use dark-mode: true
 
 enable popups: true
 

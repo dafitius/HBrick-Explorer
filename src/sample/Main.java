@@ -1,26 +1,21 @@
 package sample;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -236,7 +231,8 @@ public class Main extends Application {
         borderpane.setCenter(hbox);
         primaryStage.setTitle("TBLU tree viewer");
         primaryStage.setScene(new Scene(borderpane, 850, 675));
-        if(this.enableDarkmode) primaryStage.getScene().getStylesheets().add("./sample/darkmode.css");
+        primaryStage.getIcons().add(new javafx.scene.image.Image(this.getClass().getResource("icon.png").toExternalForm()));
+        if(this.enableDarkmode) primaryStage.getScene().getStylesheets().add(this.getClass().getResource("darkmode.css").toExternalForm());
         primaryStage.show();
 
         primaryStage.setOnCloseRequest(event -> {
@@ -581,7 +577,7 @@ public class Main extends Application {
         Scene scene = new Scene(listView, 250, 750);
         Stage stage = new Stage();
         stage.setScene(scene);
-        if(this.enableDarkmode) stage.getScene().getStylesheets().add("./sample/darkmode.css");
+        if(this.enableDarkmode) stage.getScene().getStylesheets().add(this.getClass().getResource("darkmode.css").toExternalForm());
         stage.setTitle(name);
         stage.setX(250 * openPopUps.size());
         stage.setY(150);

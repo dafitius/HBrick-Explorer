@@ -4,14 +4,9 @@
     <properties id="javafx-properties">
       <options>
         <option name="appClass" value="sample.Main" />
+        <option name="convertCss2Bin" value="true" />
         <option name="description" value="" />
         <option name="htmlPlaceholderId" value="" />
-        <option name="icons">
-          <JavaFxApplicationIcons>
-            <option name="linuxIcon" value="$PROJECT_DIR$/icon.png" />
-            <option name="windowsIcon" value="$PROJECT_DIR$/icon.ico" />
-          </JavaFxApplicationIcons>
-        </option>
         <option name="title" value="TBLUviewer" />
         <option name="vendor" value="" />
         <option name="version" value="" />
