@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -25,8 +26,10 @@ public class Main extends Application {
     File selectedFile;
     String filename;
     ItemLibrary itemLibrary;
+    private HashMap<String, String> nameAndHash;
     private String selectedItemName;
     ArrayList<Stage> openPopUps;
+
 
     //settings
     private int LoD;
@@ -43,13 +46,11 @@ public class Main extends Application {
         launch(args);
     }
 
-
-    @Override
-    public void start(Stage primaryStage){
+    public void initialize(){
         getSettings();
 
         openPopUps = new ArrayList<>();
-
+        nameAndHash = new HashMap<>();
 
         //ask for file to extract
         this.selectedFile = getFile();
@@ -67,162 +68,24 @@ public class Main extends Application {
 
         //Build the ItemLibrary with the information from the file
         buildItemLibrary(fl);
+    }
 
+    @Override
+    public void start(Stage primaryStage){
+        initialize();
 
-        //Add info to GUI
+        //Build treeview
         TreeView<Item> treeView = new TreeView<>();
-        TreeItem<Item> root = itemLibrary.getRoot().getViewItem();
-        treeView.setRoot(root);
+        populateTreeView(treeView, this.itemLibrary);
 
-        try {
-            if (LoD >= 0) {
-                for (TreeItem<Item> treeview : root.getChildren()) {
-                    treeview.getChildren().addAll(treeview.getValue().getViewItem().getChildren());
-                    if (LoD >= 1) {
-                        for (TreeItem<Item> treeview2 : treeview.getChildren()) {
-                            treeview2.getChildren().addAll(treeview2.getValue().getViewItem().getChildren());
-                            if (LoD >= 2) {
-                                for (TreeItem<Item> treeview3 : treeview2.getChildren()) {
-                                    treeview3.getChildren().addAll(treeview3.getValue().getViewItem().getChildren());
-                                    if (LoD >= 3) {
-                                        for (TreeItem<Item> treeview4 : treeview3.getChildren()) {
-                                            treeview4.getChildren().addAll(treeview4.getValue().getViewItem().getChildren());
-                                            if (LoD >= 4) {
-                                                for (TreeItem<Item> treeview5 : treeview4.getChildren()) {
-                                                    treeview5.getChildren().addAll(treeview5.getValue().getViewItem().getChildren());
-                                                    if (LoD >= 5) {
-                                                        for (TreeItem<Item> treeview6 : treeview5.getChildren()) {
-                                                            treeview6.getChildren().addAll(treeview6.getValue().getViewItem().getChildren());
-                                                            if (LoD >= 6) {
-                                                                for (TreeItem<Item> treeview7 : treeview6.getChildren()) {
-                                                                    treeview7.getChildren().addAll(treeview7.getValue().getViewItem().getChildren());
-                                                                    if (LoD >= 7) {
-                                                                        for (TreeItem<Item> treeview8 : treeview7.getChildren()) {
-                                                                            treeview8.getChildren().addAll(treeview8.getValue().getViewItem().getChildren());
-                                                                            if (LoD >= 8) {
-                                                                                for (TreeItem<Item> treeview9 : treeview8.getChildren()) {
-                                                                                    treeview9.getChildren().addAll(treeview9.getValue().getViewItem().getChildren());
-                                                                                    if (LoD >= 9) {
-                                                                                        for (TreeItem<Item> treeview10 : treeview9.getChildren()) {
-                                                                                            treeview10.getChildren().addAll(treeview10.getValue().getViewItem().getChildren());
-                                                                                            if (LoD >= 10) {
-                                                                                                for (TreeItem<Item> treeview11 : treeview10.getChildren()) {
-                                                                                                    treeview11.getChildren().addAll(treeview11.getValue().getViewItem().getChildren());
-                                                                                                    if (LoD >= 11) {
-                                                                                                        for (TreeItem<Item> treeview12 : treeview11.getChildren()) {
-                                                                                                            treeview12.getChildren().addAll(treeview12.getValue().getViewItem().getChildren());
-                                                                                                        }
-                                                                                                    }
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (StackOverflowError e) {
-            showMessageDialog(null, "The stack has overflown \n Level of detail could be lower then expected!\"");
-        }
-        System.out.println("added all items inside the tree");
-        //create a panel on the left for details
+        //create a panel on the right for details
         HBox hbox = new HBox();
         ListView itemDetails = new ListView();
-        treeView.setMinWidth(500);
 
-        //get selected item from the tree
 
+        //get selected item from the tree and fill in details
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                selectedItemName = newValue.getValue().toString();
-                Item selectedItem = new Item();
-                for (Item item : itemLibrary.getItems()) {
-                    if (item.getName().equals(selectedItemName)) {
-                        selectedItem = item;
-                    }
-                }
-
-                System.out.println("selected: " + selectedItem.getName());
-
-                Label name = new Label("Name: " + selectedItem.getName());
-                Label type = new Label("Type: " + selectedItem.getType());
-                Label hash = new Label("Hash: " + selectedItem.getHash());
-                //Label parent = new Label("Parent: " + selectedItem.getParent());
-                Label isANG = new Label("is ActivatableIEntity: " + selectedItem.isANG_IEntity());
-                Label isAE = new Label("is AudioEmitter: " + selectedItem.isAudioEmitter());
-                Label isAVG = new Label("is AudioVolumetricGeom: " + selectedItem.isAudioVolumetric());
-                Label isGATE = new Label("is Gate: " + selectedItem.isGate());
-                Label isREP = new Label("is Replicable: " + selectedItem.isReplicable());
-                Label isROOM = new Label("is Room: " + selectedItem.isRoom());
-
-                if (selectedItem.isANG_IEntity()) {
-                    isANG.setStyle("-fx-font-weight: bold");
-                }
-                if (selectedItem.isAudioEmitter()) {
-                    isAE.setStyle("-fx-font-weight: bold");
-                }
-                if (selectedItem.isAudioVolumetric()) {
-                    isAVG.setStyle("-fx-font-weight: bold");
-                }
-                if (selectedItem.isGate()) {
-                    isGATE.setStyle("-fx-font-weight: bold");
-                }
-                if (selectedItem.isReplicable()) {
-                    isREP.setStyle("-fx-font-weight: bold");
-                }
-                if (selectedItem.isRoom()) {
-                    isROOM.setStyle("-fx-font-weight: bold");
-                }
-
-
-                for (Stage popup : openPopUps) {
-                    popup.close();
-                }
-                openPopUps.clear();
-
-                itemDetails.getItems().clear();
-                if (!selectedItem.isANG_IEntity() &&
-                        !selectedItem.isAudioEmitter() &&
-                        !selectedItem.isAudioVolumetric() &&
-                        !selectedItem.isGate() &&
-                        !selectedItem.isReplicable() &&
-                        !selectedItem.isRoom()) {
-                    itemDetails.getItems().addAll(name, type, hash);
-                } else {
-                    itemDetails.getItems().addAll(name, type, hash, isANG, isAE, isAVG, isGATE, isREP, isROOM);
-                }
-
-                if (enablePopups) {
-                    if (selectedItem.getANG_IEntity().size() > 0)
-                        arraylistPopUp("Activatable IEntitys:", selectedItem.getANG_IEntity());
-                    if (selectedItem.getAudioEmitters().size() > 0)
-                        arraylistPopUp("Audio Emitters:", selectedItem.getAudioEmitters());
-                    if (selectedItem.getAudioVolumetric().size() > 0)
-                        arraylistPopUp("Audio Volumetric Geomerties:", selectedItem.getAudioVolumetric());
-                    if (selectedItem.getGates().size() > 0) arraylistPopUp("Gates:", selectedItem.getGates());
-                    if (selectedItem.getReplicable().size() > 0)
-                        arraylistPopUp("Replicables:", selectedItem.getReplicable());
-                    if (selectedItem.getRooms().size() > 0) arraylistPopUp("Rooms:", selectedItem.getRooms());
-                }
-            } catch (NullPointerException e) {
-                System.out.println("no information found on selected item");
-            } catch (Exception e) {
-                System.out.println("an error seems to have occured: \n" + e.getMessage());
-            }
+            getDetails(itemDetails, newValue);
         });
 
 
@@ -238,7 +101,7 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest(event -> {
             Platform.exit();
         });
-        System.out.println("launch the app");
+        System.out.println("launched the app");
     }
 
     public void buildItemLibrary(File fl) {
@@ -443,7 +306,13 @@ public class Main extends Application {
                     }
                 }
 
+                //hacks..
+                if(nameAndHash.containsKey(name)){
+                    name = name + " ";
+                }
+
                 this.itemLibrary.add(new Item(parent, type, hash, name, ANG_IEntity, audioEmitters, audioVolumetricGeom, gates, replicable, rooms));
+                this.nameAndHash.put(name, hash);
 
                 for (Item item : itemLibrary.getItems()) {
                     if (ANG_IEntity.contains(item.getName())) item.setANG_IEntity(true);
@@ -454,6 +323,9 @@ public class Main extends Application {
                     if (rooms.contains(item.getName())) item.setRoom(true);
                 }
 
+
+
+                //reset array lists
                 ANG_IEntity = new ArrayList<>();
                 audioEmitters = new ArrayList<>();
                 audioVolumetricGeom = new ArrayList<>();
@@ -492,6 +364,159 @@ public class Main extends Application {
         //serialize the itemsArray
         //serializeItemsArray(this.itemLibrary);
 
+    }
+
+    public void getDetails(ListView itemDetails, TreeItem newValue){
+        try {
+            selectedItemName = newValue.getValue().toString();
+            Item selectedItem = new Item();
+            for (Item item : itemLibrary.getItems()) {
+                if (item.getHash().equals(nameAndHash.get(selectedItemName))) {
+                    selectedItem = item;
+                }
+            }
+
+            System.out.println("selected: " + selectedItem.getName());
+
+            Label name = new Label("Name: " + selectedItem.getName());
+            Label type = new Label("Type: " + selectedItem.getType());
+            Label hash = new Label("Hash: " + selectedItem.getHash());
+            //Label parent = new Label("Parent: " + selectedItem.getParent());
+            Label isANG = new Label("is ActivatableIEntity: " + selectedItem.isANG_IEntity());
+            Label isAE = new Label("is AudioEmitter: " + selectedItem.isAudioEmitter());
+            Label isAVG = new Label("is AudioVolumetricGeom: " + selectedItem.isAudioVolumetric());
+            Label isGATE = new Label("is Gate: " + selectedItem.isGate());
+            Label isREP = new Label("is Replicable: " + selectedItem.isReplicable());
+            Label isROOM = new Label("is Room: " + selectedItem.isRoom());
+
+            if (selectedItem.isANG_IEntity()) {
+                isANG.setStyle("-fx-font-weight: bold");
+            }
+            if (selectedItem.isAudioEmitter()) {
+                isAE.setStyle("-fx-font-weight: bold");
+            }
+            if (selectedItem.isAudioVolumetric()) {
+                isAVG.setStyle("-fx-font-weight: bold");
+            }
+            if (selectedItem.isGate()) {
+                isGATE.setStyle("-fx-font-weight: bold");
+            }
+            if (selectedItem.isReplicable()) {
+                isREP.setStyle("-fx-font-weight: bold");
+            }
+            if (selectedItem.isRoom()) {
+                isROOM.setStyle("-fx-font-weight: bold");
+            }
+
+
+            for (Stage popup : openPopUps) {
+                popup.close();
+            }
+            openPopUps.clear();
+
+            itemDetails.getItems().clear();
+            if (!selectedItem.isANG_IEntity() &&
+                    !selectedItem.isAudioEmitter() &&
+                    !selectedItem.isAudioVolumetric() &&
+                    !selectedItem.isGate() &&
+                    !selectedItem.isReplicable() &&
+                    !selectedItem.isRoom()) {
+                itemDetails.getItems().addAll(name, type, hash);
+            } else {
+                itemDetails.getItems().addAll(name, type, hash, isANG, isAE, isAVG, isGATE, isREP, isROOM);
+            }
+
+            if (enablePopups) {
+                if (selectedItem.getANG_IEntity().size() > 0)
+                    arraylistPopUp("Activatable IEntitys:", selectedItem.getANG_IEntity());
+                if (selectedItem.getAudioEmitters().size() > 0)
+                    arraylistPopUp("Audio Emitters:", selectedItem.getAudioEmitters());
+                if (selectedItem.getAudioVolumetric().size() > 0)
+                    arraylistPopUp("Audio Volumetric Geomerties:", selectedItem.getAudioVolumetric());
+                if (selectedItem.getGates().size() > 0) arraylistPopUp("Gates:", selectedItem.getGates());
+                if (selectedItem.getReplicable().size() > 0)
+                    arraylistPopUp("Replicables:", selectedItem.getReplicable());
+                if (selectedItem.getRooms().size() > 0) arraylistPopUp("Rooms:", selectedItem.getRooms());
+            }
+        } catch (NullPointerException e) {
+            System.out.println("no information found on selected item");
+        } catch (Exception e) {
+            System.out.println("an error seems to have occured: \n" + e.getMessage());
+        }
+    }
+
+    public TreeView populateTreeView(TreeView treeView, ItemLibrary itemLibrary){
+
+        TreeItem<Item> root = itemLibrary.getRoot().getViewItem();
+        treeView.setRoot(root);
+
+        try {
+            if (LoD >= 0) {
+                for (TreeItem<Item> treeview : root.getChildren()) {
+                    treeview.getChildren().addAll(treeview.getValue().getViewItem().getChildren());
+                    if (LoD >= 1) {
+                        for (TreeItem<Item> treeview2 : treeview.getChildren()) {
+                            treeview2.getChildren().addAll(treeview2.getValue().getViewItem().getChildren());
+                            if (LoD >= 2) {
+                                for (TreeItem<Item> treeview3 : treeview2.getChildren()) {
+                                    treeview3.getChildren().addAll(treeview3.getValue().getViewItem().getChildren());
+                                    if (LoD >= 3) {
+                                        for (TreeItem<Item> treeview4 : treeview3.getChildren()) {
+                                            treeview4.getChildren().addAll(treeview4.getValue().getViewItem().getChildren());
+                                            if (LoD >= 4) {
+                                                for (TreeItem<Item> treeview5 : treeview4.getChildren()) {
+                                                    treeview5.getChildren().addAll(treeview5.getValue().getViewItem().getChildren());
+                                                    if (LoD >= 5) {
+                                                        for (TreeItem<Item> treeview6 : treeview5.getChildren()) {
+                                                            treeview6.getChildren().addAll(treeview6.getValue().getViewItem().getChildren());
+                                                            if (LoD >= 6) {
+                                                                for (TreeItem<Item> treeview7 : treeview6.getChildren()) {
+                                                                    treeview7.getChildren().addAll(treeview7.getValue().getViewItem().getChildren());
+                                                                    if (LoD >= 7) {
+                                                                        for (TreeItem<Item> treeview8 : treeview7.getChildren()) {
+                                                                            treeview8.getChildren().addAll(treeview8.getValue().getViewItem().getChildren());
+                                                                            if (LoD >= 8) {
+                                                                                for (TreeItem<Item> treeview9 : treeview8.getChildren()) {
+                                                                                    treeview9.getChildren().addAll(treeview9.getValue().getViewItem().getChildren());
+                                                                                    if (LoD >= 9) {
+                                                                                        for (TreeItem<Item> treeview10 : treeview9.getChildren()) {
+                                                                                            treeview10.getChildren().addAll(treeview10.getValue().getViewItem().getChildren());
+                                                                                            if (LoD >= 10) {
+                                                                                                for (TreeItem<Item> treeview11 : treeview10.getChildren()) {
+                                                                                                    treeview11.getChildren().addAll(treeview11.getValue().getViewItem().getChildren());
+                                                                                                    if (LoD >= 11) {
+                                                                                                        for (TreeItem<Item> treeview12 : treeview11.getChildren()) {
+                                                                                                            treeview12.getChildren().addAll(treeview12.getValue().getViewItem().getChildren());
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (StackOverflowError e) {
+            showMessageDialog(null, "The stack has overflown \n Level of detail could be lower then expected!\"");
+        }
+        System.out.println("added all items inside the tree");
+        treeView.setMinWidth(500);
+        return treeView;
     }
 
     public File getFile() {
