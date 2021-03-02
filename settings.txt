@@ -1,9 +1,9 @@
 
-Level of detail: 4
+Level of detail: 11
 
 python PATH var: py
 
-use old jsons: true
+use old jsons: false
 
 //can be blank
 default TBLU path:

@@ -101,7 +101,9 @@ def scanForAdress(file, fromOffset):
 
 
 #make dict
-d = {'key':'value'}
+dictKeyToName = {'key':'value'}
+dictKeyToHash = {'key':'value'}
+
 
 
 
@@ -121,9 +123,11 @@ def readData(file, type, fromOffset, toOffset):
 		originalOffset = atOffset
 
 		for f in range(numFiles):
-
+			item = readPartFromBIN1File(file, atOffset, atOffset + 0x48)
+			hash = str(item[80:96])
 			string = readStrFromOffset(file, atOffset + 0x40)
-			d[str(f)] = str(string)
+			dictKeyToName[str(f)] = str(string)
+			dictKeyToHash[str(f)] = str(hash)
 
 			atOffset += (0xA8)
 
@@ -134,8 +138,8 @@ def readData(file, type, fromOffset, toOffset):
 			writeToJson("{\n")
 			ID = readHexFromBIN1File(file, atOffset + 0xc, 0x4)
 			ID = int(ID,16)
-			if str(ID) in d:
-				parent = d.get(str(ID))
+			if str(ID) in dictKeyToHash:
+				parent = dictKeyToHash.get(str(ID))
 			else:
 				ID = hex(ID)
 				parent = ID
@@ -372,8 +376,8 @@ def readSubItemInfo(file, itemType, fromOffset):
 		for f in range(numFiles):
 			subItemLink = readHexFromBIN1File(file, atOffset, 0x4)
 			ID = int(subItemLink,16)
-			if str(ID) in d:
-				parent = d.get(str(ID))
+			if str(ID) in dictKeyToName:
+				parent = dictKeyToName.get(str(ID))
 			else:
 				ID = hex(ID)
 				parent = ID
