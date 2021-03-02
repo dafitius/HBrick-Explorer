@@ -536,8 +536,12 @@ public class Main extends Application {
 
         try {
 
+            String pythonCmdName = "python";
+            if (System.getProperty("os.name").startsWith("Windows"))
+                pythonCmdName = "py";
+
             String line = "";
-            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand("python \".\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(excCommand(pythonCmdName + " \".\\decoder\\TBLUdecode.py\" \"" + selectedFile.getPath() + "\" JSON")));
 
             System.out.println("Running decoder");
             if(printDecoder) System.out.println("-----------------------------------------------------------");
