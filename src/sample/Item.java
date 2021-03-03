@@ -5,6 +5,7 @@ import javafx.scene.control.TreeItem;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 public class Item implements Serializable {
 
@@ -13,15 +14,11 @@ public class Item implements Serializable {
     private String Type;
     private String hash;
     private String name;
-    private ArrayList<String> ANG_IEntity;
-    private ArrayList<String> audioEmitters;
-    private ArrayList<String> audioVolumetric;
-    private ArrayList<String> gates;
-    private ArrayList<String> replicable;
-    private ArrayList<String> rooms;
+
 
     //set later
     private ArrayList<Item> children;
+    private Map<String, ArrayList<String>> linkedData;
     private boolean isANG_IEntity = false;
     private boolean isAudioEmitter = false;
     private boolean isAudioVolumetric = false;
@@ -38,21 +35,21 @@ public class Item implements Serializable {
         this.hash = hash;
         this.name = name;
         children = new ArrayList<>();
-        audioEmitters = new ArrayList<String>();
-        ANG_IEntity = new ArrayList<String>();
-        replicable = new ArrayList<String>();
+    }
+    public Item(String parent, String type, String hash, String name, Map<String, ArrayList<String>> linkedData) {
+        this.parent = parent;
+        this.Type = type;
+        this.hash = hash;
+        this.name = name;
+        children = new ArrayList<>();
+        this.linkedData =linkedData;
+
     }
     public Item(String parent, String type, String hash, String name, ArrayList<String> ANG_IEntity, ArrayList<String> audioEmitters, ArrayList<String> audioVolumetric, ArrayList<String> gates, ArrayList<String> replicable, ArrayList<String> rooms) {
         this.parent = parent;
         this.Type = type;
         this.hash = hash;
         this.name = name;
-        this.ANG_IEntity = ANG_IEntity;
-        this.audioEmitters = audioEmitters;
-        this.audioVolumetric = audioVolumetric;
-        this.gates = gates;
-        this.replicable = replicable;
-        this.rooms = rooms;
         children = new ArrayList<>();
 
     }
@@ -93,27 +90,41 @@ public class Item implements Serializable {
     }
 
     public ArrayList<String> getAudioEmitters() {
-        return audioEmitters;
+
+        if(linkedData.containsKey("AudioEmitters")){
+            return linkedData.get("AudioEmitters");
+        }else return null;
+
     }
 
     public ArrayList<String> getANG_IEntity() {
-        return ANG_IEntity;
+        if(linkedData.containsKey("Activatable_NormalGameplay, IEntity")){
+            return linkedData.get("Activatable_NormalGameplay, IEntity");
+        }else return null;
     }
 
     public ArrayList<String> getReplicable() {
-        return replicable;
+        if(linkedData.containsKey("Replicable")){
+            return linkedData.get("Replicable");
+        }else return null;
     }
 
     public ArrayList<String> getAudioVolumetric() {
-        return audioVolumetric;
+        if(linkedData.containsKey("AudioVolumetricGeom ")){
+            return linkedData.get("AudioVolumetricGeom ");
+        }else return null;
     }
 
     public ArrayList<String> getGates() {
-        return gates;
+        if(linkedData.containsKey("Gates")){
+            return linkedData.get("Gates");
+        }else return null;
     }
 
     public ArrayList<String> getRooms() {
-        return rooms;
+        if(linkedData.containsKey("Rooms")){
+            return linkedData.get("Rooms");
+        }else return null;
     }
 
     public void setANG_IEntity(boolean ANG_IEntity) {
@@ -167,12 +178,12 @@ public class Item implements Serializable {
     }
 
     public void sortLinkedArrays(){
-        Collections.sort(ANG_IEntity);
-        Collections.sort(audioEmitters);
-        Collections.sort(audioVolumetric);
-        Collections.sort(gates);
-        Collections.sort(replicable);
-        Collections.sort(rooms);
+        Collections.sort(getANG_IEntity());
+        Collections.sort(getAudioEmitters());
+        Collections.sort(getAudioVolumetric());
+        Collections.sort(getGates());
+        Collections.sort(getReplicable());
+        Collections.sort(getRooms());
     }
 
     @Override

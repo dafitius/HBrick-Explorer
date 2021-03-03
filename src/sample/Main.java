@@ -1,5 +1,6 @@
 package sample;
 
+import Decoder.Decoder;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -107,239 +108,26 @@ public class Main extends Application {
     public void buildItemLibrary(File fl) {
 
 
-        File cacheFile = new File(System.getProperty("user.dir") + "\\cache\\" + filename + ".dat");
+
         //check if file is already serialized
-        if (cacheFile.exists() && useCache) {
-            this.itemLibrary = deserializeItemsArray(filename);
-        } else {
+
+
             //count the amount of lines
-            String fileAsString = "";
-            try {
-                fileAsString = readTextFile(fl.getPath(), StandardCharsets.US_ASCII);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
             this.itemLibrary = new ItemLibrary(filename);
-
-
-            //Extract the parts with directory structure
-            ArrayList<String> lines = new ArrayList<>();
-            String lastItemName = "";
-            ArrayList<ArrayList> linkedDataArrays = new ArrayList<>();
-            for (String line : fileAsString.split("},")) {
-                if (line.contains("parent")) {
-                    lines.add(line);
-                    line = line.substring(1);
-                    String[] parts = line.split(",");
-                    String name = parts[3].split("\"")[3];
-                    lastItemName = name;
-                }
-                if (line.contains("\"Activatable_NormalGameplay, IEntity\":")) {
-                    ArrayList<String> ANG_IEntity = new ArrayList<>();
-                    ANG_IEntity.add("ANG");
-                    ANG_IEntity.add(lastItemName);
-                    for (String string : line.split("\"Activatable_NormalGameplay, IEntity\":")[1].split("\"")) {
-                        string = string.replaceAll(",", "");
-                        string = string.replaceAll("]", "");
-                        string = string.replaceAll("}", "");
-                        string = string.replaceAll("\\{", "");
-                        string = string.replaceAll("\\[", "");
-                        string = string.replaceAll("\\\\s+", "");
-                        string = string.replaceAll(" ", "");
-                        if (string.length() >= 3) {
-                            ANG_IEntity.add(string);
-                        }
-                    }
-                    System.out.println(ANG_IEntity.size() + " Activatable_NormalGameplay, IEntity's found in " + ANG_IEntity.get(1));
-                    linkedDataArrays.add(ANG_IEntity);
-                    //System.out.println("Activatable_NormalGameplay, IEntity = " + line.split("\"Activatable_NormalGameplay, IEntity\":")[1]);
-                }
-                if (line.contains("\"AudioEmitters\":")) {
-                    ArrayList<String> audioEmitters = new ArrayList<>();
-                    audioEmitters.add("AE");
-                    audioEmitters.add(lastItemName);
-                    for (String string : line.split("\"AudioEmitters\":")[1].split("\"")) {
-                        string = string.replaceAll(",", "");
-                        string = string.replaceAll("]", "");
-                        string = string.replaceAll("}", "");
-                        string = string.replaceAll("\\{", "");
-                        string = string.replaceAll("\\[", "");
-                        string = string.replaceAll("\\\\s+", "");
-                        string = string.replaceAll(" ", "");
-                        if (string.length() >= 3) {
-                            audioEmitters.add(string);
-                        }
-                    }
-                    System.out.println(audioEmitters.size() + " audioEmitters found in " + audioEmitters.get(1));
-                    linkedDataArrays.add(audioEmitters);
-                    //System.out.println("AudioEmitters = " + line.split("\"AudioEmitters\":")[1]);
-                }
-                if (line.contains("\"AudioVolumetricGeom\":")) {
-                    ArrayList<String> audioVolumetricGeom = new ArrayList<>();
-                    audioVolumetricGeom.add("AVG");
-                    audioVolumetricGeom.add(lastItemName);
-                    for (String string : line.split("\"AudioVolumetricGeom\":")[1].split("\"")) {
-                        string = string.replaceAll(",", "");
-                        string = string.replaceAll("]", "");
-                        string = string.replaceAll("}", "");
-                        string = string.replaceAll("\\{", "");
-                        string = string.replaceAll("\\[", "");
-                        string = string.replaceAll("\\\\s+", "");
-                        string = string.replaceAll(" ", "");
-                        if (string.length() >= 3) {
-                            audioVolumetricGeom.add(string);
-                        }
-                    }
-                    System.out.println(audioVolumetricGeom.size() + " audioVolumetricGeometries found in " + audioVolumetricGeom.get(1));
-                    linkedDataArrays.add(audioVolumetricGeom);
-                    //System.out.println("AudioEmitters = " + line.split("\"AudioEmitters\":")[1]);
-                }
-                if (line.contains("\"Gates\":")) {
-                    ArrayList<String> gates = new ArrayList<>();
-                    gates.add("GATE");
-                    gates.add(lastItemName);
-                    for (String string : line.split("\"Gates\":")[1].split("\"")) {
-                        string = string.replaceAll(",", "");
-                        string = string.replaceAll("]", "");
-                        string = string.replaceAll("}", "");
-                        string = string.replaceAll("\\{", "");
-                        string = string.replaceAll("\\[", "");
-                        string = string.replaceAll("\\\\s+", "");
-                        string = string.replaceAll(" ", "");
-                        if (string.length() >= 3) {
-                            gates.add(string);
-                        }
-                    }
-                    System.out.println(gates.size() + " gates found in " + gates.get(1));
-                    linkedDataArrays.add(gates);
-                    //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
-                }
-                if (line.contains("\"Replicable\":")) {
-                    ArrayList<String> replicable = new ArrayList<>();
-                    replicable.add("REP");
-                    replicable.add(lastItemName);
-                    for (String string : line.split("\"Replicable\":")[1].split("\"")) {
-                        string = string.replaceAll(",", "");
-                        string = string.replaceAll("]", "");
-                        string = string.replaceAll("}", "");
-                        string = string.replaceAll("\\{", "");
-                        string = string.replaceAll("\\[", "");
-                        string = string.replaceAll("\\\\s+", "");
-                        string = string.replaceAll(" ", "");
-                        if (string.length() >= 3) {
-                            replicable.add(string);
-                        }
-                    }
-                    System.out.println(replicable.size() + " replicables found in " + replicable.get(1));
-                    linkedDataArrays.add(replicable);
-                    //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
-                }
-                if (line.contains("\"Rooms\":")) {
-                    ArrayList<String> rooms = new ArrayList<>();
-                    rooms.add("ROOM");
-                    rooms.add(lastItemName);
-                    for (String string : line.split("\"Rooms\":")[1].split("\"")) {
-                        string = string.replaceAll(",", "");
-                        string = string.replaceAll("]", "");
-                        string = string.replaceAll("}", "");
-                        string = string.replaceAll("\\{", "");
-                        string = string.replaceAll("\\[", "");
-                        string = string.replaceAll("\\\\s+", "");
-                        string = string.replaceAll(" ", "");
-                        if (string.length() >= 3) {
-                            rooms.add(string);
-                        }
-                    }
-                    System.out.println(rooms.size() + " rooms found in " + rooms.get(1));
-                    linkedDataArrays.add(rooms);
-                    //System.out.println("Replicable = " + line.split("\"Replicable\":")[1]);
-                }
-            }
-
-            //create the objects from the JSON
-            ArrayList<String> ANG_IEntity = new ArrayList<>();
-            ArrayList<String> audioEmitters = new ArrayList<>();
-            ArrayList<String> audioVolumetricGeom = new ArrayList<>();
-            ArrayList<String> gates = new ArrayList<>();
-            ArrayList<String> replicable = new ArrayList<>();
-            ArrayList<String> rooms = new ArrayList<>();
-
-            for (String line : lines) {
-                line = line.substring(1);
-                String[] parts = line.split(",");
-                String parent = parts[0].split("\"")[3];
-                String type = parts[1].split("\"")[3];
-                String hash = parts[2].split("\"")[3];
-                String name = parts[3].split("\"")[3];
-
-                //add linked data
-                for (ArrayList arrayList : linkedDataArrays) {
-                    if (arrayList.size() > 2) {
-                        if (arrayList.get(1).equals(name)) {
-                            arrayList.remove(name);
-                            if (arrayList.get(0).equals("ANG")) {
-                                arrayList.remove("ANG");
-                                ANG_IEntity.addAll(arrayList);
-                            }
-                            if (arrayList.get(0).equals("AE")) {
-                                arrayList.remove("AE");
-                                audioEmitters.addAll(arrayList);
-                            }
-                            if (arrayList.get(0).equals("AVG")) {
-                                arrayList.remove("AVG");
-                                audioVolumetricGeom.addAll(arrayList);
-                            }
-                            if (arrayList.get(0).equals("GATE")) {
-                                arrayList.remove("GATE");
-                                gates.addAll(arrayList);
-                            }
-                            if (arrayList.get(0).equals("REP")) {
-                                arrayList.remove("REP");
-                                replicable.addAll(arrayList);
-                            }
-                            if (arrayList.get(0).equals("ROOM")) {
-                                arrayList.remove("ROOM");
-                                rooms.addAll(arrayList);
-                            }
-                        }
-                    }
-                }
-
-                //hacks..
-                if(nameAndHash.containsKey(name)){
-                    name = name + " ";
-                }
-
-                this.itemLibrary.add(new Item(parent, type, hash, name, ANG_IEntity, audioEmitters, audioVolumetricGeom, gates, replicable, rooms));
-                this.nameAndHash.put(name, hash);
-
-                for (Item item : itemLibrary.getItems()) {
-                    if (ANG_IEntity.contains(item.getName())) item.setANG_IEntity(true);
-                    if (audioEmitters.contains(item.getName())) item.setAudioEmitter(true);
-                    if (audioVolumetricGeom.contains(item.getName())) item.setAudioVolumetric(true);
-                    if (gates.contains(item.getName())) item.setGate(true);
-                    if (replicable.contains(item.getName())) item.setReplicable(true);
-                    if (rooms.contains(item.getName())) item.setRoom(true);
-                }
-
-
-
-                //reset array lists
-                ANG_IEntity = new ArrayList<>();
-                audioEmitters = new ArrayList<>();
-                audioVolumetricGeom = new ArrayList<>();
-                gates = new ArrayList<>();
-                replicable = new ArrayList<>();
-                rooms = new ArrayList<>();
-
-
-            }
-            for (Item item : itemLibrary.getItems()) {
-                item.sortLinkedArrays();
-            }
-
+        try {
+            Decoder decoder = new Decoder(this.itemLibrary);
+            decoder.decode(selectedFile);
+        }catch (IOException e){
+            System.out.println(e.getMessage());
         }
+
+
+//            for (Item item : itemLibrary.getItems()) {
+//                item.sortLinkedArrays();
+//            }
+
+
 
         //Add a root node
         this.itemLibrary.add(new Item("root", "", "", filename));
@@ -348,14 +136,13 @@ public class Main extends Application {
         //find the children
         for (Item itemToFill : this.itemLibrary.getItems()) {
             for (Item item : this.itemLibrary.getItems()) {
-                if (item.getParent().equals(itemToFill.getHash())) {
+                if (item.getParent().toLowerCase().equals(itemToFill.getHash().toLowerCase())) {
                     itemToFill.addChild(item);
                 }
-                if (itemToFill.getParent().equals("root") && item.getParent().contains("0xff")) {
+                if (itemToFill.getParent().equals("root") && item.getParent().toLowerCase().contains("ffffffffff")) {
                     itemToFill.addChild(item);
                 }
             }
-
         }
         System.out.println("succesfully constructed ItemLibrary");
         //sort the children
