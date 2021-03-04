@@ -136,53 +136,90 @@ public class Decoder {
 
         switch(type){
             case 0:
-
-                //data to pull
-                String name = "";
-                String hash = "";
-                String entityType = "";
-                String parentHash = "";
-                Map<String, ArrayList<String>> linkedData = new HashMap<>();
-
-                fillParentMaps(numItems, atOffset);
-                for (int i = 0; i < numItems; i++) {
-
-                    String parentIndex = readHexString(this.fileInBytes, atOffset + 0xc, 0x4);
-
-                    if(Tools.isParsable(parentIndex, 16)){
-                        if (keyAndHash.containsKey(Integer.parseInt(parentIndex, 16))){
-                            parentHash = keyAndHash.get(Integer.parseInt(parentIndex, 16));
-                        }
-                    } else parentHash = parentIndex;
-                    entityType = readHexString(this.fileInBytes, atOffset + 0x20, 0x4);
-                    name = readStringFromOffset(this.fileInBytes, atOffset + 0x40);
-                    hash = readHexString(this.fileInBytes, atOffset + 0x28, 0x8);
-                    atOffset += (0x48);
-                    int amountOfItemLinks = 0;
-                    ArrayList<BlockAdress> blockAdresses = scanForBlockAdress(this.fileInBytes, atOffset, atOffset + 0x60);
-                    for (BlockAdress ba : blockAdresses) {
-                        linkedData = readSubData(ba.getPosition(), ba.getStartPos(), ba.getEndPos());
-                        try {
-                            for (String key : linkedData.keySet()) {
-                                System.out.println(key + ": "+ linkedData.get(key).toString());
-                            }
-                        }catch (NullPointerException e){
-                            System.out.println(e.getMessage());
-                        }
-                    }
-                    atOffset += (0x18 * 4);
-
-                    if(linkedData != null) {
-                        this.itemLibrary.add(new Item(parentHash, entityType, hash, name, linkedData));
-                    } else this.itemLibrary.add(new Item(parentHash, entityType, hash, name));
-
-                }
+                readBlock0(numItems, atOffset);
                 break;
+            case 1:
+                readBlock1(numItems, atOffset);
+                break;
+            case 2: case 3: case 4:
+                readBlock234(numItems, atOffset);
+                break;
+            case 5:
+                readBlock5(numItems, atOffset);
+                break;
+            case 6:
+                System.out.println("wait THATS ILLEGAL!");
+                break;
+            case 7:
+                readBlock7(numItems, atOffset);
+                break;
+
         }
 
     }
 
-    public Map<String, ArrayList<String>> readSubData(int type, int from, int to){
+    public void readBlock0(int numItems, int startOffset){
+        int atOffset = startOffset;
+
+        //data to pull
+        String name = "";
+        String hash = "";
+        String entityType = "";
+        String parentHash = "";
+        Map<String, ArrayList<String>> linkedData = new HashMap<>();
+
+        fillParentMaps(numItems, atOffset);
+        for (int i = 0; i < numItems; i++) {
+
+            String parentIndex = readHexString(this.fileInBytes, atOffset + 0xc, 0x4);
+
+            if(Tools.isParsable(parentIndex, 16)){
+                if (keyAndHash.containsKey(Integer.parseInt(parentIndex, 16))){
+                    parentHash = keyAndHash.get(Integer.parseInt(parentIndex, 16));
+                }
+            } else parentHash = parentIndex;
+            entityType = readHexString(this.fileInBytes, atOffset + 0x20, 0x4);
+            name = readStringFromOffset(this.fileInBytes, atOffset + 0x40);
+            hash = readHexString(this.fileInBytes, atOffset + 0x28, 0x8);
+            atOffset += (0x48);
+            ArrayList<BlockAdress> blockAdresses = scanForBlockAdress(this.fileInBytes, atOffset, atOffset + 0x60);
+            for (BlockAdress ba : blockAdresses) {
+                linkedData = readBlock0SubData(ba.getPosition(), ba.getStartPos(), ba.getEndPos());
+                try {
+                    for (String key : linkedData.keySet()) {
+                        System.out.println(key + ": "+ linkedData.get(key).toString());
+                    }
+                }catch (NullPointerException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+            atOffset += (0x18 * 4);
+
+            if(linkedData != null) {
+                this.itemLibrary.add(new Item(parentHash, entityType, hash, name, linkedData));
+            } else this.itemLibrary.add(new Item(parentHash, entityType, hash, name));
+
+        }
+    }
+    public void readBlock1(int numItems, int startOffset){
+        int atOffset = startOffset;
+        System.out.println("type 1");
+    }
+    public void readBlock234(int numItems, int startOffset){
+        int atOffset = startOffset;
+        System.out.println("type: 2, 3, 4");
+    }
+    public void readBlock5(int numItems, int startOffset){
+        int atOffset = startOffset;
+        System.out.println("type 5");
+    }
+    public void readBlock7(int numItems, int startOffset){
+        int atOffset = startOffset;
+        System.out.println("type 7");
+    }
+
+
+    public Map<String, ArrayList<String>> readBlock0SubData(int type, int from, int to){
         int atOffset = from;
         int numItems = Integer.parseInt(readHexString(this.fileInBytes, atOffset, 0x4), 16);
         atOffset += 0x4;
@@ -228,5 +265,6 @@ public class Decoder {
 
         return null;
     }
+
 
 }
