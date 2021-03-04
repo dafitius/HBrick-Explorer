@@ -1,4 +1,6 @@
-package Decoder;
+package Decoder.BlockTypes;
+
+import Decoder.Decoder;
 
 public class BlockAdress {
     private int position;
