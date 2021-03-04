@@ -1,6 +1,6 @@
-# TBLU viewer
+# Files.TBLU viewer
 
-TBLU viewer is a javaFX application made to view the TBLU files found in the HITMAN™: World of Assasination series.
+Files.TBLU viewer is a javaFX application made to view the Files.TBLU files found in the HITMAN™: World of Assasination series.
 
 ## requirements
 - Java RE 8
@@ -9,7 +9,7 @@ TBLU viewer is a javaFX application made to view the TBLU files found in the HIT
 
 # usage
 
-Run **TBLUViewer.jar** and select a .TBLU file.
+Run **TBLUViewer.jar** and select a .Files.TBLU file.
 
 The application can be configured inside of the setting.txt.
 
@@ -30,9 +30,9 @@ Allows you to change the PATH variable used to run a python script.
 
 ### use old jsons: <true/false>
 Checks if file to load has already been decoded and uses this data to build the treeview.
-Decreases load time due to the application not having to decode the TBLU file.
+Decreases load time due to the application not having to decode the Files.TBLU file.
 
-### default TBLU path: <file path>
+### default Files.TBLU path: <file path>
 sets the filechooser's inital directory to this path.
 Which can save some clicks :)
 
@@ -50,7 +50,7 @@ allows the decoder to print debug information
 
 # internal workings
 
-TBLUviewer uses a Python script to decode the TBLU files. After decoding the file the scripts ouput is interpretetdby a JavaFX application that builds an ItemLibrary and displays its items inside a treeView.
+TBLUviewer uses a Python script to decode the Files.TBLU files. After decoding the file the scripts ouput is interpretetdby a JavaFX application that builds an ItemLibrary and displays its items inside a treeView.
 
 
 internal flow:

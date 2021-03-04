@@ -1,6 +1,6 @@
 package sample;
 
-import Decoder.Decoder;
+import Decoder.TBLU.TBLUDecoder;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -93,7 +92,7 @@ public class Main extends Application {
         BorderPane borderpane = new BorderPane();
         hbox.getChildren().addAll(treeView, itemDetails);
         borderpane.setCenter(hbox);
-        primaryStage.setTitle("TBLU tree viewer");
+        primaryStage.setTitle("Files.TBLU tree viewer");
         primaryStage.setScene(new Scene(borderpane, 850, 675));
         primaryStage.getIcons().add(new javafx.scene.image.Image(this.getClass().getResource("icon.png").toExternalForm()));
         if(this.enableDarkmode) primaryStage.getScene().getStylesheets().add(this.getClass().getResource("darkmode.css").toExternalForm());
@@ -116,8 +115,8 @@ public class Main extends Application {
 
             this.itemLibrary = new ItemLibrary(filename);
         try {
-            Decoder decoder = new Decoder(this.itemLibrary);
-            decoder.decode(selectedFile);
+            TBLUDecoder tbluDecoder = new TBLUDecoder();
+            tbluDecoder.decode(selectedFile);
         }catch (IOException e){
             System.out.println(e.getMessage());
         }
@@ -314,7 +313,7 @@ public class Main extends Application {
             if(initialDir.exists()) fileChooser.setInitialDirectory(initialDir);
         }
         fileChooser.setTitle("Select a TBLU file");
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("TBLU files", "*.TBLU");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Files.TBLU files", "*.TBLU");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         File selectedFile = fileChooser.showOpenDialog(selectFile);

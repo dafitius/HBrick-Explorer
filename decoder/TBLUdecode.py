@@ -1,6 +1,6 @@
 import os
 import sys
-#can decode TBLU
+#can decode Files.TBLU
 
 def isBIN1File(file):
 	filedata = file.read(20)
