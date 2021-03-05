@@ -22,6 +22,15 @@ public class TBLUDecoder {
     HashMap<Integer, String> keyAndHash = new HashMap<>();
     ItemLibrary itemLibrary;
 
+    private Header header;
+    private ArrayList<Block0> block0;
+    private ArrayList<Block1> block1;
+    private ArrayList<Block2> block2;
+    private ArrayList<Block3> block3;
+    private ArrayList<Block4> block4;
+    private ArrayList<Block5> block5;
+    private ArrayList<Block7> block7;
+    private Footer footer;
 
     public TBLUDecoder() {
 
@@ -29,18 +38,28 @@ public class TBLUDecoder {
 
 
     public TBLU decode(File file) throws IOException{
+        this.header = new Header();
+        this.block0 = new ArrayList<>();
+        this.block1 = new ArrayList<>();
+        this.block2 = new ArrayList<>();
+        this.block3 = new ArrayList<>();
+        this.block4 = new ArrayList<>();
+        this.block5 = new ArrayList<>();
+        this.block7 = new ArrayList<>();
+
         this.TBLUfile = file;
         this.fileInBytes = Files.readAllBytes(Paths.get(file.getPath()));
         System.out.println("start decode");
         if(Tools.isBIN1File(this.fileInBytes)){
             //header size is 0x18, so that will be skipped,
+
             ArrayList<BlockAdress> blockAdresses = Tools.scanForBlockAdress(this.fileInBytes, 0x18, 0xD8);
 
             for(BlockAdress ba : blockAdresses){
-                readData(ba.getPosition(), ba.getStartPos(), ba.getEndPos());
+               readData(ba.getPosition(), ba.getStartPos(), ba.getEndPos());
             }
         }
-        return null;
+        return new TBLU(this.header, this.block0, this.block1, this.block2, this.block3, this.block4, this.block5, this.block7, this.footer);
     }
 
 
@@ -66,29 +85,28 @@ public class TBLUDecoder {
         switch(type){
             case 0:
                 fillParentMaps(numItems, atOffset);
-                readBlock0(numItems, atOffset);
+                this.block0 = readBlock0(numItems, atOffset);
                 break;
             case 1:
-                readBlock1(numItems, atOffset);
+                this.block1 = readBlock1(numItems, atOffset);
                 break;
             case 2:
-                readBlock2(numItems, atOffset);
+                this.block2 = readBlock2(numItems, atOffset);
                 break;
             case 3:
-                readBlock3(numItems, atOffset);
+                this.block3 = readBlock3(numItems, atOffset);
                 break;
             case 4:
-                readBlock4(numItems, atOffset);
+                this.block4 = readBlock4(numItems, atOffset);
                 break;
-
             case 5:
-                readBlock5(numItems, atOffset);
+                this.block5 = readBlock5(numItems, atOffset);
                 break;
             case 6:
                 System.out.println("BLOCK6 DETECTED  ---------------------------------------------------------------------");
                 break;
             case 7:
-                readBlock7(numItems, atOffset);
+                this.block7 = readBlock7(numItems, atOffset);
                 break;
 
         }
@@ -104,7 +122,7 @@ public class TBLUDecoder {
         String entityType = "";
         String parentHash = "";
         String parentName = "";
-        Block0_0 block0_0;
+        Block0_0List block0_0List;
         Block0_1 block0_1;
         Block0_2 block0_2;
         Block0_3 block0_3;
@@ -112,7 +130,7 @@ public class TBLUDecoder {
 
         for (int i = 0; i < numItems; i++) {
 
-            block0_0 = new Block0_0();
+            block0_0List = new Block0_0List();
             block0_1 = new Block0_1();
             block0_2 = new Block0_2();
             block0_3 = new Block0_3();
@@ -136,7 +154,7 @@ public class TBLUDecoder {
                 subBlock foundBlock = readBlock0SubData(ba.getPosition(), ba.getStartPos(), ba.getEndPos());
                 int BlockType = foundBlock.getType();
 
-                if (BlockType == 0) block0_0 = (Block0_0) foundBlock;
+                if (BlockType == 0) block0_0List = (Block0_0List) foundBlock;
                 if (BlockType == 1) block0_1 = (Block0_1) foundBlock;
                 if (BlockType == 2) block0_2 = (Block0_2) foundBlock;
                 if (BlockType == 3) block0_3 = (Block0_3) foundBlock;
@@ -145,13 +163,17 @@ public class TBLUDecoder {
             }
             atOffset += (0x18 * 4);
 
+            if(block0_0List.getBlocks() != null){
+                //System.out.println(block0_0List.getBlocks().toString());
+            }
 
-            blocks.add(new Block0(parentName, parentHash, entityType, hash, name, block0_0, block0_1, block0_2, block0_3));
+            blocks.add(new Block0(parentName, parentHash, entityType, hash, name, block0_0List, block0_1, block0_2, block0_3));
 
 
         }
         return blocks;
     }
+
     public ArrayList<Block1> readBlock1(int numItems, int startOffset){
         int atOffset = startOffset;
         System.out.println("type 1");
@@ -373,9 +395,41 @@ public class TBLUDecoder {
         return null;
     }
 
-    public Block0_0 readBlock0_0(int numItems, int startOffset){
+    public Block0_0List readBlock0_0(int numItems, int startOffset){
         int atOffset = startOffset;
-        return new Block0_0();
+        ArrayList<Block0_0> blocks = new ArrayList<>();
+        String string1;
+        String parentName = "";
+        String parentHash = "";
+        String string2;
+        for (int i = 0; i < numItems; i++) {
+
+            string1 = Tools.readStringFromOffset(this.fileInBytes, atOffset + 0x8);
+            string2 = Tools.readStringFromOffset(this.fileInBytes, atOffset + 0x20);
+            String parent1Index = Tools.readHexAsString(this.fileInBytes, atOffset + 0x10, 0x4);
+            if(Tools.isParsable(parent1Index, 16)){
+                if (keyAndName.containsKey(Integer.parseInt(parent1Index, 16))){
+                    parentName = keyAndName.get(Integer.parseInt(parent1Index, 16));
+                    parentHash = keyAndHash.get(Integer.parseInt(parent1Index, 16));
+                }
+            } else {
+                parentName = parent1Index;
+                parentHash = parent1Index;
+            }
+
+
+            blocks.add(new Block0_0(string1, parentName, parentHash, string2));
+            atOffset += 0x28;
+        }
+
+//        for(Block0_0 block : blocks){
+//            if(!block.getString1().equals(block.getString2())) {
+//                System.out.println("                                    " + block.printBlock());
+//            }
+//        }
+
+
+        return new Block0_0List(blocks);
     }
 
     public Block0_1 readBlock0_1(int numItems, int startOffset){

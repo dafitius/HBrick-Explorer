@@ -1,6 +1,10 @@
 package sample;
 
+import Decoder.TBLU.BlockTypes.Block0;
+import Decoder.TBLU.BlockTypes.Block0_0List;
+import Decoder.TBLU.BlockTypes.Block0_3;
 import Decoder.TBLU.TBLUDecoder;
+import Files.TBLU;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -116,7 +120,17 @@ public class Main extends Application {
             this.itemLibrary = new ItemLibrary(filename);
         try {
             TBLUDecoder tbluDecoder = new TBLUDecoder();
-            tbluDecoder.decode(selectedFile);
+            TBLU TBLUfile = tbluDecoder.decode(selectedFile);
+            System.out.println("----------------------------------------------");
+            //System.out.println(TBLUfile.toString());
+            ArrayList<Block0> blocks = TBLUfile.getBlock0();
+            for(Block0 block : blocks){
+
+                if(block.getSubBlock0List().getBlocks() != null) {
+
+                    System.out.println(block.getSubBlock0List().toString());
+                }
+            }
         }catch (IOException e){
             System.out.println(e.getMessage());
         }

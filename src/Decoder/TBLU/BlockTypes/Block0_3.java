@@ -16,14 +16,19 @@ public class Block0_3 implements subBlock{
         this.arrays = arrays;
     }
 
+    public Map<String, ArrayList<String>> getArrays() {
+        return arrays;
+    }
 
     @Override
     public String toString() {
         if(arrays == null){
-            return "";
-        }else return "Block0_3{" +
-                "arrays=" + arrays.toString() +
-                '}';
+            return "no block0_3 found";
+        }else {
+            return "Block0_3{" +
+                    "arrays=" + arrays.toString() +
+                    '}';
+        }
     }
 
     @Override
