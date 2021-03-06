@@ -29,7 +29,7 @@ public class Block0_0List implements subBlock{
     @Override
     public String toString() {
         if (blocks == null) {
-            return "no list found";
+            return "NOFOUND";
         } else {
             return "Block0_0List{" +
                     "blockType=" + blockType +

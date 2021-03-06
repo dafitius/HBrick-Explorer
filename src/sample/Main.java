@@ -122,15 +122,10 @@ public class Main extends Application {
             TBLUDecoder tbluDecoder = new TBLUDecoder();
             TBLU TBLUfile = tbluDecoder.decode(selectedFile);
             System.out.println("----------------------------------------------");
-            //System.out.println(TBLUfile.toString());
-            ArrayList<Block0> blocks = TBLUfile.getBlock0();
-            for(Block0 block : blocks){
-
-                if(block.getSubBlock0List().getBlocks() != null) {
-
-                    System.out.println(block.getSubBlock0List().toString());
-                }
-            }
+            System.out.println("size: " + TBLUfile.getHeader().getFileSize() + " bytes");
+            System.out.println("type: " + TBLUfile.getHeader().getFileType());
+            System.out.println("root: " + TBLUfile.getHeader().getRootName());
+            System.out.println("unkown: " + TBLUfile.getHeader().getUnknown());
         }catch (IOException e){
             System.out.println(e.getMessage());
         }

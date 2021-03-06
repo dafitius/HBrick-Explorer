@@ -23,7 +23,7 @@ public class Block0_3 implements subBlock{
     @Override
     public String toString() {
         if(arrays == null){
-            return "no block0_3 found";
+            return "NOFOUND";
         }else {
             return "Block0_3{" +
                     "arrays=" + arrays.toString() +

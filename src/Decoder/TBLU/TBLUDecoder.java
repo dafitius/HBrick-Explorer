@@ -11,16 +11,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.KeyStore;
 import java.util.*;
 
 public class TBLUDecoder {
 
     File TBLUfile;
-    TBLU deserializedFile;
     byte[] fileInBytes;
     HashMap<Integer, String> keyAndName = new HashMap<>();
     HashMap<Integer, String> keyAndHash = new HashMap<>();
-    ItemLibrary itemLibrary;
 
     private Header header;
     private ArrayList<Block0> block0;
@@ -52,7 +51,8 @@ public class TBLUDecoder {
         System.out.println("start decode");
         if(Tools.isBIN1File(this.fileInBytes)){
             //header size is 0x18, so that will be skipped,
-
+            fillParentMaps();
+            this.header = readHeader(this.fileInBytes);
             ArrayList<BlockAdress> blockAdresses = Tools.scanForBlockAdress(this.fileInBytes, 0x18, 0xD8);
 
             for(BlockAdress ba : blockAdresses){
@@ -63,7 +63,12 @@ public class TBLUDecoder {
     }
 
 
-    public void fillParentMaps(int numItems, int atOffset){
+    public void fillParentMaps(){
+
+        int atOffset = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, 0x18, 0x4), 16);
+        int numItems = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0xc, 0x4), 16);
+        atOffset += 0x10;
+
         for (int i = 0; i < numItems; i++) {
             String hash = Tools.readHexAsString(this.fileInBytes, atOffset + 0x28, 0x8);
             String name = Tools.readStringFromOffset(this.fileInBytes, atOffset + 0x40);
@@ -74,17 +79,52 @@ public class TBLUDecoder {
     }
 
 
+    public Header readHeader(byte[] bytes){
+        String fileType;
+        int fileSize;
+        String unknown;
+        String rootName = "";
+        String rootHash = "";
+
+        fileType = Tools.readHexAsString(bytes, 0x4, 0x4);
+
+        fileSize = Integer.parseInt(Tools.readHexAsStringReverse(bytes, 0x8, 0x4), 16);
+        fileSize += (Integer.parseInt(Tools.readHexAsString(bytes, fileSize + 0x18, 0x4), 16) * 0x4);
+
+        fileSize += 0x1C;
+        if(fileSize < bytes.length){
+            fileSize += (Integer.parseInt(Tools.readHexAsString(bytes, fileSize + 0x4, 0x4), 16));
+            fileSize += 0x8;
+        }
+
+        unknown = Tools.readHexAsString(bytes, 0x10, 0x4);
+
+        String parentIndex = Tools.readHexAsString(bytes, 0x14, 0x4);
+        if(Tools.isParsable(parentIndex, 16)){
+            if (keyAndHash.containsKey(Integer.parseInt(parentIndex, 16))){
+                rootHash = keyAndHash.get(Integer.parseInt(parentIndex, 16));
+                rootName = keyAndName.get(Integer.parseInt(parentIndex, 16));
+            }
+        } else {
+            rootHash = parentIndex;
+            rootName = parentIndex;
+        }
+
+
+        return new Header(fileType, fileSize, unknown, rootName, rootHash);
+
+    }
+
+
     public void readData(int type, int from, int to){
             int atOffset = from;
             int numItems = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset, 0x4), 16);
             atOffset += 0x4;
 
-        System.out.println("  Type " + type + " found");
-        System.out.println("  amount: " + numItems);
+
 
         switch(type){
             case 0:
-                fillParentMaps(numItems, atOffset);
                 this.block0 = readBlock0(numItems, atOffset);
                 break;
             case 1:
@@ -163,9 +203,6 @@ public class TBLUDecoder {
             }
             atOffset += (0x18 * 4);
 
-            if(block0_0List.getBlocks() != null){
-                //System.out.println(block0_0List.getBlocks().toString());
-            }
 
             blocks.add(new Block0(parentName, parentHash, entityType, hash, name, block0_0List, block0_1, block0_2, block0_3));
 
@@ -176,7 +213,7 @@ public class TBLUDecoder {
 
     public ArrayList<Block1> readBlock1(int numItems, int startOffset){
         int atOffset = startOffset;
-        System.out.println("type 1");
+
         ArrayList<Block1> blocks = new ArrayList<>();
         String parentName;
         String parentHash;
@@ -184,7 +221,7 @@ public class TBLUDecoder {
             blocks.add(new Block1(Tools.readHexAsString(this.fileInBytes, atOffset, 0x4)));
             atOffset += 0x4;
         }
-        System.out.println(blocks.toString());
+
         return blocks;
     }
 
@@ -309,7 +346,7 @@ public class TBLUDecoder {
     }
 
     public ArrayList<Block5> readBlock5(int numItems, int startOffset){
-        System.out.println("type 5");
+
         int atOffset = startOffset;
         ArrayList<Block5> blocks = new ArrayList<>();
         String hash;
@@ -336,7 +373,7 @@ public class TBLUDecoder {
 
     public ArrayList<Block7> readBlock7(int numItems, int startOffset){
         int atOffset = startOffset;
-        System.out.println("type 7");
+
 
         ArrayList<Block7> blocks = new ArrayList<>();
         String hash1;
@@ -376,8 +413,7 @@ public class TBLUDecoder {
 
         int numItems = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset, 0x4), 16);
         atOffset += 0x4;
-        System.out.println("  sub-Type " + type + " found");
-        System.out.println("  amount: " + numItems);
+
 
 
         switch(type){
@@ -422,11 +458,7 @@ public class TBLUDecoder {
             atOffset += 0x28;
         }
 
-//        for(Block0_0 block : blocks){
-//            if(!block.getString1().equals(block.getString2())) {
-//                System.out.println("                                    " + block.printBlock());
-//            }
-//        }
+
 
 
         return new Block0_0List(blocks);
@@ -434,12 +466,73 @@ public class TBLUDecoder {
 
     public Block0_1 readBlock0_1(int numItems, int startOffset){
         int atOffset = startOffset;
+        String name = "";
+        // map = <name, ArrayList<parentName, parentHash>, String>
+        Map<String, ArrayList<Map.Entry<Map.Entry<String, String>, String>>> map = new HashMap<>();
+        for (int i = 0; i < numItems; i++) {
+
+
+            name = Tools.readStringFromOffset(this.fileInBytes, atOffset + 0x8);
+
+
+            ArrayList<Map.Entry<Map.Entry<String, String>, String>> strings = new ArrayList<>();
+
+            ArrayList<BlockAdress> blockAdresses = Tools.scanForBlockAdress(this.fileInBytes, atOffset + 0x18, atOffset + 0x30);
+            for (BlockAdress ba : blockAdresses) {
+                int atSubOffset = ba.getStartPos();
+                int numInstances = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atSubOffset, 0x4), 16);
+                atSubOffset += 0x4;
+
+                for (int j = 0; j < numInstances; j++) {
+                    String parentIndex = Tools.readHexAsString(this.fileInBytes, atSubOffset + 0xC, 0x4);
+                    String nameInside = Tools.readStringFromOffset(this.fileInBytes, atSubOffset + 0x18);
+                    if(Tools.isParsable(parentIndex, 16)) {
+                        if(keyAndHash.containsKey(Integer.parseInt(parentIndex, 16))) {
+                            strings.add( new AbstractMap.SimpleEntry(
+                                    new AbstractMap.SimpleEntry(keyAndName.get(Integer.parseInt(parentIndex, 16)), keyAndHash.get(Integer.parseInt(parentIndex, 16)))
+                                    , nameInside
+                            ));
+                        }
+                    }
+                    atSubOffset += 0x20;
+                }
+            }
+            map.put(name, strings);
+            atOffset += (0x30);
+
+        }
+
         return new Block0_1();
     }
 
     public Block0_2 readBlock0_2(int numItems, int startOffset){
         int atOffset = startOffset;
-        return new Block0_2();
+        String name = "";
+        String parentName = "";
+        String parentHash = "";
+        ArrayList<Map.Entry<String, Map.Entry<String, String>>> map = new ArrayList<>();
+
+
+        for (int i = 0; i < numItems; i++) {
+            name = Tools.readStringFromOffset(this.fileInBytes, atOffset + 0x8);
+            String parentIndex = Tools.readHexAsString(this.fileInBytes, atOffset + 0x10, 0x4);
+            if(Tools.isParsable(parentIndex, 16)){
+                if (keyAndName.containsKey(Integer.parseInt(parentIndex, 16))){
+                    parentName = keyAndName.get(Integer.parseInt(parentIndex, 16));
+                    parentHash = keyAndHash.get(Integer.parseInt(parentIndex, 16));
+                }
+            } else {
+                parentName = parentIndex;
+                parentHash = parentIndex;
+            }
+
+            map.add(new AbstractMap.SimpleEntry(name, new AbstractMap.SimpleEntry(parentName, parentHash)));
+
+            atOffset += 0x18;
+        }
+
+
+        return new Block0_2(map);
     }
 
     public Block0_3 readBlock0_3(int numItems, int startOffset){
@@ -458,7 +551,7 @@ public class TBLUDecoder {
                 int atSubOffset = ba.getStartPos();
                 int numInstances = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atSubOffset, 0x4), 16);
                 atSubOffset += 0x4;
-                System.out.println(numInstances + " " + name + " found");
+
                 for (int j = 0; j < numInstances; j++) {
                     String instance = Tools.readHexAsString(this.fileInBytes, atSubOffset, 0x4);
                     if(Tools.isParsable(instance, 16)) {

@@ -42,6 +42,16 @@ public class Tools {
         return sb.toString();
     }
 
+    public static String readHexAsStringReverse(byte[] bytes, int from, int amount){
+        bytes = Arrays.copyOfRange(bytes, from, from + amount);
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            String byteString = String.format("%02X", b);
+            sb.append(new StringBuilder(byteString).toString());
+        }
+        return sb.toString();
+    }
+
     public static byte[] readBytes(byte[] bytes, int from, int amount){
         return Arrays.copyOfRange(bytes, from, from + amount);
     }
@@ -56,8 +66,11 @@ public class Tools {
         int atOffset = stringOffsetOffset;
 
         int strOffset = Integer.parseInt(readHexAsString(bytes, atOffset, 0x4), 16) + 0x10;
-        int strLength = Integer.parseInt(readHexAsString(bytes, strOffset - 0x4, 0x4), 16) - 1;
-        return readString(bytes, strOffset, strLength);
+        int strLength = Integer.parseInt(readHexAsString(bytes, strOffset - 0x4, 0x4), 16);
+        if(strLength > 0) {
+            return readString(bytes, strOffset, strLength).substring(0, strLength - 1);
+        }
+        else return "";
     }
 
     public static boolean isBlockAdress(String blockAdress, String row1, String row2, String row3){
