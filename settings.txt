@@ -3,10 +3,10 @@ Level of detail: 11
 
 python PATH var: py
 
-use old jsons: false
+use old jsons: true
 
 //can be blank
-default TBLU path:
+default TBLU path: D:\David\Hitman-modding\decoders\TBLU
 
 use dark-mode: true
 
