@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="TBLUTreeView" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="sample.Main" />
+    <option name="MAIN_CLASS_NAME" value="Logic.Main" />
     <module name="TBLUTreeView" />
     <method v="2">
       <option name="Make" enabled="true" />

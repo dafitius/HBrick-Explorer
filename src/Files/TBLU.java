@@ -65,6 +65,15 @@ public class TBLU {
         return footer;
     }
 
+
+    public String printHeader(){
+        return "[HEADER]" + "\n" +
+                "size: " + getHeader().getFileSize() + " bytes" + "\n" +
+                "type: " + getHeader().getFileType() + "\n" +
+                "root: " + getHeader().getRootName() + "\n" +
+                "unkown: " + getHeader().getUnknown() + "\n";
+    }
+
     @Override
     public String toString() {
         return "TBLU{" +
