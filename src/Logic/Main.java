@@ -21,14 +21,8 @@ public class Main extends Application {
 
 
     //settings
-    private int LoD;
-    private String pythonPATHVar;
-    private boolean useCache;
-    private boolean useOldJsons;
     private String TBLUfolderPATH;
     private boolean enableDarkmode;
-    private boolean enablePopups;
-    private boolean printDecoder;
 
     public static void main(String[] args) {
 
@@ -94,20 +88,12 @@ public class Main extends Application {
 
             while (line != null) {
                 try {
-                    if (line.contains("Level of detail")) this.LoD = Integer.parseInt(line.split(": ")[1]);
-                    if (line.contains("python PATH var")) this.pythonPATHVar = line.split(": ")[1];
-                    //if (line.contains("use cache")) this.useCache = Boolean.parseBoolean(line.split(": ")[1]);
-                    this.useCache = false;
-                    if (line.contains("use old jsons")) this.useOldJsons = Boolean.parseBoolean(line.split(": ")[1]);
                     if (line.contains("default TBLU path")) {
                         String[] splitLine = line.split(": ");
                         if(splitLine.length > 1) this.TBLUfolderPATH = line.split(": ")[1];
                         else this.TBLUfolderPATH = "";
                     }
                     if (line.contains("use dark-mode")) this.enableDarkmode = Boolean.parseBoolean(line.split(": ")[1]);
-                    if (line.contains("enable popups")) this.enablePopups = Boolean.parseBoolean(line.split(": ")[1]);
-                    if (line.contains("enable decoder prints"))
-                        this.printDecoder = Boolean.parseBoolean(line.split(": ")[1]);
                 }catch (NumberFormatException e){
                     System.out.println("detected typo inside the setting.txt: \n" + e.getMessage());
                 }
@@ -117,14 +103,8 @@ public class Main extends Application {
             }
 
             System.out.println("[SETTINGS]");
-            System.out.println("Level of detail: " + this.LoD);
-            System.out.println("python PATH var: " + this.pythonPATHVar);
             System.out.println("default TBLU path" + this.TBLUfolderPATH);
-            //System.out.println("use cache: " + this.useCache);
-            System.out.println("use old jsons: " + this.useOldJsons);
             System.out.println("use dark-mode: " + this.enableDarkmode);
-            System.out.println("enable popups: " + this.enablePopups);
-            System.out.println("enable decoder prints: " + this.printDecoder);
 
             System.out.println(" ");
         } catch (IOException e) {
