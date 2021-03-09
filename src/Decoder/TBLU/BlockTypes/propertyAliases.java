@@ -2,22 +2,22 @@ package Decoder.TBLU.BlockTypes;
 
 import java.util.ArrayList;
 
-public class Block0_0List implements subBlock{
+public class propertyAliases implements subBlock{
 
     private int blockType;
-    private ArrayList<Block0_0> blocks;
+    private ArrayList<propertyAlias> blocks;
 
-    public Block0_0List(ArrayList<Block0_0> blocks) {
+    public propertyAliases(ArrayList<propertyAlias> blocks) {
         this.blocks = blocks;
         this.blockType = 0;
     }
 
-    public Block0_0List() {
+    public propertyAliases() {
         this.blockType = 0;
     }
 
 
-    public ArrayList<Block0_0> getBlocks() {
+    public ArrayList<propertyAlias> getBlocks() {
         return blocks;
     }
 

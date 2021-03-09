@@ -3,15 +3,15 @@ package Decoder.TBLU.BlockTypes;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class Block0_3 implements subBlock{
+public class entitySubsets implements subBlock{
 
     private int blockType;
     private Map<String, ArrayList<String>> arrays;
 
-    public Block0_3(){
+    public entitySubsets(){
         this.blockType = 3;
     }
-    public Block0_3(Map<String, ArrayList<String>> arrays) {
+    public entitySubsets(Map<String, ArrayList<String>> arrays) {
         this.blockType = 3;
         this.arrays = arrays;
     }

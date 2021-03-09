@@ -1,7 +1,5 @@
 package Decoder;
 
-import Decoder.TBLU.BlockTypes.BlockAdress;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +27,10 @@ public class Tools {
             System.out.println("not a valid BIN1 file");
             return false;
         }
+    }
+
+    public static String bytesToString(byte[] bytes){
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     public static String readHexAsString(byte[] bytes, int from, int amount){

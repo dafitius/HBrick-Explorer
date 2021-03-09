@@ -1,11 +1,11 @@
 package Decoder.TBLU.BlockTypes;
 
-public class Block5 implements Block{
+public class overrideDelete implements Block{
     String hash;
     String unkownValue; //seems to always be FFFFFFFE
     String name;
 
-    public Block5(String hash, String unkownValue, String name) {
+    public overrideDelete(String hash, String unkownValue, String name) {
         this.hash = hash;
         this.unkownValue = unkownValue;
         this.name = name;

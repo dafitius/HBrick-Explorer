@@ -1,5 +1,6 @@
 package Decoder.TBLU;
 
+import Decoder.BlockAdress;
 import Decoder.TBLU.BlockTypes.*;
 import Decoder.Tools;
 import Files.TBLU;
@@ -20,13 +21,13 @@ public class TBLUDecoder {
     HashMap<Integer, String> keyAndHash = new HashMap<>();
 
     private Header header;
-    private ArrayList<Block0> block0;
-    private ArrayList<Block1> block1;
-    private ArrayList<Block2> block2;
+    private ArrayList<subEntity> subEntity;
+    private ArrayList<externalSceneTypeIndex> externalSceneTypeIndex;
+    private ArrayList<Block2> Block2;
     private ArrayList<Block3> block3;
     private ArrayList<Block4> block4;
-    private ArrayList<Block5> block5;
-    private ArrayList<Block7> block7;
+    private ArrayList<overrideDelete> overrideDelete;
+    private ArrayList<pinConnectionOverrideDelete> pinConnectionOverrideDelete;
     private Footer footer;
 
     public TBLUDecoder() {
@@ -36,13 +37,13 @@ public class TBLUDecoder {
 
     public TBLU decode(File file) throws IOException{
         this.header = new Header();
-        this.block0 = new ArrayList<>();
-        this.block1 = new ArrayList<>();
-        this.block2 = new ArrayList<>();
+        this.subEntity = new ArrayList<>();
+        this.externalSceneTypeIndex = new ArrayList<>();
+        this.Block2 = new ArrayList<>();
         this.block3 = new ArrayList<>();
         this.block4 = new ArrayList<>();
-        this.block5 = new ArrayList<>();
-        this.block7 = new ArrayList<>();
+        this.overrideDelete = new ArrayList<>();
+        this.pinConnectionOverrideDelete = new ArrayList<>();
 
         this.TBLUfile = file;
         this.fileInBytes = Files.readAllBytes(Paths.get(file.getPath()));
@@ -57,7 +58,7 @@ public class TBLUDecoder {
                readData(ba.getPosition(), ba.getStartPos(), ba.getEndPos());
             }
         }
-        return new TBLU(this.header, this.block0, this.block1, this.block2, this.block3, this.block4, this.block5, this.block7, this.footer);
+        return new TBLU(this.header, this.subEntity, this.externalSceneTypeIndex, this.Block2, this.block3, this.block4, this.overrideDelete, this.pinConnectionOverrideDelete, this.footer);
     }
 
 
@@ -123,13 +124,13 @@ public class TBLUDecoder {
 
         switch(type){
             case 0:
-                this.block0 = readBlock0(numItems, atOffset);
+                this.subEntity = readBlock0(numItems, atOffset);
                 break;
             case 1:
-                this.block1 = readBlock1(numItems, atOffset);
+                this.externalSceneTypeIndex = readBlock1(numItems, atOffset);
                 break;
             case 2:
-                this.block2 = readBlock2(numItems, atOffset);
+                this.Block2 = readBlock2(numItems, atOffset);
                 break;
             case 3:
                 this.block3 = readBlock3(numItems, atOffset);
@@ -138,40 +139,40 @@ public class TBLUDecoder {
                 this.block4 = readBlock4(numItems, atOffset);
                 break;
             case 5:
-                this.block5 = readBlock5(numItems, atOffset);
+                this.overrideDelete = readBlock5(numItems, atOffset);
                 break;
             case 6:
                 System.out.println("BLOCK6 DETECTED  ---------------------------------------------------------------------");
                 break;
             case 7:
-                this.block7 = readBlock7(numItems, atOffset);
+                this.pinConnectionOverrideDelete = readBlock7(numItems, atOffset);
                 break;
 
         }
 
     }
 
-    public ArrayList<Block0> readBlock0(int numItems, int startOffset){
+    public ArrayList<subEntity> readBlock0(int numItems, int startOffset){
         int atOffset = startOffset;
-        ArrayList<Block0> blocks = new ArrayList<>();
+        ArrayList<subEntity> blocks = new ArrayList<>();
         //data to pull
         String name = "";
         String hash = "";
         String entityType = "";
         String parentHash = "";
         String parentName = "";
-        Block0_0List block0_0List;
+        propertyAliases propertyAliases;
         Block0_1 block0_1;
         Block0_2 block0_2;
-        Block0_3 block0_3;
+        entitySubsets entitySubsets;
 
 
         for (int i = 0; i < numItems; i++) {
 
-            block0_0List = new Block0_0List();
+            propertyAliases = new propertyAliases();
             block0_1 = new Block0_1();
             block0_2 = new Block0_2();
-            block0_3 = new Block0_3();
+            entitySubsets = new entitySubsets();
             String parentIndex = Tools.readHexAsString(this.fileInBytes, atOffset + 0xc, 0x4);
 
             if(Tools.isParsable(parentIndex, 16)){
@@ -192,31 +193,31 @@ public class TBLUDecoder {
                 subBlock foundBlock = readBlock0SubData(ba.getPosition(), ba.getStartPos(), ba.getEndPos());
                 int BlockType = foundBlock.getType();
 
-                if (BlockType == 0) block0_0List = (Block0_0List) foundBlock;
+                if (BlockType == 0) propertyAliases = (propertyAliases) foundBlock;
                 if (BlockType == 1) block0_1 = (Block0_1) foundBlock;
                 if (BlockType == 2) block0_2 = (Block0_2) foundBlock;
-                if (BlockType == 3) block0_3 = (Block0_3) foundBlock;
+                if (BlockType == 3) entitySubsets = (entitySubsets) foundBlock;
 
 
             }
             atOffset += (0x18 * 4);
 
 
-            blocks.add(new Block0(parentName, parentHash, entityType, hash, name, block0_0List, block0_1, block0_2, block0_3));
+            blocks.add(new subEntity(parentName, parentHash, entityType, hash, name, propertyAliases, block0_1, block0_2, entitySubsets));
 
 
         }
         return blocks;
     }
 
-    public ArrayList<Block1> readBlock1(int numItems, int startOffset){
+    public ArrayList<externalSceneTypeIndex> readBlock1(int numItems, int startOffset){
         int atOffset = startOffset;
 
-        ArrayList<Block1> blocks = new ArrayList<>();
+        ArrayList<externalSceneTypeIndex> blocks = new ArrayList<>();
         String parentName;
         String parentHash;
         for (int i = 0; i < numItems; i++) {
-            blocks.add(new Block1(Tools.readHexAsString(this.fileInBytes, atOffset, 0x4)));
+            blocks.add(new externalSceneTypeIndex(Tools.readHexAsString(this.fileInBytes, atOffset, 0x4)));
             atOffset += 0x4;
         }
 
@@ -343,10 +344,10 @@ public class TBLUDecoder {
         return blocks;
     }
 
-    public ArrayList<Block5> readBlock5(int numItems, int startOffset){
+    public ArrayList<overrideDelete> readBlock5(int numItems, int startOffset){
 
         int atOffset = startOffset;
-        ArrayList<Block5> blocks = new ArrayList<>();
+        ArrayList<overrideDelete> blocks = new ArrayList<>();
         String hash;
         String unkownValue;
         String name;
@@ -356,10 +357,10 @@ public class TBLUDecoder {
             unkownValue = Tools.readHexAsString(this.fileInBytes, atOffset + 0xC, 0x4);
             name = Tools.readStringFromOffset(this.fileInBytes, atOffset + 0x18);
 
-            blocks.add(new Block5(hash, unkownValue, name));
+            blocks.add(new overrideDelete(hash, unkownValue, name));
             atOffset += 0x20;
         }
-        for(Block5 block : blocks){
+        for(overrideDelete block : blocks){
             if(!block.getUnkownValue().equals("FFFFFFFE") || !block.getName().equals("")){
                 System.out.println("THERE WAS A BLOCK5 WITH A SPECIAL VALUE ---------------------------------------------------------------------");
             }
@@ -369,11 +370,11 @@ public class TBLUDecoder {
 
     }
 
-    public ArrayList<Block7> readBlock7(int numItems, int startOffset){
+    public ArrayList<pinConnectionOverrideDelete> readBlock7(int numItems, int startOffset){
         int atOffset = startOffset;
 
 
-        ArrayList<Block7> blocks = new ArrayList<>();
+        ArrayList<pinConnectionOverrideDelete> blocks = new ArrayList<>();
         String hash1;
         String unkownValue1;
         String name1;
@@ -393,10 +394,10 @@ public class TBLUDecoder {
             name3 = Tools.readStringFromOffset(this.fileInBytes, atOffset + 0x48);
             name4 = Tools.readStringFromOffset(this.fileInBytes, atOffset + 0x58);
 
-            blocks.add(new Block7(hash1, unkownValue1, name1, hash2, unkownValue2, name2, name3, name4));
+            blocks.add(new pinConnectionOverrideDelete(hash1, unkownValue1, name1, hash2, unkownValue2, name2, name3, name4));
             atOffset += 0x70;
         }
-        for(Block7 block : blocks){
+        for(pinConnectionOverrideDelete block : blocks){
             if(!block.getUnkownValue1().equals("FFFFFFFE") || !block.getName1().equals("")){
                 System.out.println("THERE WAS A BLOCK7 WITH A SPECIAL VALUE ---------------------------------------------------------------------");
             }
@@ -429,9 +430,9 @@ public class TBLUDecoder {
         return null;
     }
 
-    public Block0_0List readBlock0_0(int numItems, int startOffset){
+    public propertyAliases readBlock0_0(int numItems, int startOffset){
         int atOffset = startOffset;
-        ArrayList<Block0_0> blocks = new ArrayList<>();
+        ArrayList<propertyAlias> blocks = new ArrayList<>();
         String string1;
         String parentName = "";
         String parentHash = "";
@@ -452,14 +453,14 @@ public class TBLUDecoder {
             }
 
 
-            blocks.add(new Block0_0(string1, parentName, parentHash, string2));
+            blocks.add(new propertyAlias(string1, parentName, parentHash, string2));
             atOffset += 0x28;
         }
 
 
 
 
-        return new Block0_0List(blocks);
+        return new propertyAliases(blocks);
     }
 
     public Block0_1 readBlock0_1(int numItems, int startOffset){
@@ -533,7 +534,7 @@ public class TBLUDecoder {
         return new Block0_2(map);
     }
 
-    public Block0_3 readBlock0_3(int numItems, int startOffset){
+    public entitySubsets readBlock0_3(int numItems, int startOffset){
         int atOffset = startOffset;
         String name = "";
         Map<String, ArrayList<String>> map = new HashMap<>();
@@ -564,7 +565,7 @@ public class TBLUDecoder {
             atOffset += (0x28);
 
         }
-        return new Block0_3(map);
+        return new entitySubsets(map);
     }
 
 }

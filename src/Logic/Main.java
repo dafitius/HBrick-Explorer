@@ -1,7 +1,9 @@
 package Logic;
 
 import Decoder.TBLU.TBLUDecoder;
+import Decoder.TEMP.TEMPDecoder;
 import Files.TBLU;
+import Files.TEMP;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -36,10 +38,19 @@ public class Main extends Application {
         this.selectedFile = getFile();
 
 
+//        try {
+//            TEMPDecoder tempDecoder = new TEMPDecoder();
+//            TEMP TEMPfile = tempDecoder.decode(selectedFile);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+
         try {
             TBLUDecoder tbluDecoder = new TBLUDecoder();
             TBLU TBLUfile = tbluDecoder.decode(selectedFile);
-            System.out.println(TBLUfile.printHeader());
+            System.out.println(TBLUfile.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,9 +84,10 @@ public class Main extends Application {
             File initialDir = new File(TBLUfolderPATH);
             if(initialDir.exists()) fileChooser.setInitialDirectory(initialDir);
         }
-        fileChooser.setTitle("Select a TBLU file");
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Files.TBLU files", "*.TBLU");
-        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setTitle("Select a  file");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("TBLU files", "*.TBLU");
+        FileChooser.ExtensionFilter filter2 = new FileChooser.ExtensionFilter("TEMP files", "*.TEMP");
+        fileChooser.getExtensionFilters().addAll(filter, filter);
         fileChooser.setSelectedExtensionFilter(filter);
         File selectedFile = fileChooser.showOpenDialog(selectFile);
         System.out.println("Selected file: " + selectedFile);

@@ -1,5 +1,5 @@
 
 //can be blank
-default TBLU path: D:\David\Hitman-modding\decoders\TBLU
+default TBLU path: D:\David\Hitman-modding\decoders\TEMP
 
 use dark-mode: true
