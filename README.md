@@ -2,7 +2,10 @@
 
 HBrick Explorer is a javaFX application made to view the .brick files found in the HITMAN™: World of Assasination trilogy.
 
+##requirements
+- java JRE 8
 
-### releases
-no releases yet.
-a TBLU(part of brick) viewer can be found [Here](https://github.com/dafitius/Hitman_TBLU_viewer/releases/tag/0.5)
+
+## usage
+1. set the prefered settings inside the settings.txt file.
+2. open the .jar file inside the same folder the settings.txt is in.

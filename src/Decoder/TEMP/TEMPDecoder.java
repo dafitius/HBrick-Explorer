@@ -1,22 +1,16 @@
 package Decoder.TEMP;
 
-import Decoder.BlockAdress;
 import Decoder.TEMP.BlockTypes.*;
 import Decoder.Tools;
 import Files.STemplateEntityFactory;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 
 public class TEMPDecoder {
@@ -35,7 +29,7 @@ public class TEMPDecoder {
     private Map<Long,String> fillPropertyMap(){
         Map<Long,String> map = new HashMap<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("g_properties.txt"));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/Logic/resources/g_properties.txt")));
             String line = reader.readLine();
             while (line != null) {
                 line = line.split("\\(")[1];

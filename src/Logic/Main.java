@@ -101,9 +101,9 @@ public class Main extends Application {
         borderpane.setTop(tabPane);
         primaryStage.setTitle("brick Viewer");
         primaryStage.setScene(new Scene(borderpane, 850, 675));
-//      primaryStage.getIcons().add(new javafx.scene.image.Image(this.getClass().getResource("icon.png").toExternalForm()));
+        primaryStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/Logic/resources/icon.png")));
         if (this.enableDarkmode)
-            primaryStage.getScene().getStylesheets().add(this.getClass().getResource("darkmode.css").toExternalForm());
+            primaryStage.getScene().getStylesheets().add(this.getClass().getResource("/Logic/resources/darkmode.css").toExternalForm());
         primaryStage.show();
 
         primaryStage.setOnCloseRequest(event -> {
@@ -229,7 +229,7 @@ public class Main extends Application {
 
             while (line != null) {
                 try {
-                    if (line.contains("default TBLU path")) {
+                    if (line.contains("default file path")) {
                         String[] splitLine = line.split(": ");
                         if (splitLine.length > 1) this.TBLUfolderPATH = line.split(": ")[1];
                         else this.TBLUfolderPATH = "";
