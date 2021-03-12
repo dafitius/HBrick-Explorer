@@ -98,6 +98,7 @@ public class Main extends Application {
 
         TabPane tabPane = new TabPane();
         Tab welcomeTab = new Tab("welcome");
+        welcomeTab.setClosable(false);
         Tab addTab = new Tab("+");
         ListView<String> welcomeText = new ListView<>();
         welcomeText.getItems().addAll("welcome to brick explorer", "to use this application please add a file");
@@ -110,20 +111,22 @@ public class Main extends Application {
             if (selectedTab.equals(addTab)) {
                 tabPane.getTabs().remove(addTab);
                 File selectedFile = getFile();
-                tabPane.getTabs().add(new Tab(selectedFile.getName()));
+                if (selectedFile != null) tabPane.getTabs().add(new Tab(selectedFile.getName()));
                 tabPane.getTabs().add(addTab);
                 SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
                 selectionModel.select(tabPane.getTabs().get(tabPane.getTabs().size() - 2));
                 tabPane.setSelectionModel(selectionModel);
-                switch (selectedFile.getName().split("\\.")[1]) {
-                    case "TEMP":
-                        displayTEMPfile(selectedFile, borderpane);
-                        break;
-                    case "TBLU":
-                        displayTBLUfile(selectedFile, borderpane);
-                        break;
+                if (selectedFile != null) {
+                    switch (selectedFile.getName().split("\\.")[1]) {
+                        case "TEMP":
+                            displayTEMPfile(selectedFile, borderpane);
+                            break;
+                        case "TBLU":
+                            displayTBLUfile(selectedFile, borderpane);
+                            break;
+                    }
                 }
-            } else{
+            } else {
                 borderpane.setCenter(tabs.get(selectedTab.getText()));
             }
 
@@ -149,7 +152,7 @@ public class Main extends Application {
 
     private void displayTEMPfile(File selectedFile, BorderPane borderPane) {
         ListView<String> list = new ListView<>();
-        if(!this.tabs.containsKey(selectedFile.getName())) {
+        if (!this.tabs.containsKey(selectedFile.getName())) {
             STemplateEntityFactory decodedTEMPfile = decodeTempFile(selectedFile);
 
             for (STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()) {
@@ -161,7 +164,7 @@ public class Main extends Application {
                 }
             }
             this.tabs.put(selectedFile.getName(), list);
-        }else list = this.tabs.get(selectedFile.getName());
+        } else list = this.tabs.get(selectedFile.getName());
         borderPane.setCenter(list);
 
     }
@@ -169,14 +172,14 @@ public class Main extends Application {
     private void displayTBLUfile(File selectedFile, BorderPane borderPane) {
 
         ListView<String> list = new ListView<>();
-        if(!this.tabs.containsKey(selectedFile.getName())) {
+        if (!this.tabs.containsKey(selectedFile.getName())) {
             TBLU decodedTBLUfile = decodeTbluFile(selectedFile);
 
-        for(subEntity subEntity : decodedTBLUfile.getBlock0()){
-            list.getItems().add(subEntity.getName());
-        }
+            for (subEntity subEntity : decodedTBLUfile.getBlock0()) {
+                list.getItems().add(subEntity.getName());
+            }
             this.tabs.put(selectedFile.getName(), list);
-        }else list = this.tabs.get(selectedFile.getName());
+        } else list = this.tabs.get(selectedFile.getName());
         borderPane.setCenter(list);
     }
 
