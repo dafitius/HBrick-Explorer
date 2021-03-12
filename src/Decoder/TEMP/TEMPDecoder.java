@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 public class TEMPDecoder {
     File TBLUfile;
     byte[] fileInBytes;
+    String hitmanVersion;
     private Map<Long,String> g_propertiesValues = new HashMap<>();
 
     private int blueprintIndexInResourceHeader;
@@ -182,7 +183,7 @@ public class TEMPDecoder {
                     }
                 }
                 atOffset += 0x58;
-
+                if(hitmanVersion.equals("H3")) atOffset += 0x18;
 
                 TFSEs.add(new STemplateFactorySubEntity(entityTypeResourceIndex, reference, postInitPropertyValues, propertyValues));
             }
@@ -205,8 +206,9 @@ public class TEMPDecoder {
 
 
 
-    public STemplateEntityFactory decode(File file) throws IOException{
+    public STemplateEntityFactory decode(File file, String hitmanVersion) throws IOException{
         long start = System.currentTimeMillis();
+        this.hitmanVersion = hitmanVersion;
         this.TBLUfile = file;
         this.fileInBytes = Files.readAllBytes(Paths.get(file.getPath()));
         this.g_propertiesValues = fillPropertyMap();

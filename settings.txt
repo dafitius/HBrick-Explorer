@@ -1,4 +1,7 @@
 
+//H2 or H3
+hitman edition: H2
+
 //can be blank
 default TBLU path: D:\David\Hitman-modding\unpacked hitman\Unpacked rpkg\H2\Base game\Chunk0patch\TEMP
 

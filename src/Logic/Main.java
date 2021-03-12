@@ -23,7 +23,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +36,10 @@ public class Main extends Application {
     private Map<String, Node> tabs;
 
     //settings
+    private String hitmanEdition;
     private String TBLUfolderPATH;
     private boolean enableDarkmode;
+
 
     public static void main(String[] args) {
 
@@ -98,7 +99,7 @@ public class Main extends Application {
 
         borderpane.setCenter(hbox);
         borderpane.setTop(tabPane);
-        primaryStage.setTitle("TBLU tree viewer");
+        primaryStage.setTitle("brick Viewer");
         primaryStage.setScene(new Scene(borderpane, 850, 675));
 //      primaryStage.getIcons().add(new javafx.scene.image.Image(this.getClass().getResource("icon.png").toExternalForm()));
         if (this.enableDarkmode)
@@ -118,9 +119,9 @@ public class Main extends Application {
         for (subEntity entity : subEntities) {
 
             for (int i = 0; i < depth; i++) System.out.print("   ");
-            System.out.print("|---");
-            System.out.print(entity.getName() + "\n");
-            System.out.println("added " + entity.getName() + " to " + treeItem.getValue());
+            //System.out.print("|---");
+            //System.out.print(entity.getName() + "\n");
+            //System.out.println("added " + entity.getName() + " to " + treeItem.getValue());
             TreeItem<String> item = new TreeItem<>(entity.getName());
             treeItem.getChildren().add(item);
 
@@ -180,13 +181,12 @@ public class Main extends Application {
         borderPane.setCenter(treeView);
     }
 
-
     private STemplateEntityFactory decodeTempFile(File selectedFile) {
 
         TEMPDecoder tempDecoder = new TEMPDecoder();
         STemplateEntityFactory TEMPfile = null;
         try {
-            TEMPfile = tempDecoder.decode(selectedFile);
+            TEMPfile = tempDecoder.decode(selectedFile, hitmanEdition);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -235,6 +235,9 @@ public class Main extends Application {
                         else this.TBLUfolderPATH = "";
                     }
                     if (line.contains("use dark-mode")) this.enableDarkmode = Boolean.parseBoolean(line.split(": ")[1]);
+                    if (line.contains("hitman edition")) {
+                        this.hitmanEdition = line.split(": ")[1];
+                    }
                 } catch (NumberFormatException e) {
                     System.out.println("detected typo inside the setting.txt: \n" + e.getMessage());
                 }
@@ -244,7 +247,8 @@ public class Main extends Application {
             }
 
             System.out.println("[SETTINGS]");
-            System.out.println("default TBLU path" + this.TBLUfolderPATH);
+            System.out.println("Hitman version: " + this.hitmanEdition);
+            System.out.println("default TBLU path: " + this.TBLUfolderPATH);
             System.out.println("use dark-mode: " + this.enableDarkmode);
 
             System.out.println(" ");

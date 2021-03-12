@@ -14,7 +14,7 @@
     </properties>
     <root id="root">
       <element id="archive" name="JavaFXApp.jar">
-        <element id="module-output" name="TBLUTreeView" />
+        <element id="module-output" name="HBrick-Explorer" />
       </element>
     </root>
   </artifact>

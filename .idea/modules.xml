@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TBLUTreeView.iml" filepath="$PROJECT_DIR$/TBLUTreeView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HBrick-Explorer.iml" filepath="$PROJECT_DIR$/HBrick-Explorer.iml" />
     </modules>
   </component>
 </project>

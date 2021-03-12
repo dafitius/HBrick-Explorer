@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="TBLUTreeView" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="Logic.Main" />
-    <module name="TBLUTreeView" />
+    <module name="HBrick-Explorer" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
