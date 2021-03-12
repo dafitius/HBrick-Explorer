@@ -14,17 +14,17 @@ import Files.TBLU;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +34,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 public class Main extends Application {
 
 
-    private Map<String, ListView> tabs;
+    private Map<String, Node> tabs;
 
     //settings
     private String TBLUfolderPATH;
@@ -48,45 +48,6 @@ public class Main extends Application {
     public void initialize() {
         getSettings();
         this.tabs = new HashMap<>();
-    }
-
-    public void addFile() {
-        //ask for file to extract
-        File selectedFile = getFile();
-
-
-        Thread decodeThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                TEMPDecoder tempDecoder = new TEMPDecoder();
-                STemplateEntityFactory TEMPfile = null;
-                try {
-                    TEMPfile = tempDecoder.decode(selectedFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                for (STemplateFactorySubEntity subEntity : TEMPfile.getSubEntities()) {
-                    for (SEntityTemplateProperty sEntityTemplateProperty : subEntity.getPropertyValues()) {
-                        if (sEntityTemplateProperty.getnPropertyID().getProp().equals("m_mTransform")) {
-                            m_mTransform transform = (m_mTransform) sEntityTemplateProperty.getnPropertyID();
-                            //System.out.println(transform.getMatrix34().getTrans());
-                        }
-                    }
-                }
-            }
-        });
-        decodeThread.setName("decodeThread");
-        decodeThread.start();
-
-
-//        try {
-//            TBLUDecoder tbluDecoder = new TBLUDecoder();
-//            TBLU TBLUfile = tbluDecoder.decode(selectedFile);
-//            System.out.println(TBLUfile.toString());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     @Override
@@ -139,7 +100,7 @@ public class Main extends Application {
         borderpane.setTop(tabPane);
         primaryStage.setTitle("TBLU tree viewer");
         primaryStage.setScene(new Scene(borderpane, 850, 675));
-        primaryStage.getIcons().add(new javafx.scene.image.Image(this.getClass().getResource("icon.png").toExternalForm()));
+//      primaryStage.getIcons().add(new javafx.scene.image.Image(this.getClass().getResource("icon.png").toExternalForm()));
         if (this.enableDarkmode)
             primaryStage.getScene().getStylesheets().add(this.getClass().getResource("darkmode.css").toExternalForm());
         primaryStage.show();
@@ -149,6 +110,28 @@ public class Main extends Application {
         });
         System.out.println("launched the app");
     }
+
+
+    public TreeItem<String> populateTreeView(TreeView<String> treeView, subEntity subEntity, int depth, TreeItem<String> treeItem) {
+
+        ArrayList<subEntity> subEntities = subEntity.getCC_children();
+        for (subEntity entity : subEntities) {
+
+            for (int i = 0; i < depth; i++) System.out.print("   ");
+            System.out.print("|---");
+            System.out.print(entity.getName() + "\n");
+            System.out.println("added " + entity.getName() + " to " + treeItem.getValue());
+            TreeItem<String> item = new TreeItem<>(entity.getName());
+            treeItem.getChildren().add(item);
+
+            if (entity.isCC_hasChildren()) {
+                populateTreeView(treeView, entity, depth + 1, item);
+            }
+        }
+        if(depth == 0) return treeItem;
+        return null;
+    }
+
 
     private void displayTEMPfile(File selectedFile, BorderPane borderPane) {
         ListView<String> list = new ListView<>();
@@ -164,23 +147,37 @@ public class Main extends Application {
                 }
             }
             this.tabs.put(selectedFile.getName(), list);
-        } else list = this.tabs.get(selectedFile.getName());
+        } else list = (ListView<String>) this.tabs.get(selectedFile.getName());
         borderPane.setCenter(list);
 
     }
 
     private void displayTBLUfile(File selectedFile, BorderPane borderPane) {
 
-        ListView<String> list = new ListView<>();
+        TreeView<String> treeView = new TreeView<>();
+        subEntity rootEntity = null;
         if (!this.tabs.containsKey(selectedFile.getName())) {
             TBLU decodedTBLUfile = decodeTbluFile(selectedFile);
 
-            for (subEntity subEntity : decodedTBLUfile.getBlock0()) {
-                list.getItems().add(subEntity.getName());
+            //add children to items
+            for (subEntity itemToFill : decodedTBLUfile.getBlock0()) {
+                for (subEntity item : decodedTBLUfile.getBlock0()) {
+
+                    if (item.getParentHash().equals(itemToFill.getHash())) {
+                        itemToFill.addChild(item);
+                    }
+
+                }
+                if (itemToFill.getHash().equals(decodedTBLUfile.getHeader().getRootHash())) {
+                    rootEntity = itemToFill;
+                }
             }
-            this.tabs.put(selectedFile.getName(), list);
-        } else list = this.tabs.get(selectedFile.getName());
-        borderPane.setCenter(list);
+            if (rootEntity != null) {
+                treeView.setRoot(populateTreeView(treeView, rootEntity, 0, new TreeItem<>(rootEntity.getName())));
+            }
+            this.tabs.put(selectedFile.getName(), treeView);
+        } else treeView = (TreeView<String>) this.tabs.get(selectedFile.getName());
+        borderPane.setCenter(treeView);
     }
 
 
