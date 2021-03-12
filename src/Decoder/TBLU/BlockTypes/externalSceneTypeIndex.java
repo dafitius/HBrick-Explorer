@@ -1,11 +1,11 @@
 package Decoder.TBLU.BlockTypes;
 
-public class Block1 implements Block{
+public class externalSceneTypeIndex implements Block{
 
     String value;
 
 
-    public Block1(String value) {
+    public externalSceneTypeIndex(String value) {
         this.value = value;
     }
 

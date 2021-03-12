@@ -1,18 +1,18 @@
 package Decoder.TBLU.BlockTypes;
 
-public class Block0 implements Block {
+public class subEntity implements Block {
 
     private String parentName;
     private String parentHash;
     private String type;
     private String hash;
     private String name;
-    private Block0_0List subBlock0List;
+    private propertyAliases subBlock0List;
     private Block0_1 subBlock1;
     private Block0_2 subBlock2;
-    private Block0_3 subBlock3;
+    private entitySubsets subBlock3;
 
-    public Block0(String parentName, String parentHash, String type, String hash, String name, Block0_0List subBlock0List, Block0_1 subBlock1, Block0_2 subBlock2, Block0_3 subBlock3) {
+    public subEntity(String parentName, String parentHash, String type, String hash, String name, propertyAliases subBlock0List, Block0_1 subBlock1, Block0_2 subBlock2, entitySubsets subBlock3) {
         this.parentName = parentName;
         this.parentHash = parentHash;
         this.type = type;
@@ -45,7 +45,7 @@ public class Block0 implements Block {
         return name;
     }
 
-    public Block0_0List getSubBlock0List() {
+    public propertyAliases getSubBlock0List() {
         return subBlock0List;
     }
 
@@ -57,7 +57,7 @@ public class Block0 implements Block {
         return subBlock2;
     }
 
-    public Block0_3 getSubBlock3() {
+    public entitySubsets getSubBlock3() {
         return subBlock3;
     }
 

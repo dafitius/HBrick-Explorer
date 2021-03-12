@@ -1,6 +1,6 @@
 package Decoder.TBLU.BlockTypes;
 
-public class Block0_0 implements subBlock {
+public class propertyAlias implements subBlock {
 
     private int blockType;
     private String string1;
@@ -8,7 +8,7 @@ public class Block0_0 implements subBlock {
     private String parentHash;
     private String string2;
 
-    public Block0_0(String string1, String parentName, String parentHash, String string2) {
+    public propertyAlias(String string1, String parentName, String parentHash, String string2) {
         this.blockType = blockType;
         this.string1 = string1;
         this.parentName = parentName;
@@ -17,7 +17,7 @@ public class Block0_0 implements subBlock {
         this.blockType = 0;
     }
 
-    public Block0_0(){
+    public propertyAlias(){
         blockType = 0;
     }
 

@@ -7,24 +7,24 @@ import java.util.ArrayList;
 public class TBLU {
 
     private Header header;
-    private ArrayList<Block0> block0;
-    private ArrayList<Block1> block1;
-    private ArrayList<Block2> block2;
+    private ArrayList<subEntity> subEntities;
+    private ArrayList<externalSceneTypeIndex> externalSceneTypeIndices;
+    private ArrayList<Block2> Block2s;
     private ArrayList<Block3> block3;
     private ArrayList<Block4> block4;
-    private ArrayList<Block5> block5;
-    private ArrayList<Block7> block7;
+    private ArrayList<overrideDelete> overrideDeletes;
+    private ArrayList<pinConnectionOverrideDelete> pinConnectionOverrideDeletes;
     private Footer footer;
 
-    public TBLU(Header header, ArrayList<Block0> block0, ArrayList<Block1> block1, ArrayList<Block2> block2, ArrayList<Block3> block3, ArrayList<Block4> block4, ArrayList<Block5> block5, ArrayList<Block7> block7, Footer footer) {
+    public TBLU(Header header, ArrayList<subEntity> subEntities, ArrayList<externalSceneTypeIndex> externalSceneTypeIndices, ArrayList<Block2> Block2s, ArrayList<Block3> block3, ArrayList<Block4> block4, ArrayList<overrideDelete> overrideDeletes, ArrayList<pinConnectionOverrideDelete> pinConnectionOverrideDeletes, Footer footer) {
         this.header = header;
-        this.block0 = block0;
-        this.block1 = block1;
-        this.block2 = block2;
+        this.subEntities = subEntities;
+        this.externalSceneTypeIndices = externalSceneTypeIndices;
+        this.Block2s = Block2s;
         this.block3 = block3;
         this.block4 = block4;
-        this.block5 = block5;
-        this.block7 = block7;
+        this.overrideDeletes = overrideDeletes;
+        this.pinConnectionOverrideDeletes = pinConnectionOverrideDeletes;
         this.footer = footer;
     }
 
@@ -33,16 +33,16 @@ public class TBLU {
         return header;
     }
 
-    public ArrayList<Block0> getBlock0() {
-        return block0;
+    public ArrayList<subEntity> getBlock0() {
+        return subEntities;
     }
 
-    public ArrayList<Block1> getBlock1() {
-        return block1;
+    public ArrayList<externalSceneTypeIndex> getBlock1() {
+        return externalSceneTypeIndices;
     }
 
     public ArrayList<Block2> getBlock2() {
-        return block2;
+        return Block2s;
     }
 
     public ArrayList<Block3> getBlock3() {
@@ -53,12 +53,12 @@ public class TBLU {
         return block4;
     }
 
-    public ArrayList<Block5> getBlock5() {
-        return block5;
+    public ArrayList<overrideDelete> getBlock5() {
+        return overrideDeletes;
     }
 
-    public ArrayList<Block7> getBlock7() {
-        return block7;
+    public ArrayList<pinConnectionOverrideDelete> getBlock7() {
+        return pinConnectionOverrideDeletes;
     }
 
     public Footer getFooter() {
@@ -78,13 +78,13 @@ public class TBLU {
     public String toString() {
         return "TBLU{" +
                 "header=" + header +
-                ", block0=" + block0 +
-                ", block1=" + block1 +
-                ", block2=" + block2 +
+                ", block0=" + subEntities +
+                ", block1=" + externalSceneTypeIndices +
+                ", block2=" + Block2s +
                 ", block3=" + block3 +
                 ", block4=" + block4 +
-                ", block5=" + block5 +
-                ", block7=" + block7 +
+                ", block5=" + overrideDeletes +
+                ", block7=" + pinConnectionOverrideDeletes +
                 ", footer=" + footer +
                 '}';
     }

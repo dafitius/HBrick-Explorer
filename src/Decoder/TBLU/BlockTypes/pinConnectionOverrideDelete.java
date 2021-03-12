@@ -1,6 +1,6 @@
 package Decoder.TBLU.BlockTypes;
 
-public class Block7 implements Block{
+public class pinConnectionOverrideDelete implements Block{
     String hash1;
     String unkownValue1;
     String name1;
@@ -10,7 +10,7 @@ public class Block7 implements Block{
     String name3;
     String name4;
 
-    public Block7(String hash1, String unkownValue1, String name1, String hash2, String unkownValue2, String name2, String name3, String name4) {
+    public pinConnectionOverrideDelete(String hash1, String unkownValue1, String name1, String hash2, String unkownValue2, String name2, String name3, String name4) {
         this.hash1 = hash1;
         this.unkownValue1 = unkownValue1;
         this.name1 = name1;
