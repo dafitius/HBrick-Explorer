@@ -10,6 +10,8 @@ HBrick Explorer is a javaFX application made to view the .brick files found in t
 1. set the prefered settings inside the settings.txt file.
 2. open the .jar file inside the same folder the settings.txt is in.
 
-#notes
-The TEMP files will currently only show all positional and rotation data found within them.
-This is NOT the only information that can be found inside the TEMP files, but the only information i am able to easily represent.
+## to-do
+- Intergate the settings.txt into the GUI
+- allow exports to json
+- allow sorting inside tree views
+- add 3d viewport
