@@ -251,6 +251,7 @@ public class Main extends Application {
         });
     }
 
+
     private STemplateEntityFactory decodeTempFile(File selectedFile) {
 
         TEMPDecoder tempDecoder = new TEMPDecoder();
