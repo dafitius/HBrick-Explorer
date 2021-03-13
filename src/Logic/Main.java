@@ -223,7 +223,10 @@ public class Main extends Application {
 
                     entityTypeResourceIndex.getChildren().add(new TreeItem<>("entityTypeResourceIndex: " + subEntity.getEntityTypeResourceIndex()));
                     logicalParent.getChildren().add(new TreeItem<>("\"Entity ID\": " + subEntity.getLogicalParent().getEntityID()));
-                    logicalParent.getChildren().add(new TreeItem<>("\"Entity Index\": " + subEntity.getLogicalParent().getEntityIndex()));
+                    int parentIndex = subEntity.getLogicalParent().getEntityIndex();
+                    if(parentIndex > 0) {
+                        logicalParent.getChildren().add(new TreeItem<>("\"Entity Index\": " + parentIndex + " (" + subEntityNames.get(parentIndex) + ")"));
+                    } else logicalParent.getChildren().add(new TreeItem<>("\"Entity Index\": " + parentIndex));
                     logicalParent.getChildren().add(new TreeItem<>("\"Exposed entity\": \"" + subEntity.getLogicalParent().getExposedEntity() + "\""));
                     logicalParent.getChildren().add(new TreeItem<>("\"External Scene Index\": " + subEntity.getLogicalParent().getExternalSceneIndex()));
                     subEntity.getPostInitPropertyValues().forEach(p -> {

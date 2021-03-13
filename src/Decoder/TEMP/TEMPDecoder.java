@@ -96,6 +96,7 @@ public class TEMPDecoder {
                 ////extract SEntityTemplateProperty
                 long propertyID = Long.parseUnsignedLong(Tools.readHexAsString(this.fileInBytes, atOffset + 0x20, 0x4), 16);
                 String propertyName = this.g_propertiesValues.get(propertyID);
+                if(propertyName == null) propertyName = propertyID + "";
                 int propertyDataOffset = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x30, 0x4), 16);
                 SEntityTemplateProperty property = new SEntityTemplateProperty(PropertyDecoder.readProperty(propertyName, propertyDataOffset, this.fileInBytes));
                 System.out.println(propertyName);

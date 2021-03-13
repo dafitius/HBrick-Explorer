@@ -11,7 +11,7 @@ HBrick Explorer is a javaFX application made to view the .brick files found in t
 2. open the .jar file inside the same folder the settings.txt is in.
 
 ## to-do
-- Intergate the settings.txt into the GUI
+- implement more properties
 - allow exports to json
 - allow sorting inside tree views
-- add 3d viewport
+- add 3d viewport?

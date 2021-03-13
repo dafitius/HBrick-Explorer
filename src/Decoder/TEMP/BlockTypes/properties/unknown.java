@@ -4,10 +4,12 @@ import Decoder.TEMP.BlockTypes.nPropertyID;
 
 public class unknown implements nPropertyID {
 
-    String name;
+    String name = "this property's";
 
     public unknown(String name) {
-        this.name = name;
+        if(name != null) {
+            this.name = name;
+        } else name = "this property";
     }
 
     @Override
