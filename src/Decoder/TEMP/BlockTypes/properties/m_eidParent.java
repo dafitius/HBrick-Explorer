@@ -11,11 +11,10 @@ public class m_eidParent implements nPropertyID {
         this.SEntityTemplateReference = SEntityTemplateReference;
     }
 
+
     @Override
     public String toString() {
-        return "m_eidParent{" +
-                "SEntityTemplateReference=" + SEntityTemplateReference +
-                '}';
+        return "\"m_eidParent\": {\n" + SEntityTemplateReference + "}";
     }
 
     @Override

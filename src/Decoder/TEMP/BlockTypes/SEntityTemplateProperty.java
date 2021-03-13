@@ -11,9 +11,7 @@ public class SEntityTemplateProperty {
 
     @Override
     public String toString() {
-        return "SEntityTemplateProperty{" +
-                "nPropertyID=" + nPropertyID +
-                '}';
+        return  nPropertyID + "";
     }
 
     public Decoder.TEMP.BlockTypes.nPropertyID getnPropertyID() {

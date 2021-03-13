@@ -14,6 +14,8 @@ import Files.TBLU;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -22,6 +24,9 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,9 +124,6 @@ public class Main extends Application {
         for (subEntity entity : subEntities) {
 
             for (int i = 0; i < depth; i++) System.out.print("   ");
-            //System.out.print("|---");
-            //System.out.print(entity.getName() + "\n");
-            //System.out.println("added " + entity.getName() + " to " + treeItem.getValue());
             TreeItem<String> item = new TreeItem<>(entity.getName());
             treeItem.getChildren().add(item);
 
@@ -129,27 +131,48 @@ public class Main extends Application {
                 populateTreeView(treeView, entity, depth + 1, item);
             }
         }
-        if(depth == 0) return treeItem;
+        if (depth == 0) return treeItem;
         return null;
     }
 
 
     private void displayTEMPfile(File selectedFile, BorderPane borderPane) {
-        ListView<String> list = new ListView<>();
+        //ListView<String> list = new ListView<>();
+        TreeView<String> treeView = new TreeView<>();
         if (!this.tabs.containsKey(selectedFile.getName())) {
+            int i = 0;
             STemplateEntityFactory decodedTEMPfile = decodeTempFile(selectedFile);
-
+            TreeItem<String> root = new TreeItem<>("subEntities");
+            treeView.setRoot(root);
             for (STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()) {
-                for (SEntityTemplateProperty sEntityTemplateProperty : subEntity.getPropertyValues()) {
-                    if (sEntityTemplateProperty.getnPropertyID().getProp().equals("m_mTransform")) {
-                        m_mTransform transform = (m_mTransform) sEntityTemplateProperty.getnPropertyID();
-                        list.getItems().add(transform.getMatrix34().toString());
-                    }
-                }
+                TreeItem<String> subEntityItem = new TreeItem<String>("sub Entity " + i);
+                TreeItem<String> entityTypeResourceIndex = new TreeItem<>("entityTypeResourceIndex");
+                TreeItem<String> logicalParent = new TreeItem<>("LogicalParent");
+                TreeItem<String> postInitPropertyValues = new TreeItem<>("postInitPropertyValues");
+                TreeItem<String> propertyValues = new TreeItem<>("propertyValues");
+                subEntityItem.getChildren().addAll(entityTypeResourceIndex, logicalParent, postInitPropertyValues, propertyValues);
+
+                entityTypeResourceIndex.getChildren().add(new TreeItem<>("entityTypeResourceIndex: " + subEntity.getEntityTypeResourceIndex()));
+                logicalParent.getChildren().add(new TreeItem<>("\"Entity ID\": " + subEntity.getLogicalParent().getEntityID()));
+                logicalParent.getChildren().add(new TreeItem<>("\"Entity Index\": " + subEntity.getLogicalParent().getEntityIndex()));
+                logicalParent.getChildren().add(new TreeItem<>("\"Exposed entity\": \"" + subEntity.getLogicalParent().getExposedEntity() + "\""));
+                logicalParent.getChildren().add(new TreeItem<>("\"External Scene Index\": " + subEntity.getLogicalParent().getExternalSceneIndex()));
+                subEntity.getPostInitPropertyValues().forEach(p -> {postInitPropertyValues.getChildren().add(new TreeItem<String>(p.toString()));});
+                subEntity.getPropertyValues().forEach(p -> {propertyValues.getChildren().add(new TreeItem<String>(p.toString()));});
+
+                root.getChildren().add(subEntityItem);
+                i++;
             }
-            this.tabs.put(selectedFile.getName(), list);
-        } else list = (ListView<String>) this.tabs.get(selectedFile.getName());
-        borderPane.setCenter(list);
+            this.tabs.put(selectedFile.getName(), treeView);
+        } else treeView = (TreeView<String>) this.tabs.get(selectedFile.getName());
+        borderPane.setCenter(treeView);
+        treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("selected: " + newValue.getValue());
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection stringSelection = new StringSelection(newValue.getValue());
+            clipboard.setContents(stringSelection, null);
+        });
+
 
     }
 
@@ -179,6 +202,12 @@ public class Main extends Application {
             this.tabs.put(selectedFile.getName(), treeView);
         } else treeView = (TreeView<String>) this.tabs.get(selectedFile.getName());
         borderPane.setCenter(treeView);
+        treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("selected: " + newValue.getValue());
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection stringSelection = new StringSelection(newValue.getValue());
+            clipboard.setContents(stringSelection, null);
+        });
     }
 
     private STemplateEntityFactory decodeTempFile(File selectedFile) {

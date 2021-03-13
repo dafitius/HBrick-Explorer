@@ -16,12 +16,10 @@ public class SEntityTemplateReference {
 
     @Override
     public String toString() {
-        return "SEntityTemplateReference{" +
-                "EntityID=" + Long.toUnsignedString(entityID) +
-                ", entityIndex=" + entityIndex +
-                ", exposedEntity='" + exposedEntity + '\'' +
-                ", externalSceneIndex=" + externalSceneIndex +
-                '}';
+        return  "\"EntityID\": " + Long.toUnsignedString(entityID) + "\n" +
+                "\"entityIndex\": " + entityIndex + "\n" +
+                "\"exposedEntity\": \"" + exposedEntity + '\"' + "\n" +
+                "\"externalSceneIndex\": " + externalSceneIndex;
     }
 
     public long getEntityID() {

@@ -4,10 +4,7 @@ import Decoder.DataTypes.SMatrix34;
 import Decoder.DataTypes.SVector3;
 import Decoder.TEMP.BlockTypes.SEntityTemplateReference;
 import Decoder.TEMP.BlockTypes.nPropertyID;
-import Decoder.TEMP.BlockTypes.properties.m_aValues;
-import Decoder.TEMP.BlockTypes.properties.m_eidParent;
-import Decoder.TEMP.BlockTypes.properties.m_mTransform;
-import Decoder.TEMP.BlockTypes.properties.unknown;
+import Decoder.TEMP.BlockTypes.properties.*;
 import Decoder.Tools;
 
 public class PropertyDecoder {
@@ -21,10 +18,12 @@ public class PropertyDecoder {
                     return readm_mTransform(atOffset, file);
                 case "m_eidParent":
                     return readm_eidParent(atOffset, file);
+                case "m_RepositoryId":
+                    return readm_RepositoryId(atOffset, file);
             }
 
         }
-        return new unknown();
+        return new unknown(name);
     }
 
     private static nPropertyID readm_mTransform(int atOffset, byte[] file){
@@ -72,5 +71,14 @@ public class PropertyDecoder {
         int externalSceneIndex = Integer.parseUnsignedInt(Tools.readHexAsString(file, atOffset + 0x8, 0x4), 16);
         SEntityTemplateReference reference = new SEntityTemplateReference(entityID, entityIndex, exposedEntity, externalSceneIndex);
         return new m_eidParent(reference);
+    }
+
+    private static nPropertyID readm_RepositoryId(int atOffset, byte[] file){
+        atOffset += 0x10;
+        String part1 = Tools.readHexAsString(file, atOffset, 0x4).toLowerCase();
+        String part2 = Tools.readHexAsString(file, atOffset + 0x4, 0x2).toLowerCase();
+        String part3 = Tools.readHexAsString(file, atOffset + 0x6, 0x2).toLowerCase();
+        String part4 = Tools.readHexAsStringReverse(file, atOffset + 0x8, 0x8).toLowerCase();
+        return new m_RepositoryId(part1 + "-" + part2 + "-" + part3 + "-" + part4);
     }
 }

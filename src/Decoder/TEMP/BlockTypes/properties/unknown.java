@@ -4,12 +4,15 @@ import Decoder.TEMP.BlockTypes.nPropertyID;
 
 public class unknown implements nPropertyID {
 
-    public unknown() {
+    String name;
+
+    public unknown(String name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
-        return "This data type has not been decoded yet";
+        return name + " decoding hasn't been implemented yet";
     }
 
     @Override
