@@ -1,6 +1,8 @@
 package Decoder.DataTypes;
 
-public class SVector3 {
+import Decoder.TEMP.BlockTypes.nProperty;
+
+public class SVector3 implements nProperty {
 
     private float x;
     private float y;

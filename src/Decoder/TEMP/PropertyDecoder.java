@@ -22,6 +22,8 @@ public class PropertyDecoder {
                     return readfloat32(atOffset, file);
                 case "bool":
                     return readbool(atOffset, file);
+                case "SVector3":
+                    return readSVector3(atOffset, file);
             }
 
         }
@@ -110,5 +112,18 @@ public class PropertyDecoder {
         if(value == 0)return new bool(false);
         if(value == 1)return new bool(true);
         return new bool();
+    }
+
+    private static nProperty readSVector3(int atOffset, byte[] file){
+        atOffset += 0x10;
+        Long i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x0, 0x4), 16);
+        float Sx = Float.intBitsToFloat(i.intValue());
+        i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x4, 0x4), 16);
+        float Sy = Float.intBitsToFloat(i.intValue());
+        i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x8, 0x4), 16);
+        float Sz = Float.intBitsToFloat(i.intValue());
+        return new SVector3(Sx, Sy, Sz);
+
+
     }
 }
