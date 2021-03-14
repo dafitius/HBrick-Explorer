@@ -96,10 +96,11 @@ public class TEMPDecoder {
 
                 ////extract SEntityTemplateProperty
                 long propertyID = Long.parseUnsignedLong(Tools.readHexAsString(this.fileInBytes, atOffset + 0x20, 0x4), 16);
-                String propertyName = this.g_propertiesValues.get(propertyID);
-                if(propertyName == null) propertyName = propertyID + "";
+                String propertyName = propertyID + "";
+                if(this.g_propertiesValues.containsKey(propertyID)) propertyName = this.g_propertiesValues.get(propertyID);
+                int propertyIndex =  Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x28, 0x4), 16);
                 int propertyDataOffset = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x30, 0x4), 16);
-                SEntityTemplateProperty property = new SEntityTemplateProperty(PropertyDecoder.readProperty(propertyName, propertyDataOffset, this.fileInBytes));
+                SEntityTemplateProperty property = new SEntityTemplateProperty(propertyName, CC_dataTypes.get(propertyIndex), PropertyDecoder.readProperty(CC_dataTypes.get(propertyIndex), propertyDataOffset, this.fileInBytes));
                 System.out.println(propertyName);
                 atOffset += 0x38;
 
@@ -155,9 +156,11 @@ public class TEMPDecoder {
                     for (int j = 0; j < subAmount; j++) {
 
                         long propertyID = Long.parseUnsignedLong(Tools.readHexAsString(this.fileInBytes, atSubOffset, 0x4), 16);
-                        String propertyName = this.g_propertiesValues.get(propertyID);
+                        String propertyName = propertyID + "";
+                        if(this.g_propertiesValues.containsKey(propertyID)) propertyName = this.g_propertiesValues.get(propertyID);
                         int propertyDataOffset = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atSubOffset + 0x10, 0x4), 16);
-                        SEntityTemplateProperty property = new SEntityTemplateProperty(PropertyDecoder.readProperty(propertyName, propertyDataOffset, this.fileInBytes));
+                        int propertyIndex =  Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atSubOffset + 0x8, 0x4), 16);
+                        SEntityTemplateProperty property = new SEntityTemplateProperty(propertyName, CC_dataTypes.get(propertyIndex), PropertyDecoder.readProperty(CC_dataTypes.get(propertyIndex), propertyDataOffset, this.fileInBytes));
                         postInitPropertyValues.add(property);
                         atSubOffset += 0x18;
                     }
@@ -171,9 +174,11 @@ public class TEMPDecoder {
 
                     for (int j = 0; j < subAmount; j++) {
                         long propertyID = Long.parseUnsignedLong(Tools.readHexAsString(this.fileInBytes, atSubOffset, 0x4), 16);
-                        String propertyName = this.g_propertiesValues.get(propertyID);
+                        String propertyName = propertyID + "";
+                        if(this.g_propertiesValues.containsKey(propertyID)) propertyName = this.g_propertiesValues.get(propertyID);
+                        int propertyIndex =  Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atSubOffset + 0x8, 0x4), 16);
                         int propertyDataOffset = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atSubOffset + 0x10, 0x4), 16);
-                        SEntityTemplateProperty property = new SEntityTemplateProperty(PropertyDecoder.readProperty(propertyName, propertyDataOffset, this.fileInBytes));
+                        SEntityTemplateProperty property = new SEntityTemplateProperty(propertyName, CC_dataTypes.get(propertyIndex), PropertyDecoder.readProperty(CC_dataTypes.get(propertyIndex), propertyDataOffset, this.fileInBytes));
                         propertyValues.add(property);
                         atSubOffset += 0x18;
                     }
@@ -211,8 +216,10 @@ public class TEMPDecoder {
         fileSize += 0x8;
         int value = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize, 0x4), 16);
         while(value < Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize + 0x4, 0x4), 16)){
-            fileSize += 0x8;
+            fileSize += 0x4;
         }
+        fileSize += 0x4;
+        System.out.println(Integer.toHexString(fileSize));
         int amountOfTypes = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize, 0x4), 16);
         fileSize += 0x4;
         int atOffset = fileSize;
@@ -243,6 +250,7 @@ public class TEMPDecoder {
         this.hitmanVersion = hitmanVersion;
         this.TBLUfile = file;
         this.fileInBytes = Files.readAllBytes(Paths.get(file.getPath()));
+        this.CC_dataTypes = getDataTypes();
         this.g_propertiesValues = fillPropertyMap();
         this.blueprintIndexInResourceHeader = readBlueprintIndexInResourceHeader();
         this.externalSceneTypeIndicesInResourceHeader = readExternalSceneTypeIndicesInResourceHeader();
@@ -250,7 +258,7 @@ public class TEMPDecoder {
         this.rootEntity = readRootEntity();
         this.subEntities = readSubEntities();
         this.subType = readSubType();
-        this.CC_dataTypes = getDataTypes();
+
         STemplateEntityFactory templateEntity = new STemplateEntityFactory(blueprintIndexInResourceHeader, externalSceneTypeIndicesInResourceHeader, propertyOverrides, rootEntity, subEntities, subType, CC_dataTypes);
         //System.out.println(templateEntity);
 

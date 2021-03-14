@@ -2,11 +2,15 @@ package Decoder.TEMP.BlockTypes;
 
 public class SEntityTemplateProperty {
 
-    private nPropertyID nPropertyID;
+    private String nPropertyID;
+    private String type;
+    private nProperty nProperty;
 
 
-    public SEntityTemplateProperty(Decoder.TEMP.BlockTypes.nPropertyID nPropertyID) {
+    public SEntityTemplateProperty(String nPropertyID, String type, Decoder.TEMP.BlockTypes.nProperty nProperty) {
         this.nPropertyID = nPropertyID;
+        this.type = type;
+        this.nProperty = nProperty;
     }
 
     @Override
@@ -14,7 +18,11 @@ public class SEntityTemplateProperty {
         return  nPropertyID + "";
     }
 
-    public Decoder.TEMP.BlockTypes.nPropertyID getnPropertyID() {
+    public Decoder.TEMP.BlockTypes.nProperty getnProperty() {
+        return nProperty;
+    }
+
+    public String getnPropertyID() {
         return nPropertyID;
     }
 }

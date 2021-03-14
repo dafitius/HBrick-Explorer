@@ -1,8 +1,8 @@
-package Decoder.TEMP.BlockTypes.properties;
+package Decoder.DataTypes;
 
-import Decoder.TEMP.BlockTypes.nPropertyID;
+import Decoder.TEMP.BlockTypes.nProperty;
 
-public class unknown implements nPropertyID {
+public class unknown implements nProperty {
 
     String name = "this property's";
 
@@ -17,8 +17,4 @@ public class unknown implements nPropertyID {
         return name + " decoding hasn't been implemented yet";
     }
 
-    @Override
-    public String getProp(){
-        return "unknown";
-    }
 }

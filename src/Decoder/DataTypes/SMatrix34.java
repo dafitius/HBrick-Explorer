@@ -1,8 +1,8 @@
 package Decoder.DataTypes;
 
-import Decoder.TEMP.BlockTypes.nPropertyID;
+import Decoder.TEMP.BlockTypes.nProperty;
 
-public class SMatrix34 {
+public class SMatrix34 implements nProperty {
     private SVector3 Trans;
     private SVector3 XAxis;
     private SVector3 YAxis;
@@ -20,7 +20,7 @@ public class SMatrix34 {
         return "\"Trans\": {" + Trans + "},\n"+
                 "\"XAxis\": {" + XAxis + "},\n"+
                 "\"YAxis\": {" + YAxis + "},\n"+
-                "\"ZAxis\": {" + ZAxis + "},\n";
+                "\"ZAxis\": {" + ZAxis + "}}";
     }
 
     public SVector3 getTrans() {

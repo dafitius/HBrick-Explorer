@@ -1,32 +1,34 @@
 package Decoder.TEMP;
 
-import Decoder.DataTypes.SMatrix34;
-import Decoder.DataTypes.SVector3;
+import Decoder.DataTypes.*;
 import Decoder.TEMP.BlockTypes.SEntityTemplateReference;
-import Decoder.TEMP.BlockTypes.nPropertyID;
-import Decoder.TEMP.BlockTypes.properties.*;
+import Decoder.TEMP.BlockTypes.nProperty;
 import Decoder.Tools;
 
 public class PropertyDecoder {
 
-    public static nPropertyID readProperty(String name, int atOffset, byte[] file) {
-        if (name != null) {
-            switch (name) {
-                case "m_aValues":
-                    return new m_aValues();
-                case "m_mTransform":
-                    return readm_mTransform(atOffset, file);
-                case "m_eidParent":
-                    return readm_eidParent(atOffset, file);
-                case "m_RepositoryId":
-                    return readm_RepositoryId(atOffset, file);
+    public static nProperty readProperty(String dataType, int atOffset, byte[] file) {
+        if (dataType != null) {
+            switch (dataType) {
+                case "SColorRGB":
+                    return readSColorRGB(atOffset, file);
+                case "SMatrix43":
+                    return readSMatrix43(atOffset, file);
+                case "SEntityTemplateReference":
+                    return readSEntityTemplateReference(atOffset, file);
+                case "ZGuid":
+                    return readZGuid(atOffset, file);
+                case "float32":
+                    return readfloat32(atOffset, file);
+                case "bool":
+                    return readbool(atOffset, file);
             }
 
         }
-        return new unknown(name);
+        return new unknown(dataType);
     }
 
-    private static nPropertyID readm_mTransform(int atOffset, byte[] file){
+    private static nProperty readSMatrix43(int atOffset, byte[] file){
         atOffset += 0x10;
         Long i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x0, 0x4), 16);
         float Xx = Float.intBitsToFloat(i.intValue());
@@ -60,25 +62,53 @@ public class PropertyDecoder {
         float Tz = Float.intBitsToFloat(i.intValue());
         SVector3 Trans = new SVector3(Tx, Ty, Tz);
 
-        return new m_mTransform(new SMatrix34(Trans, xAxis, yAxis, zAxis));
+        return new SMatrix34(Trans, xAxis, yAxis, zAxis);
     }
 
-    private static nPropertyID readm_eidParent(int atOffset, byte[] file){
+    private static nProperty readSColorRGB(int atOffset, byte[] file){
+        atOffset += 0x10;
+        Long i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x0, 0x4), 16);
+        float Xx = Float.intBitsToFloat(i.intValue());
+        i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x4, 0x4), 16);
+        float Xy = Float.intBitsToFloat(i.intValue());
+        i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x8, 0x4), 16);
+        float Xz = Float.intBitsToFloat(i.intValue());
+        return new SColorRGB(Xx, Xy, Xz);
+
+    }
+
+    private static nProperty readSEntityTemplateReference(int atOffset, byte[] file){
         atOffset += 0x10;
         long entityID = Long.parseUnsignedLong(Tools.readHexAsString(file, atOffset, 0x8), 16);
         int entityIndex = Integer.parseUnsignedInt(Tools.readHexAsString(file, atOffset + 0xC, 0x4), 16);
         String exposedEntity = Tools.readStringFromOffset(file, atOffset + 0x18);
         int externalSceneIndex = Integer.parseUnsignedInt(Tools.readHexAsString(file, atOffset + 0x8, 0x4), 16);
         SEntityTemplateReference reference = new SEntityTemplateReference(entityID, entityIndex, exposedEntity, externalSceneIndex);
-        return new m_eidParent(reference);
+        return new SEntityTemplateReferenceProperty(reference);
     }
 
-    private static nPropertyID readm_RepositoryId(int atOffset, byte[] file){
+    private static nProperty readZGuid(int atOffset, byte[] file){
         atOffset += 0x10;
         String part1 = Tools.readHexAsString(file, atOffset, 0x4).toLowerCase();
         String part2 = Tools.readHexAsString(file, atOffset + 0x4, 0x2).toLowerCase();
         String part3 = Tools.readHexAsString(file, atOffset + 0x6, 0x2).toLowerCase();
         String part4 = Tools.readHexAsStringReverse(file, atOffset + 0x8, 0x8).toLowerCase();
-        return new m_RepositoryId(part1 + "-" + part2 + "-" + part3 + "-" + part4);
+        return new ZGuid(part1 + "-" + part2 + "-" + part3 + "-" + part4);
+    }
+
+    private static nProperty readfloat32(int atOffset, byte[] file){
+        atOffset += 0x10;
+        Long i = Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16);
+        float value = Float.intBitsToFloat(i.intValue());
+        return new float32(value);
+
+    }
+
+    private static nProperty readbool(int atOffset, byte[] file){
+        atOffset += 0x10;
+        int value = Integer.parseInt(Tools.readHexAsString(file, atOffset, 0x4),16);
+        if(value == 0)return new bool(false);
+        if(value == 1)return new bool(true);
+        return new bool();
     }
 }

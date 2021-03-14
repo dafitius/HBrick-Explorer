@@ -81,7 +81,8 @@ public class Main extends Application {
 
         borderpane.setCenter(hbox);
         borderpane.setTop(tabPane);
-        HBox topBar = buildBar(primaryStage, tabPane, borderpane);
+        BorderPane topPane = new BorderPane();
+        HBox topBar = buildBar(primaryStage, tabPane, topPane, borderpane);
         createDragFunction(primaryStage, topBar);
         VBox vbox = new VBox(topBar, borderpane);
         primaryStage.setTitle("brick Viewer");
@@ -139,10 +140,10 @@ public class Main extends Application {
                 logicalParent.getChildren().add(new TreeItem<>("\"Exposed entity\": \"" + subEntity.getLogicalParent().getExposedEntity() + "\""));
                 logicalParent.getChildren().add(new TreeItem<>("\"External Scene Index\": " + subEntity.getLogicalParent().getExternalSceneIndex()));
                 subEntity.getPostInitPropertyValues().forEach(p -> {
-                    postInitPropertyValues.getChildren().add(new TreeItem<String>(p.toString()));
+                    postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
                 });
                 subEntity.getPropertyValues().forEach(p -> {
-                    propertyValues.getChildren().add(new TreeItem<String>(p.toString()));
+                    propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
                 });
 
                 root.getChildren().add(subEntityItem);
@@ -230,10 +231,10 @@ public class Main extends Application {
                     logicalParent.getChildren().add(new TreeItem<>("\"Exposed entity\": \"" + subEntity.getLogicalParent().getExposedEntity() + "\""));
                     logicalParent.getChildren().add(new TreeItem<>("\"External Scene Index\": " + subEntity.getLogicalParent().getExternalSceneIndex()));
                     subEntity.getPostInitPropertyValues().forEach(p -> {
-                        postInitPropertyValues.getChildren().add(new TreeItem<String>(p.toString()));
+                        postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
                     });
                     subEntity.getPropertyValues().forEach(p -> {
-                        propertyValues.getChildren().add(new TreeItem<String>(p.toString()));
+                        propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
                     });
 
                     root.getChildren().add(subEntityItem);
@@ -347,11 +348,11 @@ public class Main extends Application {
     }
 
 
-    private HBox buildBar(Stage stage, TabPane tabPane, BorderPane borderPane) {
+    private HBox buildBar(Stage stage, TabPane tabPane, BorderPane borderPane , BorderPane mainpane) {
         String menuItemStyle = "-fx-font-size: 20; -fx-text-fill: #ec625f;";
 
         return new HBox(
-                CreateMenuBar(menuItemStyle, tabPane, borderPane),
+                CreateMenuBar(menuItemStyle, tabPane, borderPane, mainpane),
                 buildSpacer(),
                 createOptionsBar(stage, menuItemStyle, true)
         );
@@ -365,7 +366,7 @@ public class Main extends Application {
         return spacer;
     }
 
-    private Node CreateMenuBar(String menuItemStyle, TabPane tabPane, BorderPane borderpane) {
+    private Node CreateMenuBar(String menuItemStyle, TabPane tabPane, BorderPane borderpane, BorderPane mainPane) {
         MenuBar menuBar = new MenuBar();
 
         //Menu items
@@ -384,26 +385,26 @@ public class Main extends Application {
         addTBLU.setOnAction(e -> {
             File selectedFile = getFile("TBLU");
             tabPane.getTabs().add(new Tab(selectedFile.getName()));
-            displayTBLUfile(selectedFile, borderpane);
+            displayTBLUfile(selectedFile, mainPane);
         });
 
         addTEMP.setOnAction(e -> {
             File selectedFile = getFile("TEMP");
             tabPane.getTabs().add(new Tab(selectedFile.getName()));
-            displayTEMPfile(selectedFile, borderpane);
+            displayTEMPfile(selectedFile, mainPane);
         });
 
         addBrick.setOnAction(e -> {
             File selectedTEMPFile = getFile("TEMP");
             File selectedTBLUFile = getFile("TBLU");
             tabPane.getTabs().add(new Tab(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName()));
-            displayBrickfile(selectedTEMPFile, selectedTBLUFile, borderpane);
+            displayBrickfile(selectedTEMPFile, selectedTBLUFile, mainPane);
         });
 
         exportMenu.setOnAction(e -> {
-            if (borderpane.getCenter() != null) {
-                if (borderpane.getCenter() instanceof TreeView) {
-                    exportTreeView((TreeView) borderpane.getCenter());
+            if (mainPane.getCenter() != null) {
+                if (mainPane.getCenter() instanceof TreeView) {
+                    exportTreeView((TreeView) mainPane.getCenter());
                 }
             }
         });
