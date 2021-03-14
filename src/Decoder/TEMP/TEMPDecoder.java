@@ -25,6 +25,7 @@ public class TEMPDecoder {
     private int rootEntity;
     private ArrayList<STemplateFactorySubEntity> subEntities;
     private int subType;
+    private ArrayList<String> CC_dataTypes;
 
     private Map<Long,String> fillPropertyMap(){
         Map<Long,String> map = new HashMap<>();
@@ -199,6 +200,42 @@ public class TEMPDecoder {
         }
     }
 
+    private ArrayList<String> getDataTypes(){
+        ArrayList<String> types = new ArrayList<>();
+        int fileSize = Integer.parseInt(Tools.readHexAsStringReverse(this.fileInBytes, 0x8, 0x4), 16);
+        fileSize += 0x10;
+        fileSize += 0x4;
+        fileSize += (Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize + 0x4, 0x4), 16)) * 4;
+        fileSize += 0x8;
+        fileSize += 0x4;
+        fileSize += 0x8;
+        int value = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize, 0x4), 16);
+        while(value < Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize + 0x4, 0x4), 16)){
+            fileSize += 0x8;
+        }
+        int amountOfTypes = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize, 0x4), 16);
+        fileSize += 0x4;
+        int atOffset = fileSize;
+        for (int i = 0; i < amountOfTypes; i++) {
+            int stringLength = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x8, 0x4), 16) - 1;
+            types.add(Tools.readString(this.fileInBytes, atOffset + 0xc, stringLength));
+            atOffset += 0xC;
+            atOffset += stringLength;
+            if(stringLength % 4 == 0){
+                atOffset += 0x4;
+            }
+            else {
+                int padding = stringLength;
+                while (padding % 4 != 0) {
+                    atOffset++;
+                    padding++;
+                }
+            }
+        }
+        System.out.println(types);
+        return types;
+
+    }
 
 
     public STemplateEntityFactory decode(File file, String hitmanVersion) throws IOException{
@@ -213,7 +250,8 @@ public class TEMPDecoder {
         this.rootEntity = readRootEntity();
         this.subEntities = readSubEntities();
         this.subType = readSubType();
-        STemplateEntityFactory templateEntity = new STemplateEntityFactory(blueprintIndexInResourceHeader, externalSceneTypeIndicesInResourceHeader, propertyOverrides, rootEntity, subEntities, subType);
+        this.CC_dataTypes = getDataTypes();
+        STemplateEntityFactory templateEntity = new STemplateEntityFactory(blueprintIndexInResourceHeader, externalSceneTypeIndicesInResourceHeader, propertyOverrides, rootEntity, subEntities, subType, CC_dataTypes);
         //System.out.println(templateEntity);
 
         long finish = System.currentTimeMillis();

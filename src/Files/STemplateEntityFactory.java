@@ -14,14 +14,16 @@ public class STemplateEntityFactory {
     private int rootEntity;
     private ArrayList<STemplateFactorySubEntity> subEntities;
     private int subType;
+    private ArrayList<String> CC_Types;
 
-    public STemplateEntityFactory(int blueprintIndexInResourceHeader, int[] externalSceneTypeIndicesInResourceHeader, ArrayList<SEntityTemplatePropertyOverride> propertyOverrides, int rootEntity, ArrayList<STemplateFactorySubEntity> subEntities, int subType) {
+    public STemplateEntityFactory(int blueprintIndexInResourceHeader, int[] externalSceneTypeIndicesInResourceHeader, ArrayList<SEntityTemplatePropertyOverride> propertyOverrides, int rootEntity, ArrayList<STemplateFactorySubEntity> subEntities, int subType, ArrayList<String> types) {
         this.blueprintIndexInResourceHeader = blueprintIndexInResourceHeader;
         this.externalSceneTypeIndicesInResourceHeader = externalSceneTypeIndicesInResourceHeader;
         this.propertyOverrides = propertyOverrides;
         this.rootEntity = rootEntity;
         this.subEntities = subEntities;
         this.subType = subType;
+        this.CC_Types = types;
     }
 
     @Override
@@ -59,4 +61,6 @@ public class STemplateEntityFactory {
     public int getSubType() {
         return subType;
     }
+
+
 }
