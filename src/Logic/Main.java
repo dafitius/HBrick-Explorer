@@ -3,6 +3,7 @@ package Logic;
 import Decoder.TBLU.TBLUDecoder;
 
 import Decoder.TEMP.TEMPDecoder;
+import Decoder.Enums.*;
 
 import Decoder.TEMP.BlockTypes.*;
 import Decoder.TBLU.BlockTypes.*;
@@ -124,8 +125,25 @@ public class Main extends Application {
         if (!this.tabs.containsKey(selectedFile.getName())) {
             int i = 0;
             STemplateEntityFactory decodedTEMPfile = decodeTempFile(selectedFile);
-            TreeItem<String> root = new TreeItem<>("subEntities");
-            treeView.setRoot(root);
+            treeView.setRoot(new TreeItem<>("Template"));
+
+            TreeItem<String> subType = new TreeItem<>("subType: " + EntityTemplateSubType.get(decodedTEMPfile.getSubType()));
+
+            TreeItem<String> subEntities = new TreeItem<>("subEntities");
+
+            TreeItem<String> propertyOverrides = new TreeItem<>("propertyOverrides");
+
+            TreeItem<String> externalSceneTypeIndicesInResourceHeader = new TreeItem<>("externalSceneTypeIndicesInResourceHeader");
+            if(decodedTEMPfile.getExternalSceneTypeIndicesInResourceHeader() != null) {
+                for (int index : decodedTEMPfile.getExternalSceneTypeIndicesInResourceHeader()) {
+                    externalSceneTypeIndicesInResourceHeader.getChildren().add(new TreeItem<String>(index + ""));
+                }
+            }
+            TreeItem<String> blueprintIndexInResourceHeader = new TreeItem<>("blueprintIndexInResourceHeader: " + decodedTEMPfile.getBlueprintIndexInResourceHeader());
+
+            treeView.getRoot().getChildren().addAll(subType, blueprintIndexInResourceHeader, externalSceneTypeIndicesInResourceHeader, propertyOverrides, subEntities);
+
+
             for (STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()) {
                 TreeItem<String> subEntityItem = new TreeItem<String>("sub Entity " + i);
                 TreeItem<String> entityTypeResourceIndex = new TreeItem<>("entityTypeResourceIndex");
@@ -148,9 +166,12 @@ public class Main extends Application {
                     else propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
                 });
 
-                root.getChildren().add(subEntityItem);
+                subEntities.getChildren().add(subEntityItem);
                 i++;
             }
+
+
+
             this.tabs.put(selectedFile.getName(), treeView);
         } else treeView = (TreeView<String>) this.tabs.get(selectedFile.getName());
         borderPane.setCenter(treeView);

@@ -214,32 +214,38 @@ public class TEMPDecoder {
         fileSize += 0x8;
         fileSize += 0x4;
         fileSize += 0x8;
-        int value = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize, 0x4), 16);
-        while(value < Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize + 0x4, 0x4), 16)){
-            fileSize += 0x4;
-        }
-        fileSize += 0x4;
-        System.out.println(Integer.toHexString(fileSize));
-        int amountOfTypes = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize, 0x4), 16);
-        fileSize += 0x4;
-        int atOffset = fileSize;
-        for (int i = 0; i < amountOfTypes; i++) {
-            int stringLength = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x8, 0x4), 16) - 1;
-            types.add(Tools.readString(this.fileInBytes, atOffset + 0xc, stringLength));
-            atOffset += 0xC;
-            atOffset += stringLength;
-            if(stringLength % 4 == 0){
-                atOffset += 0x4;
-            }
-            else {
-                int padding = stringLength;
-                while (padding % 4 != 0) {
-                    atOffset++;
-                    padding++;
+        if(this.fileInBytes.length > fileSize) {
+
+
+            if(Tools.readHexAsString(this.fileInBytes, fileSize - 0xc, 0x4).equals("3989BF9F")) {
+                int value = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize, 0x4), 16);
+
+                while (value < Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize + 0x4, 0x4), 16)) {
+                    fileSize += 0x4;
                 }
+                fileSize += 0x4;
+                System.out.println(Integer.toHexString(fileSize));
+                int amountOfTypes = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, fileSize, 0x4), 16);
+                fileSize += 0x4;
+                int atOffset = fileSize;
+                for (int i = 0; i < amountOfTypes; i++) {
+                    int stringLength = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x8, 0x4), 16) - 1;
+                    types.add(Tools.readString(this.fileInBytes, atOffset + 0xc, stringLength));
+                    atOffset += 0xC;
+                    atOffset += stringLength;
+                    if (stringLength % 4 == 0) {
+                        atOffset += 0x4;
+                    } else {
+                        int padding = stringLength;
+                        while (padding % 4 != 0) {
+                            atOffset++;
+                            padding++;
+                        }
+                    }
+                }
+                System.out.println(types);
             }
         }
-        System.out.println(types);
         return types;
 
     }
