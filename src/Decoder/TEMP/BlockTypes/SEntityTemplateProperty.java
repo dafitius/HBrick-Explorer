@@ -25,4 +25,8 @@ public class SEntityTemplateProperty {
     public String getnPropertyID() {
         return nPropertyID;
     }
+
+    public String getType() {
+        return type;
+    }
 }

@@ -1,5 +1,5 @@
 //H2 or H3
-hitman edition: H2
+hitman edition: H3
 
 //can be blank
 default file path: 
