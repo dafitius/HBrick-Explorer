@@ -2,16 +2,16 @@ package Decoder.DataTypes;
 
 import Decoder.TEMP.BlockTypes.nProperty;
 
-public class ZString implements nProperty {
+public class int32 implements nProperty {
 
-    private String value;
+    private long value;
 
-    public ZString(String value) {
+    public int32(long value) {
         this.value = value;
     }
 
     @Override
     public String toString() {
-        return "\"" + value + "\"";
+        return value +"";
     }
 }

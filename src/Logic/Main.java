@@ -141,11 +141,11 @@ public class Main extends Application {
                 logicalParent.getChildren().add(new TreeItem<>("\"External Scene Index\": " + subEntity.getLogicalParent().getExternalSceneIndex()));
                 subEntity.getPostInitPropertyValues().forEach(p -> {
                     if(!p.getnPropertyID().matches("[0-9]+")) postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
-                    else postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ "}"));
+                    else postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
                 });
                 subEntity.getPropertyValues().forEach(p -> {
                     if(!p.getnPropertyID().matches("[0-9]+")) propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
-                    else propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ "}"));
+                    else propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
                 });
 
                 root.getChildren().add(subEntityItem);
@@ -234,11 +234,11 @@ public class Main extends Application {
                     logicalParent.getChildren().add(new TreeItem<>("\"External Scene Index\": " + subEntity.getLogicalParent().getExternalSceneIndex()));
                     subEntity.getPostInitPropertyValues().forEach(p -> {
                         if(!p.getnPropertyID().matches("[0-9]+")) postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
-                        else postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ "}"));
+                        else postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
                     });
                     subEntity.getPropertyValues().forEach(p -> {
                         if(!p.getnPropertyID().matches("[0-9]+")) propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
-                        else propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ "}"));
+                        else propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
                     });
 
                     root.getChildren().add(subEntityItem);

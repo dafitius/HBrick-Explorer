@@ -28,6 +28,10 @@ public class PropertyDecoder {
                     return readSVector3(atOffset, file);
                 case "ZRuntimeResourceID":
                     return readResourceRuntimeID(atOffset, file);
+                case "int32":
+                    return readInt32(atOffset, file);
+                case "ZGameTime":
+                    return readZGameTime(atOffset, file);
             }
 
         }
@@ -118,6 +122,16 @@ public class PropertyDecoder {
         return new bool();
     }
 
+    private static nProperty readInt32(int atOffset, byte[] file){
+        atOffset += 0x10;
+        return new int32(Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16));
+    }
+
+    private static nProperty readZGameTime(int atOffset, byte[] file){
+        atOffset += 0x10;
+        return new ZGameTime(Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16));
+    }
+
     private static nProperty readZString(int atOffset, byte[] file){
         atOffset += 0x10;
 
@@ -139,8 +153,8 @@ public class PropertyDecoder {
 
     private static nProperty readResourceRuntimeID(int atOffset, byte[] file) {
         atOffset += 0x10;
-        int high = Integer.parseInt(Tools.readHexAsString(file, atOffset, 0x4), 16);
-        int low = Integer.parseInt(Tools.readHexAsString(file, atOffset + 0x4, 0x4), 16);
+        long high = Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16);
+        long low = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x4, 0x4), 16);
         return new ZRuntimeResourceID(high, low);
     }
 }

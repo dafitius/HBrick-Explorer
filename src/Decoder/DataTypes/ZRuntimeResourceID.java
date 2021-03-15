@@ -4,10 +4,10 @@ import Decoder.TEMP.BlockTypes.nProperty;
 
 public class ZRuntimeResourceID implements nProperty {
 
-        private int m_IDHigh;
-        private int m_IDLow;
+        private long m_IDHigh;
+        private long m_IDLow;
 
-    public ZRuntimeResourceID(int m_IDHigh, int m_IDLow) {
+    public ZRuntimeResourceID(long m_IDHigh, long m_IDLow) {
         this.m_IDHigh = m_IDHigh;
         this.m_IDLow = m_IDLow;
     }
@@ -20,11 +20,11 @@ public class ZRuntimeResourceID implements nProperty {
                 ", \"m_IDLow\": " + m_IDLow;
     }
 
-    public int getM_IDHigh() {
+    public long getM_IDHigh() {
         return m_IDHigh;
     }
 
-    public int getM_IDLow() {
+    public long getM_IDLow() {
         return m_IDLow;
     }
 }
