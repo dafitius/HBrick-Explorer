@@ -166,7 +166,28 @@ public class Main extends Application {
                 i++;
             }
 
+            i = 0;
+            for (SEntityTemplatePropertyOverride propertyOverride : decodedTEMPfile.getPropertyOverrides()) {
 
+                //Entity root
+                TreeItem<String> propertyOverrideItem = new TreeItem<String>("property override" + i);
+
+                TreeItem<String> PropertyOwner = new TreeItem<>("PropertyOwner");
+                TreeItem<String> propertyValue = new TreeItem<>("propertyValue");
+                propertyOverrideItem.getChildren().addAll( PropertyOwner, propertyValue);
+
+                PropertyOwner.getChildren().add(new TreeItem<>("\"Entity ID\": " + propertyOverride.getPropertOwner().getEntityID()));
+                PropertyOwner.getChildren().add(new TreeItem<>("\"Entity Index\": " + propertyOverride.getPropertOwner().getEntityIndex()));
+                PropertyOwner.getChildren().add(new TreeItem<>("\"Exposed entity\": \"" + propertyOverride.getPropertOwner().getExposedEntity() + "\""));
+                PropertyOwner.getChildren().add(new TreeItem<>("\"External Scene Index\": " + propertyOverride.getPropertOwner().getExternalSceneIndex()));
+
+                SEntityTemplateProperty p = propertyOverride.getPropertyValue();
+                if(!p.getnPropertyID().matches("[0-9]+")) propertyValue.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
+                else propertyValue.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
+
+                propertyOverrides.getChildren().add(propertyOverrideItem);
+                i++;
+            }
 
             this.tabs.put(selectedFile.getName(), treeView);
         } else treeView = (TreeView<String>) this.tabs.get(selectedFile.getName());
@@ -177,8 +198,6 @@ public class Main extends Application {
             StringSelection stringSelection = new StringSelection(newValue.getValue());
             clipboard.setContents(stringSelection, null);
         });
-
-
     }
 
     private void displayTBLUfile(File selectedFile, BorderPane borderPane) {
