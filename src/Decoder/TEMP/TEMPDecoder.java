@@ -101,7 +101,6 @@ public class TEMPDecoder {
                 int propertyIndex =  Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x28, 0x4), 16);
                 int propertyDataOffset = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x30, 0x4), 16);
                 SEntityTemplateProperty property = new SEntityTemplateProperty(propertyName, CC_dataTypes.get(propertyIndex), PropertyDecoder.readProperty(CC_dataTypes.get(propertyIndex), propertyDataOffset, this.fileInBytes));
-                System.out.println(propertyName);
                 atOffset += 0x38;
 
                 ETPOs.add(new SEntityTemplatePropertyOverride(reference, property));

@@ -139,56 +139,63 @@ public class Main extends Application {
 
             treeView.getRoot().getChildren().addAll(subType, blueprintIndexInResourceHeader, externalSceneTypeIndicesInResourceHeader, propertyOverrides, subEntities);
 
+            if(decodedTEMPfile.getSubEntities() != null) {
+                for (STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()) {
+                    TreeItem<String> subEntityItem = new TreeItem<String>("sub Entity " + i);
+                    TreeItem<String> entityTypeResourceIndex = new TreeItem<>("entityTypeResourceIndex");
+                    TreeItem<String> logicalParent = new TreeItem<>("LogicalParent");
+                    TreeItem<String> postInitPropertyValues = new TreeItem<>("postInitPropertyValues");
+                    TreeItem<String> propertyValues = new TreeItem<>("propertyValues");
+                    subEntityItem.getChildren().addAll(entityTypeResourceIndex, logicalParent, postInitPropertyValues, propertyValues);
 
-            for (STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()) {
-                TreeItem<String> subEntityItem = new TreeItem<String>("sub Entity " + i);
-                TreeItem<String> entityTypeResourceIndex = new TreeItem<>("entityTypeResourceIndex");
-                TreeItem<String> logicalParent = new TreeItem<>("LogicalParent");
-                TreeItem<String> postInitPropertyValues = new TreeItem<>("postInitPropertyValues");
-                TreeItem<String> propertyValues = new TreeItem<>("propertyValues");
-                subEntityItem.getChildren().addAll(entityTypeResourceIndex, logicalParent, postInitPropertyValues, propertyValues);
+                    entityTypeResourceIndex.getChildren().add(new TreeItem<>("entityTypeResourceIndex: " + subEntity.getEntityTypeResourceIndex()));
+                    logicalParent.getChildren().add(new TreeItem<>("\"Entity ID\": " + subEntity.getLogicalParent().getEntityID()));
+                    logicalParent.getChildren().add(new TreeItem<>("\"Entity Index\": " + subEntity.getLogicalParent().getEntityIndex()));
+                    logicalParent.getChildren().add(new TreeItem<>("\"Exposed entity\": \"" + subEntity.getLogicalParent().getExposedEntity() + "\""));
+                    logicalParent.getChildren().add(new TreeItem<>("\"External Scene Index\": " + subEntity.getLogicalParent().getExternalSceneIndex()));
+                    subEntity.getPostInitPropertyValues().forEach(p -> {
+                        if (!p.getnPropertyID().matches("[0-9]+"))
+                            postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
+                        else
+                            postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString() + " }"));
+                    });
+                    subEntity.getPropertyValues().forEach(p -> {
+                        if (!p.getnPropertyID().matches("[0-9]+"))
+                            propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
+                        else
+                            propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString() + " }"));
+                    });
 
-                entityTypeResourceIndex.getChildren().add(new TreeItem<>("entityTypeResourceIndex: " + subEntity.getEntityTypeResourceIndex()));
-                logicalParent.getChildren().add(new TreeItem<>("\"Entity ID\": " + subEntity.getLogicalParent().getEntityID()));
-                logicalParent.getChildren().add(new TreeItem<>("\"Entity Index\": " + subEntity.getLogicalParent().getEntityIndex()));
-                logicalParent.getChildren().add(new TreeItem<>("\"Exposed entity\": \"" + subEntity.getLogicalParent().getExposedEntity() + "\""));
-                logicalParent.getChildren().add(new TreeItem<>("\"External Scene Index\": " + subEntity.getLogicalParent().getExternalSceneIndex()));
-                subEntity.getPostInitPropertyValues().forEach(p -> {
-                    if(!p.getnPropertyID().matches("[0-9]+")) postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
-                    else postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
-                });
-                subEntity.getPropertyValues().forEach(p -> {
-                    if(!p.getnPropertyID().matches("[0-9]+")) propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
-                    else propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
-                });
-
-                subEntities.getChildren().add(subEntityItem);
-                i++;
+                    subEntities.getChildren().add(subEntityItem);
+                    i++;
+                }
             }
-
             i = 0;
-            for (SEntityTemplatePropertyOverride propertyOverride : decodedTEMPfile.getPropertyOverrides()) {
+            if(decodedTEMPfile.getPropertyOverrides() != null) {
+                for (SEntityTemplatePropertyOverride propertyOverride : decodedTEMPfile.getPropertyOverrides()) {
 
-                //Entity root
-                TreeItem<String> propertyOverrideItem = new TreeItem<String>("property override" + i);
+                    //Entity root
+                    TreeItem<String> propertyOverrideItem = new TreeItem<String>("property override" + i);
 
-                TreeItem<String> PropertyOwner = new TreeItem<>("PropertyOwner");
-                TreeItem<String> propertyValue = new TreeItem<>("propertyValue");
-                propertyOverrideItem.getChildren().addAll( PropertyOwner, propertyValue);
+                    TreeItem<String> PropertyOwner = new TreeItem<>("PropertyOwner");
+                    TreeItem<String> propertyValue = new TreeItem<>("propertyValue");
+                    propertyOverrideItem.getChildren().addAll(PropertyOwner, propertyValue);
 
-                PropertyOwner.getChildren().add(new TreeItem<>("\"Entity ID\": " + propertyOverride.getPropertOwner().getEntityID()));
-                PropertyOwner.getChildren().add(new TreeItem<>("\"Entity Index\": " + propertyOverride.getPropertOwner().getEntityIndex()));
-                PropertyOwner.getChildren().add(new TreeItem<>("\"Exposed entity\": \"" + propertyOverride.getPropertOwner().getExposedEntity() + "\""));
-                PropertyOwner.getChildren().add(new TreeItem<>("\"External Scene Index\": " + propertyOverride.getPropertOwner().getExternalSceneIndex()));
+                    PropertyOwner.getChildren().add(new TreeItem<>("\"Entity ID\": " + propertyOverride.getPropertOwner().getEntityID()));
+                    PropertyOwner.getChildren().add(new TreeItem<>("\"Entity Index\": " + propertyOverride.getPropertOwner().getEntityIndex()));
+                    PropertyOwner.getChildren().add(new TreeItem<>("\"Exposed entity\": \"" + propertyOverride.getPropertOwner().getExposedEntity() + "\""));
+                    PropertyOwner.getChildren().add(new TreeItem<>("\"External Scene Index\": " + propertyOverride.getPropertOwner().getExternalSceneIndex()));
 
-                SEntityTemplateProperty p = propertyOverride.getPropertyValue();
-                if(!p.getnPropertyID().matches("[0-9]+")) propertyValue.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
-                else propertyValue.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
+                    SEntityTemplateProperty p = propertyOverride.getPropertyValue();
+                    if (!p.getnPropertyID().matches("[0-9]+"))
+                        propertyValue.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
+                    else
+                        propertyValue.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString() + " }"));
 
-                propertyOverrides.getChildren().add(propertyOverrideItem);
-                i++;
+                    propertyOverrides.getChildren().add(propertyOverrideItem);
+                    i++;
+                }
             }
-
             this.tabs.put(selectedFile.getName(), treeView);
         } else treeView = (TreeView<String>) this.tabs.get(selectedFile.getName());
         borderPane.setCenter(treeView);
