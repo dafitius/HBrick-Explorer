@@ -28,6 +28,10 @@ public class subEntity implements Block {
         this.subBlock3 = subBlock3;
     }
 
+    public subEntity(String name){
+        this.name = name;
+    }
+
 
     public String getParentName() {
         return parentName;
@@ -80,16 +84,6 @@ public class subEntity implements Block {
 
     @Override
     public String toString() {
-        return "Block0{" +
-                "parentName='" + parentName + '\'' +
-                ", parentHash='" + parentHash + '\'' +
-                ", type='" + type + '\'' +
-                ", hash='" + hash + '\'' +
-                ", name='" + name + '\'' +
-                ", subBlock0=" + subBlock0List +
-                ", subBlock1=" + subBlock1 +
-                ", subBlock2=" + subBlock2 +
-                ", subBlock3=" + subBlock3 +
-                '}';
+        return name;
     }
 }

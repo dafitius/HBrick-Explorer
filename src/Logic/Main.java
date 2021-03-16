@@ -21,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
@@ -31,6 +32,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,8 +42,8 @@ public class Main extends Application {
 
     private static double xOffset = 0;
     private static double yOffset = 0;
-
-    private Map<String, Node> tabs;
+    //          name,           treeView, DetailsList
+    private Map<String, Map.Entry<Node, Node>> tabs;
 
     //settings
     private String hitmanEdition;
@@ -67,19 +69,29 @@ public class Main extends Application {
         BorderPane borderpane = new BorderPane();
 
         TabPane tabPane = new TabPane();
+
         ListView<String> welcomeText = new ListView<>();
         welcomeText.getItems().addAll("welcome to brick explorer", "to use this application please add a file");
 
         tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
+            SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
             Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-            borderpane.setCenter(tabs.get(selectedTab.getText()));
+            selectionModel.select(selectedTab);
+            if(this.tabs.containsKey(selectedTab.getText())) {
+                borderpane.setCenter(tabs.get(selectedTab.getText()).getKey());
+                if(tabs.get(selectedTab.getText()).getValue() != null) borderpane.setRight(tabs.get(selectedTab.getText()).getValue());
+                else borderpane.setRight(null);
+            }
+
         });
 
 
         //create a panel on the right for details
 
-        borderpane.setCenter(hbox);
+        borderpane.setCenter(hbox);;
         borderpane.setTop(tabPane);
+
+
         BorderPane topPane = new BorderPane();
         HBox topBar = buildBar(primaryStage, tabPane, topPane, borderpane);
         createDragFunction(primaryStage, topBar);
@@ -99,17 +111,17 @@ public class Main extends Application {
     }
 
 
-    public TreeItem<String> populateTreeView(TreeView<String> treeView, subEntity subEntity, int depth, TreeItem<String> treeItem) {
+    public TreeItem<subEntity> populateTreeView(subEntity subEntity, int depth, TreeItem<subEntity> treeItem) {
 
         ArrayList<subEntity> subEntities = subEntity.getCC_children();
         for (subEntity entity : subEntities) {
 
             for (int i = 0; i < depth; i++) System.out.print("   ");
-            TreeItem<String> item = new TreeItem<>(entity.getName());
+            TreeItem<subEntity> item = new TreeItem<subEntity>(entity);
             treeItem.getChildren().add(item);
 
             if (entity.isCC_hasChildren()) {
-                populateTreeView(treeView, entity, depth + 1, item);
+                populateTreeView(entity, depth + 1, item);
             }
         }
         if (depth == 0) return treeItem;
@@ -196,9 +208,12 @@ public class Main extends Application {
                     i++;
                 }
             }
-            this.tabs.put(selectedFile.getName(), treeView);
+            this.tabs.put(selectedFile.getName(), new AbstractMap.SimpleEntry(treeView, null));
         } else treeView = (TreeView<String>) this.tabs.get(selectedFile.getName());
+
+        borderPane.setRight(null);
         borderPane.setCenter(treeView);
+
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("selected: " + newValue.getValue());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -209,7 +224,7 @@ public class Main extends Application {
 
     private void displayTBLUfile(File selectedFile, BorderPane borderPane) {
 
-        TreeView<String> treeView = new TreeView<>();
+        TreeView<subEntity> treeView = new TreeView<>();
         subEntity rootEntity = null;
         if (!this.tabs.containsKey(selectedFile.getName())) {
             TBLU decodedTBLUfile = decodeTbluFile(selectedFile);
@@ -228,26 +243,30 @@ public class Main extends Application {
                 }
             }
             if (rootEntity != null) {
-                treeView.setRoot(populateTreeView(treeView, rootEntity, 0, new TreeItem<>(rootEntity.getName())));
+                treeView.setRoot(populateTreeView(rootEntity, 0, new TreeItem<subEntity>(rootEntity)));
             }
-            this.tabs.put(selectedFile.getName(), treeView);
-        } else treeView = (TreeView<String>) this.tabs.get(selectedFile.getName());
+            this.tabs.put(selectedFile.getName(), new AbstractMap.SimpleEntry(treeView, null));
+        } else treeView = (TreeView<subEntity>) this.tabs.get(selectedFile.getName());
         borderPane.setCenter(treeView);
+        borderPane.setRight(null);
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("selected: " + newValue.getValue());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            StringSelection stringSelection = new StringSelection(newValue.getValue());
+            StringSelection stringSelection = new StringSelection(newValue.getValue().toString());
             clipboard.setContents(stringSelection, null);
         });
     }
 
     private void displayBrickfile(File selectedTEMPFile, File selectedTBLUFile, BorderPane borderPane) {
 
-        TreeView<String> treeView = new TreeView<>();
+        TreeView<subEntity> treeView = new TreeView<>();
+        ListView detailList = new ListView<String>();
+        Map<String, Integer> nameAndIndex = new HashMap();
         subEntity rootEntity = null;
         if (!this.tabs.containsKey(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName())) {
             TBLU decodedTBLUfile = decodeTbluFile(selectedTBLUFile);
             STemplateEntityFactory decodedTEMPfile = decodeTempFile(selectedTEMPFile);
+
             //fill array with required names
             ArrayList<String> subEntityNames = new ArrayList<>(decodedTBLUfile.getBlock0().size());
             decodedTBLUfile.getBlock0().forEach(s -> {
@@ -256,49 +275,41 @@ public class Main extends Application {
 
             if (decodedTBLUfile.getBlock0().size() == decodedTEMPfile.getSubEntities().size()) {
 
-                int i = 0;
-                TreeItem<String> root = new TreeItem<>("subEntities");
-                treeView.setRoot(root);
-                for (STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()) {
-                    TreeItem<String> subEntityItem = new TreeItem<String>(subEntityNames.get(i));
-                    TreeItem<String> entityTypeResourceIndex = new TreeItem<>("entityTypeResourceIndex");
-                    TreeItem<String> logicalParent = new TreeItem<>("LogicalParent");
-                    TreeItem<String> postInitPropertyValues = new TreeItem<>("postInitPropertyValues");
-                    TreeItem<String> propertyValues = new TreeItem<>("propertyValues");
-                    subEntityItem.getChildren().addAll(entityTypeResourceIndex, logicalParent, postInitPropertyValues, propertyValues);
+                for (subEntity itemToFill : decodedTBLUfile.getBlock0()) {
+                    for (subEntity item : decodedTBLUfile.getBlock0()) {
 
-                    entityTypeResourceIndex.getChildren().add(new TreeItem<>("entityTypeResourceIndex: " + subEntity.getEntityTypeResourceIndex()));
-                    logicalParent.getChildren().add(new TreeItem<>("\"Entity ID\": " + subEntity.getLogicalParent().getEntityID()));
-                    int parentIndex = subEntity.getLogicalParent().getEntityIndex();
-                    if(parentIndex > 0) {
-                        logicalParent.getChildren().add(new TreeItem<>("\"Entity Index\": " + parentIndex + " (" + subEntityNames.get(parentIndex) + ")"));
-                    } else logicalParent.getChildren().add(new TreeItem<>("\"Entity Index\": " + parentIndex));
-                    logicalParent.getChildren().add(new TreeItem<>("\"Exposed entity\": \"" + subEntity.getLogicalParent().getExposedEntity() + "\""));
-                    logicalParent.getChildren().add(new TreeItem<>("\"External Scene Index\": " + subEntity.getLogicalParent().getExternalSceneIndex()));
-                    subEntity.getPostInitPropertyValues().forEach(p -> {
-                        if(!p.getnPropertyID().matches("[0-9]+")) postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
-                        else postInitPropertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
-                    });
-                    subEntity.getPropertyValues().forEach(p -> {
-                        if(!p.getnPropertyID().matches("[0-9]+")) propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getnProperty().toString()));
-                        else propertyValues.getChildren().add(new TreeItem<String>(p.getnPropertyID() + ": \n" + p.getType() + ": { " + p.getnProperty().toString()+ " }"));
-                    });
+                        if (item.getParentHash().equals(itemToFill.getHash())) {
+                            itemToFill.addChild(item);
+                        }
 
-                    root.getChildren().add(subEntityItem);
-                    i++;
+                    }
+                    if (itemToFill.getHash().equals(decodedTBLUfile.getHeader().getRootHash())) {
+                        rootEntity = itemToFill;
+                    }
                 }
-            } else treeView = new TreeView<>(new TreeItem<>("These files do not form a brick together"));
+                if (rootEntity != null) {
+                    treeView.setRoot(populateTreeView(rootEntity, 0, new TreeItem<subEntity>(rootEntity)));
+                }
 
+            } else treeView = new TreeView<subEntity>(new TreeItem<subEntity>(new subEntity("these files do not form a brick together!")));
 
-            this.tabs.put(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName(), treeView);
+            detailList.setMinWidth(350);
+            detailList.setMaxWidth(350);
+
+            this.tabs.put(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName(), new AbstractMap.SimpleEntry(treeView, detailList));
         } else
-            treeView = (TreeView<String>) this.tabs.get(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName());
+            treeView = (TreeView<subEntity>) this.tabs.get(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName());
         borderPane.setCenter(treeView);
+        borderPane.setRight(detailList);
+
+
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("selected: " + newValue.getValue());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            StringSelection stringSelection = new StringSelection(newValue.getValue());
+            StringSelection stringSelection = new StringSelection(newValue.getValue().getName());
             clipboard.setContents(stringSelection, null);
+
+            detailList.getItems().add(newValue.getValue().getHash());
         });
     }
 
@@ -327,6 +338,10 @@ public class Main extends Application {
             e.printStackTrace();
         }
         return TBLUfile;
+    }
+
+    public void setDetailList(int Entityindex, STemplateEntityFactory decodedTEMPfile, ListView listView){
+
     }
 
     public File getFile(String fileType) {
@@ -428,20 +443,26 @@ public class Main extends Application {
 
         addTBLU.setOnAction(e -> {
             File selectedFile = getFile("TBLU");
-            tabPane.getTabs().add(new Tab(selectedFile.getName()));
+            Tab tab = new Tab(selectedFile.getName());
+            tabPane.getTabs().add(tab);
+            tabPane.getSelectionModel().select(tab);
             displayTBLUfile(selectedFile, mainPane);
         });
 
         addTEMP.setOnAction(e -> {
             File selectedFile = getFile("TEMP");
-            tabPane.getTabs().add(new Tab(selectedFile.getName()));
+            Tab tab = new Tab(selectedFile.getName());
+            tabPane.getTabs().add(tab);
+            tabPane.getSelectionModel().select(tab);
             displayTEMPfile(selectedFile, mainPane);
         });
 
         addBrick.setOnAction(e -> {
             File selectedTEMPFile = getFile("TEMP");
             File selectedTBLUFile = getFile("TBLU");
-            tabPane.getTabs().add(new Tab(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName()));
+            Tab tab = new Tab(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName());
+            tabPane.getTabs().add(tab);
+            tabPane.getSelectionModel().select(tab);
             displayBrickfile(selectedTEMPFile, selectedTBLUFile, mainPane);
         });
 
