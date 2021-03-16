@@ -8,7 +8,7 @@ public class EnumReader {
     public static String readEnum(String dataType, int value) {
         try {
             BufferedReader Reader =
-                    new BufferedReader(new FileReader("src/Logic/resources/enums.txt"));
+                    new BufferedReader(new InputStreamReader(EnumReader.class.getResourceAsStream("/Logic/resources/enums.txt")));
             //File enumFile = new File("src/Logic/resources/enums.txt");
             //Scanner Reader = new Scanner(enumFile);
             String line = "notNull";
