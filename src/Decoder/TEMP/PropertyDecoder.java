@@ -5,9 +5,12 @@ import Decoder.TEMP.BlockTypes.SEntityTemplateReference;
 import Decoder.TEMP.BlockTypes.nProperty;
 import Decoder.Tools;
 
+import java.util.ArrayList;
+
 public class PropertyDecoder {
 
-    public static nProperty readProperty(String dataType, int atOffset, byte[] file) {
+    public static nProperty readProperty(String dataType, int atOffset, byte[] file, boolean initSkip) {
+        if(initSkip) atOffset += 0x10;
         if (dataType != null) {
             switch (dataType) {
                 case "SColorRGB":
@@ -40,11 +43,15 @@ public class PropertyDecoder {
         if(dataType.toLowerCase().startsWith("e") || dataType.toLowerCase().contains(".e")){
             return readEnum(atOffset, file, dataType);
         }
+        if(dataType.startsWith("TArray<")){
+            String ArraydataType = dataType.replace("TArray<", "").replace(">", "");
+            return readArray(atOffset, file, ArraydataType);
+        }
         return new unknown(dataType);
     }
 
     private static nProperty readSMatrix43(int atOffset, byte[] file){
-        atOffset += 0x10;
+
         Long i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x0, 0x4), 16);
         float Xx = Float.intBitsToFloat(i.intValue());
         i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x4, 0x4), 16);
@@ -81,7 +88,7 @@ public class PropertyDecoder {
     }
 
     private static nProperty readSColorRGB(int atOffset, byte[] file){
-        atOffset += 0x10;
+
         Long i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x0, 0x4), 16);
         float Xx = Float.intBitsToFloat(i.intValue());
         i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x4, 0x4), 16);
@@ -93,7 +100,7 @@ public class PropertyDecoder {
     }
 
     private static nProperty readSEntityTemplateReference(int atOffset, byte[] file){
-        atOffset += 0x10;
+
         long entityID = Long.parseUnsignedLong(Tools.readHexAsString(file, atOffset, 0x8), 16);
         int entityIndex = Integer.parseUnsignedInt(Tools.readHexAsString(file, atOffset + 0xC, 0x4), 16);
         String exposedEntity = Tools.readStringFromOffset(file, atOffset + 0x18);
@@ -103,7 +110,7 @@ public class PropertyDecoder {
     }
 
     private static nProperty readZGuid(int atOffset, byte[] file){
-        atOffset += 0x10;
+
         String part1 = Tools.readHexAsString(file, atOffset, 0x4).toLowerCase();
         String part2 = Tools.readHexAsString(file, atOffset + 0x4, 0x2).toLowerCase();
         String part3 = Tools.readHexAsString(file, atOffset + 0x6, 0x2).toLowerCase();
@@ -112,7 +119,7 @@ public class PropertyDecoder {
     }
 
     private static nProperty readfloat32(int atOffset, byte[] file){
-        atOffset += 0x10;
+
         Long i = Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16);
         float value = Float.intBitsToFloat(i.intValue());
         return new float32(value);
@@ -120,7 +127,7 @@ public class PropertyDecoder {
     }
 
     private static nProperty readbool(int atOffset, byte[] file){
-        atOffset += 0x10;
+
         int value = Integer.parseInt(Tools.readHexAsString(file, atOffset, 0x4),16);
         if(value == 0)return new bool(false);
         if(value == 1)return new bool(true);
@@ -128,28 +135,28 @@ public class PropertyDecoder {
     }
 
     private static nProperty readInt32(int atOffset, byte[] file){
-        atOffset += 0x10;
+
         return new int32(Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16));
     }
 
     private static nProperty readUint32(int atOffset, byte[] file){
-        atOffset += 0x10;
+
         return new uint32(Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16));
     }
 
     private static nProperty readZGameTime(int atOffset, byte[] file){
-        atOffset += 0x10;
+
         return new ZGameTime(Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16));
     }
 
     private static nProperty readZString(int atOffset, byte[] file){
-        atOffset += 0x10;
+
 
         return new ZString(Tools.readStringFromOffset(file, atOffset + 0x8));
     }
 
     private static nProperty readSVector3(int atOffset, byte[] file){
-        atOffset += 0x10;
+
         Long i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x0, 0x4), 16);
         float Sx = Float.intBitsToFloat(i.intValue());
         i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x4, 0x4), 16);
@@ -162,15 +169,36 @@ public class PropertyDecoder {
     }
 
     private static nProperty readResourceRuntimeID(int atOffset, byte[] file) {
-        atOffset += 0x10;
+
         long high = Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16);
         long low = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x4, 0x4), 16);
         return new ZRuntimeResourceID(high, low);
     }
 
     private static nProperty readEnum(int atOffset, byte[] file, String dataType){
-        atOffset += 0x10;
+
         int value = Integer.parseInt(Tools.readHexAsString(file, atOffset, 0x4), 16);
         return new enumValue(EnumReader.readEnum(dataType, value));
+    }
+
+    private static nProperty readArray(int atOffset, byte[] file, String dataType){
+        ArrayList<nProperty> properties = new ArrayList<>();
+        if(Tools.isParsable(Tools.readHexAsString(file, atOffset + 0x8, 0x4), 16)) {
+            int endOffset = (Integer.parseInt(Tools.readHexAsString(file, atOffset + 0x8, 0x4), 16)) + 0xC;
+            int startOffset = (Integer.parseInt(Tools.readHexAsString(file, atOffset, 0x4), 16)) + 0xC;
+            atOffset = startOffset;
+            long numEntries = Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16);
+            if (numEntries != 0) {
+                long blockSize = (endOffset - startOffset) / numEntries;
+                atOffset += 0x4;
+                for (int i = 0; i < numEntries; i++) {
+
+                    properties.add(readProperty(dataType, atOffset, file, false));
+                    atOffset += blockSize;
+                }
+                return new TArray(properties);
+            }
+        }
+        return null;
     }
 }

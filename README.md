@@ -11,5 +11,5 @@ HBrick Explorer is a javaFX application made to view the .brick files found in t
 2. open the .jar file inside the same folder the settings.txt is in.
 
 ## to-do
-- implement more properties
-- allow searching inside tree views
+- convert SEntityTemplateReference to the name of the entity referenced
+- store offset of values

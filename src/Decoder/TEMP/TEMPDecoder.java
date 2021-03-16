@@ -100,7 +100,7 @@ public class TEMPDecoder {
                 if(this.g_propertiesValues.containsKey(propertyID)) propertyName = this.g_propertiesValues.get(propertyID);
                 int propertyIndex =  Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x28, 0x4), 16);
                 int propertyDataOffset = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x30, 0x4), 16);
-                SEntityTemplateProperty property = new SEntityTemplateProperty(propertyName, CC_dataTypes.get(propertyIndex), PropertyDecoder.readProperty(CC_dataTypes.get(propertyIndex), propertyDataOffset, this.fileInBytes));
+                SEntityTemplateProperty property = new SEntityTemplateProperty(propertyName, CC_dataTypes.get(propertyIndex), PropertyDecoder.readProperty(CC_dataTypes.get(propertyIndex), propertyDataOffset, this.fileInBytes, true));
                 atOffset += 0x38;
 
                 ETPOs.add(new SEntityTemplatePropertyOverride(reference, property));
@@ -159,7 +159,7 @@ public class TEMPDecoder {
                         if(this.g_propertiesValues.containsKey(propertyID)) propertyName = this.g_propertiesValues.get(propertyID);
                         int propertyDataOffset = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atSubOffset + 0x10, 0x4), 16);
                         int propertyIndex =  Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atSubOffset + 0x8, 0x4), 16);
-                        SEntityTemplateProperty property = new SEntityTemplateProperty(propertyName, CC_dataTypes.get(propertyIndex), PropertyDecoder.readProperty(CC_dataTypes.get(propertyIndex), propertyDataOffset, this.fileInBytes));
+                        SEntityTemplateProperty property = new SEntityTemplateProperty(propertyName, CC_dataTypes.get(propertyIndex), PropertyDecoder.readProperty(CC_dataTypes.get(propertyIndex), propertyDataOffset, this.fileInBytes, true));
                         postInitPropertyValues.add(property);
                         atSubOffset += 0x18;
                     }
@@ -177,7 +177,7 @@ public class TEMPDecoder {
                         if(this.g_propertiesValues.containsKey(propertyID)) propertyName = this.g_propertiesValues.get(propertyID);
                         int propertyIndex =  Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atSubOffset + 0x8, 0x4), 16);
                         int propertyDataOffset = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atSubOffset + 0x10, 0x4), 16);
-                        SEntityTemplateProperty property = new SEntityTemplateProperty(propertyName, CC_dataTypes.get(propertyIndex), PropertyDecoder.readProperty(CC_dataTypes.get(propertyIndex), propertyDataOffset, this.fileInBytes));
+                        SEntityTemplateProperty property = new SEntityTemplateProperty(propertyName, CC_dataTypes.get(propertyIndex), PropertyDecoder.readProperty(CC_dataTypes.get(propertyIndex), propertyDataOffset, this.fileInBytes, true));
                         propertyValues.add(property);
                         atSubOffset += 0x18;
                     }

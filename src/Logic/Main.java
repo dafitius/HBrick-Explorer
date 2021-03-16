@@ -1,5 +1,6 @@
 package Logic;
 
+import Decoder.DataTypes.SColorRGB;
 import Decoder.TBLU.TBLUDecoder;
 
 import Decoder.TEMP.TEMPDecoder;
@@ -18,6 +19,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -77,9 +79,10 @@ public class Main extends Application {
             SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
             Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
             selectionModel.select(selectedTab);
-            if(this.tabs.containsKey(selectedTab.getText())) {
+            if (this.tabs.containsKey(selectedTab.getText())) {
                 borderpane.setCenter(tabs.get(selectedTab.getText()).getKey());
-                if(tabs.get(selectedTab.getText()).getValue() != null) borderpane.setRight(tabs.get(selectedTab.getText()).getValue());
+                if (tabs.get(selectedTab.getText()).getValue() != null)
+                    borderpane.setRight(tabs.get(selectedTab.getText()).getValue());
                 else borderpane.setRight(null);
             }
 
@@ -88,7 +91,8 @@ public class Main extends Application {
 
         //create a panel on the right for details
 
-        borderpane.setCenter(hbox);;
+        borderpane.setCenter(hbox);
+        ;
         borderpane.setTop(tabPane);
 
 
@@ -142,7 +146,7 @@ public class Main extends Application {
             TreeItem<String> propertyOverrides = new TreeItem<>("propertyOverrides");
 
             TreeItem<String> externalSceneTypeIndicesInResourceHeader = new TreeItem<>("externalSceneTypeIndicesInResourceHeader");
-            if(decodedTEMPfile.getExternalSceneTypeIndicesInResourceHeader() != null) {
+            if (decodedTEMPfile.getExternalSceneTypeIndicesInResourceHeader() != null) {
                 for (int index : decodedTEMPfile.getExternalSceneTypeIndicesInResourceHeader()) {
                     externalSceneTypeIndicesInResourceHeader.getChildren().add(new TreeItem<String>(index + ""));
                 }
@@ -151,7 +155,7 @@ public class Main extends Application {
 
             treeView.getRoot().getChildren().addAll(subType, blueprintIndexInResourceHeader, externalSceneTypeIndicesInResourceHeader, propertyOverrides, subEntities);
 
-            if(decodedTEMPfile.getSubEntities() != null) {
+            if (decodedTEMPfile.getSubEntities() != null) {
                 for (STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()) {
                     TreeItem<String> subEntityItem = new TreeItem<String>("sub Entity " + i);
                     TreeItem<String> entityTypeResourceIndex = new TreeItem<>("entityTypeResourceIndex");
@@ -183,7 +187,7 @@ public class Main extends Application {
                 }
             }
             i = 0;
-            if(decodedTEMPfile.getPropertyOverrides() != null) {
+            if (decodedTEMPfile.getPropertyOverrides() != null) {
                 for (SEntityTemplatePropertyOverride propertyOverride : decodedTEMPfile.getPropertyOverrides()) {
 
                     //Entity root
@@ -294,7 +298,8 @@ public class Main extends Application {
                     treeView.setRoot(populateTreeView(rootEntity, 0, new TreeItem<subEntity>(rootEntity)));
                 }
 
-            } else treeView = new TreeView<subEntity>(new TreeItem<subEntity>(new subEntity("these files do not form a brick together!")));
+            } else
+                treeView = new TreeView<subEntity>(new TreeItem<subEntity>(new subEntity("these files do not form a brick together!")));
 
             detailList.setMinWidth(450);
             detailList.setMaxWidth(450);
@@ -312,7 +317,7 @@ public class Main extends Application {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection stringSelection = new StringSelection(newValue.getValue().getName());
             clipboard.setContents(stringSelection, null);
-            setDetailList(newValue.getValue().getCC_index(), newValue.getValue() ,finalDecodedTEMPfile, detailList);
+            setDetailList(newValue.getValue().getCC_index(), newValue.getValue(), finalDecodedTEMPfile, detailList);
         });
     }
 
@@ -343,22 +348,45 @@ public class Main extends Application {
         return TBLUfile;
     }
 
-    public void setDetailList(int entityIndex, subEntity entity, STemplateEntityFactory decodedTEMPfile, ListView listView){
-            listView.getItems().clear();
-        listView.getItems().add(entity.getName() + ":");
+    public void setDetailList(int entityIndex, subEntity entity, STemplateEntityFactory decodedTEMPfile, ListView listView) {
+        listView.getItems().clear();
 
-        for(STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()){
+        Label nameLabel = new Label(entity.getName());
+        nameLabel.setStyle("-fx-font-size: 17px;-fx-font-weight: bold;" + "-fx-text-fill: #FFFFFF;" + "-fx-font-family: helvetica, arial, sans-serif");
+        listView.getItems().add(nameLabel);
 
-            if(subEntity.getCC_index() == entityIndex){
+        for (STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()) {
 
-                    listView.getItems().add("entityTypeResourceIndex: " + subEntity.getEntityTypeResourceIndex());
-                    listView.getItems().add(" ");
-                    for(SEntityTemplateProperty property : subEntity.getPropertyValues()){
+            if (subEntity.getCC_index() == entityIndex) {
+
+                listView.getItems().add("entityTypeResourceIndex: " + subEntity.getEntityTypeResourceIndex());
+                if (subEntity.getPropertyValues().size() > 0) {
+                    Label subEntityLabel = new Label("subEntities:");
+                    subEntityLabel.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;" + "-fx-text-fill: #FFFFFF;" + "-fx-font-family: helvetica, arial, sans-serif");
+                    listView.getItems().add(subEntityLabel);
+                    for (SEntityTemplateProperty property : subEntity.getPropertyValues()) {
+                        if (property.getType().equals("SColorRGB")) {
+                            Label colorPropertyLabel = new Label(property.getnPropertyID() + ":\n" + property.getnProperty());
+                            SColorRGB color = (SColorRGB) property.getnProperty();
+                            Color colorValue = new Color(color.getR(), color.getG(), color.getB());
+                            String colorHex = "#" + Integer.toHexString(colorValue.getRGB()).substring(2);
+                            colorPropertyLabel.setStyle("-fx-font-size: 13px;-fx-font-weight: bold;" + "-fx-text-fill:" + colorHex + ";" + "-fx-font-family: helvetica, arial, sans-serif");
+                            listView.getItems().add(colorPropertyLabel);
+                        } else listView.getItems().add(property.getnPropertyID() + ":\n" + property.getnProperty());
+                    }
+                }
+                if (subEntity.getPostInitPropertyValues().size() > 0) {
+                    Label postInitPropertyLabel = new Label("PostInitPropertyValues:");
+                    postInitPropertyLabel.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;" + "-fx-text-fill: #FFFFFF;" + "-fx-font-family: helvetica, arial, sans-serif");
+                    listView.getItems().add(postInitPropertyLabel);
+
+                    for (SEntityTemplateProperty property : subEntity.getPostInitPropertyValues()) {
                         listView.getItems().add(property.getnPropertyID() + ":\n" + property.getnProperty());
                     }
-
                 }
+
             }
+        }
     }
 
     public File getFile(String fileType) {
@@ -424,7 +452,7 @@ public class Main extends Application {
         }
     }
 
-    private HBox buildBar(Stage stage, TabPane tabPane, BorderPane borderPane , BorderPane mainpane) {
+    private HBox buildBar(Stage stage, TabPane tabPane, BorderPane borderPane, BorderPane mainpane) {
         String menuItemStyle = "-fx-font-size: 20; -fx-text-fill: #ec625f;";
 
         return new HBox(
