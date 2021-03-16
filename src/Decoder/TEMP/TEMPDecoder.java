@@ -184,8 +184,9 @@ public class TEMPDecoder {
                 }
                 atOffset += 0x58;
                 if(hitmanVersion.equals("H3")) atOffset += 0x18;
-
-                TFSEs.add(new STemplateFactorySubEntity(entityTypeResourceIndex, reference, postInitPropertyValues, propertyValues));
+                STemplateFactorySubEntity entity = new STemplateFactorySubEntity(entityTypeResourceIndex, reference, postInitPropertyValues, propertyValues);
+                entity.setCC_index(i);
+                TFSEs.add(entity);
             }
 
             return TFSEs;

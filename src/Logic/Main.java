@@ -259,13 +259,16 @@ public class Main extends Application {
 
     private void displayBrickfile(File selectedTEMPFile, File selectedTBLUFile, BorderPane borderPane) {
 
+        TBLU decodedTBLUfile = null;
+        STemplateEntityFactory decodedTEMPfile = null;
+
         TreeView<subEntity> treeView = new TreeView<>();
         ListView detailList = new ListView<String>();
         Map<String, Integer> nameAndIndex = new HashMap();
         subEntity rootEntity = null;
         if (!this.tabs.containsKey(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName())) {
-            TBLU decodedTBLUfile = decodeTbluFile(selectedTBLUFile);
-            STemplateEntityFactory decodedTEMPfile = decodeTempFile(selectedTEMPFile);
+            decodedTBLUfile = decodeTbluFile(selectedTBLUFile);
+            decodedTEMPfile = decodeTempFile(selectedTEMPFile);
 
             //fill array with required names
             ArrayList<String> subEntityNames = new ArrayList<>(decodedTBLUfile.getBlock0().size());
@@ -293,8 +296,8 @@ public class Main extends Application {
 
             } else treeView = new TreeView<subEntity>(new TreeItem<subEntity>(new subEntity("these files do not form a brick together!")));
 
-            detailList.setMinWidth(350);
-            detailList.setMaxWidth(350);
+            detailList.setMinWidth(450);
+            detailList.setMaxWidth(450);
 
             this.tabs.put(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName(), new AbstractMap.SimpleEntry(treeView, detailList));
         } else
@@ -303,13 +306,13 @@ public class Main extends Application {
         borderPane.setRight(detailList);
 
 
+        STemplateEntityFactory finalDecodedTEMPfile = decodedTEMPfile;
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("selected: " + newValue.getValue());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection stringSelection = new StringSelection(newValue.getValue().getName());
             clipboard.setContents(stringSelection, null);
-
-            detailList.getItems().add(newValue.getValue().getHash());
+            setDetailList(newValue.getValue().getCC_index(), newValue.getValue() ,finalDecodedTEMPfile, detailList);
         });
     }
 
@@ -340,8 +343,22 @@ public class Main extends Application {
         return TBLUfile;
     }
 
-    public void setDetailList(int Entityindex, STemplateEntityFactory decodedTEMPfile, ListView listView){
+    public void setDetailList(int entityIndex, subEntity entity, STemplateEntityFactory decodedTEMPfile, ListView listView){
+            listView.getItems().clear();
+        listView.getItems().add(entity.getName() + ":");
 
+        for(STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()){
+
+            if(subEntity.getCC_index() == entityIndex){
+
+                    listView.getItems().add("entityTypeResourceIndex: " + subEntity.getEntityTypeResourceIndex());
+                    listView.getItems().add(" ");
+                    for(SEntityTemplateProperty property : subEntity.getPropertyValues()){
+                        listView.getItems().add(property.getnPropertyID() + ":\n" + property.getnProperty());
+                    }
+
+                }
+            }
     }
 
     public File getFile(String fileType) {

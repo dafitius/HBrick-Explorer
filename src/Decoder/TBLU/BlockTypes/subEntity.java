@@ -14,6 +14,7 @@ public class subEntity implements Block {
     private Block0_2 subBlock2;
     private entitySubsets subBlock3;
     private ArrayList<subEntity> CC_children = new ArrayList<>();
+    private int CC_index = -1;
     private boolean CC_hasChildren = false;
 
     public subEntity(String parentName, String parentHash, String type, String hash, String name, propertyAliases subBlock0List, Block0_1 subBlock1, Block0_2 subBlock2, entitySubsets subBlock3) {
@@ -76,6 +77,14 @@ public class subEntity implements Block {
 
     public ArrayList<subEntity> getCC_children() {
         return CC_children;
+    }
+
+    public void setCC_index(int CC_index) {
+        this.CC_index = CC_index;
+    }
+
+    public int getCC_index() {
+        return CC_index;
     }
 
     public boolean isCC_hasChildren() {

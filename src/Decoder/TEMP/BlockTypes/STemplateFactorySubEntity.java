@@ -8,6 +8,7 @@ public class STemplateFactorySubEntity {
     //private ?? platformSpecificPropertyValues;
     private ArrayList<SEntityTemplateProperty> postInitPropertyValues;
     private ArrayList<SEntityTemplateProperty> propertyValues;
+    private int CC_index = -1;
 
     public STemplateFactorySubEntity(int entityTypeResourceIndex, SEntityTemplateReference logicalParent, ArrayList<SEntityTemplateProperty> postInitPropertyValues, ArrayList<SEntityTemplateProperty> propertyValues) {
         this.entityTypeResourceIndex = entityTypeResourceIndex;
@@ -40,5 +41,13 @@ public class STemplateFactorySubEntity {
 
     public ArrayList<SEntityTemplateProperty> getPropertyValues() {
         return propertyValues;
+    }
+
+    public void setCC_index(int CC_index) {
+        this.CC_index = CC_index;
+    }
+
+    public int getCC_index() {
+        return CC_index;
     }
 }
