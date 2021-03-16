@@ -2,16 +2,16 @@ package Decoder.DataTypes;
 
 import Decoder.TEMP.BlockTypes.nProperty;
 
-public class ZGameTime implements nProperty {
+public class enumValue implements nProperty {
 
-    private long value;
+    String value;
 
-    public ZGameTime(long value) {
+    public enumValue(String value) {
         this.value = value;
     }
 
     @Override
     public String toString() {
-        return value + " ticks";
+        return value;
     }
 }

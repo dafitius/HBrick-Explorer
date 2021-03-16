@@ -35,8 +35,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static javax.swing.JOptionPane.showMessageDialog;
-
 
 public class Main extends Application {
 
@@ -118,9 +116,7 @@ public class Main extends Application {
         return null;
     }
 
-
     private void displayTEMPfile(File selectedFile, BorderPane borderPane) {
-        //ListView<String> list = new ListView<>();
         TreeView<String> treeView = new TreeView<>();
         if (!this.tabs.containsKey(selectedFile.getName())) {
             int i = 0;
@@ -280,7 +276,6 @@ public class Main extends Application {
         });
     }
 
-
     private STemplateEntityFactory decodeTempFile(File selectedFile) {
 
         TEMPDecoder tempDecoder = new TEMPDecoder();
@@ -307,7 +302,6 @@ public class Main extends Application {
         }
         return TBLUfile;
     }
-
 
     public File getFile(String fileType) {
         Stage selectFile = new Stage();
@@ -371,7 +365,6 @@ public class Main extends Application {
             System.out.println("could not find settings.txt file");
         }
     }
-
 
     private HBox buildBar(Stage stage, TabPane tabPane, BorderPane borderPane , BorderPane mainpane) {
         String menuItemStyle = "-fx-font-size: 20; -fx-text-fill: #ec625f;";

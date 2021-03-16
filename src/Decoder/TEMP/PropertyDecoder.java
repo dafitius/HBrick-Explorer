@@ -32,8 +32,13 @@ public class PropertyDecoder {
                     return readInt32(atOffset, file);
                 case "ZGameTime":
                     return readZGameTime(atOffset, file);
+                case "uint32":
+                    return readUint32(atOffset, file);
             }
 
+        }
+        if(dataType.toLowerCase().startsWith("e") || dataType.toLowerCase().contains(".e")){
+            return readEnum(atOffset, file, dataType);
         }
         return new unknown(dataType);
     }
@@ -127,6 +132,11 @@ public class PropertyDecoder {
         return new int32(Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16));
     }
 
+    private static nProperty readUint32(int atOffset, byte[] file){
+        atOffset += 0x10;
+        return new uint32(Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16));
+    }
+
     private static nProperty readZGameTime(int atOffset, byte[] file){
         atOffset += 0x10;
         return new ZGameTime(Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16));
@@ -156,5 +166,11 @@ public class PropertyDecoder {
         long high = Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16);
         long low = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x4, 0x4), 16);
         return new ZRuntimeResourceID(high, low);
+    }
+
+    private static nProperty readEnum(int atOffset, byte[] file, String dataType){
+        atOffset += 0x10;
+        int value = Integer.parseInt(Tools.readHexAsString(file, atOffset, 0x4), 16);
+        return new enumValue(EnumReader.readEnum(dataType, value));
     }
 }
