@@ -1,5 +1,6 @@
 package Decoder.TEMP;
 
+import Decoder.DataTypes.SEntityTemplateReferenceProperty;
 import Decoder.TEMP.BlockTypes.*;
 import Decoder.Tools;
 import Files.STemplateEntityFactory;
@@ -145,7 +146,8 @@ public class TEMPDecoder {
                 String exposedEntity = Tools.readStringFromOffset(this.fileInBytes, atOffset + 0x18);
                 int externalSceneIndex = Integer.parseUnsignedInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x8, 0x4), 16);
                 SEntityTemplateReference reference = new SEntityTemplateReference(entityID, entityIndex, exposedEntity, externalSceneIndex);
-
+                postInitPropertyValues = new ArrayList<>();
+                propertyValues = new ArrayList<>();
                 ////extract postInitPropertyValues
                 if(Tools.isParsable(Tools.readHexAsString(this.fileInBytes, atOffset + 0x40, 0x4), 16)) {
                     int atSubOffset = Integer.parseInt(Tools.readHexAsString(this.fileInBytes, atOffset + 0x40, 0x4), 16) + 0xC;
@@ -153,6 +155,7 @@ public class TEMPDecoder {
                     atSubOffset += 0x4;
                     postInitPropertyValues = new ArrayList<>(subAmount);
                     for (int j = 0; j < subAmount; j++) {
+
 
                         long propertyID = Long.parseUnsignedLong(Tools.readHexAsString(this.fileInBytes, atSubOffset, 0x4), 16);
                         String propertyName = propertyID + "";
@@ -188,8 +191,8 @@ public class TEMPDecoder {
                 entity.setCC_index(i);
                 TFSEs.add(entity);
             }
-
             return TFSEs;
+
         }
         return null;
     }

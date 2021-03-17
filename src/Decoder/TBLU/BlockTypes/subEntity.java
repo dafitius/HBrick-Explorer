@@ -9,6 +9,7 @@ public class subEntity implements Block {
     private String type;
     private String hash;
     private String name;
+    private int parentIndex;
     private propertyAliases subBlock0List;
     private Block0_1 subBlock1;
     private Block0_2 subBlock2;
@@ -50,6 +51,8 @@ public class subEntity implements Block {
         return hash;
     }
 
+    public int getParentIndex() {return parentIndex;}
+
     public String getName() {
         return name;
     }
@@ -89,6 +92,10 @@ public class subEntity implements Block {
 
     public boolean isCC_hasChildren() {
         return CC_hasChildren;
+    }
+
+    public void setParentIndex(int parentIndex) {
+        this.parentIndex = parentIndex;
     }
 
     @Override

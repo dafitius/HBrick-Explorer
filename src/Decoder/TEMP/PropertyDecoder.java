@@ -127,10 +127,11 @@ public class PropertyDecoder {
     }
 
     private static nProperty readbool(int atOffset, byte[] file){
-
-        int value = Integer.parseInt(Tools.readHexAsString(file, atOffset, 0x4),16);
-        if(value == 0)return new bool(false);
-        if(value == 1)return new bool(true);
+        if(Tools.isParsable(Tools.readHexAsString(file, atOffset, 0x4),16)) {
+            int value = Integer.parseInt(Tools.readHexAsString(file, atOffset, 0x4), 16);
+            if (value == 0) return new bool(false);
+            if (value == 1) return new bool(true);
+        }
         return new bool();
     }
 
@@ -190,6 +191,7 @@ public class PropertyDecoder {
             long numEntries = Long.parseLong(Tools.readHexAsString(file, atOffset, 0x4), 16);
             if (numEntries != 0) {
                 long blockSize = (endOffset - startOffset) / numEntries;
+                properties = new ArrayList<>();
                 atOffset += 0x4;
                 for (int i = 0; i < numEntries; i++) {
 
@@ -199,6 +201,6 @@ public class PropertyDecoder {
                 return new TArray(properties);
             }
         }
-        return null;
+        return new TArray();
     }
 }

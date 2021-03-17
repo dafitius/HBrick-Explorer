@@ -1,6 +1,8 @@
 package Logic;
 
 import Decoder.DataTypes.SColorRGB;
+import Decoder.DataTypes.SEntityTemplateReferenceProperty;
+import Decoder.DataTypes.TArray;
 import Decoder.TBLU.TBLUDecoder;
 
 import Decoder.TEMP.TEMPDecoder;
@@ -109,7 +111,7 @@ public class Main extends Application {
         primaryStage.show();
 
         primaryStage.setOnCloseRequest(event -> {
-            Platform.exit();
+            primaryStage.close();
         });
         System.out.println("launched the app");
     }
@@ -268,17 +270,18 @@ public class Main extends Application {
 
         TreeView<subEntity> treeView = new TreeView<>();
         ListView detailList = new ListView<String>();
-        Map<String, Integer> nameAndIndex = new HashMap();
         subEntity rootEntity = null;
+        ArrayList<String> subEntityNames = new ArrayList<>();
         if (!this.tabs.containsKey(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName())) {
             decodedTBLUfile = decodeTbluFile(selectedTBLUFile);
             decodedTEMPfile = decodeTempFile(selectedTEMPFile);
 
             //fill array with required names
-            ArrayList<String> subEntityNames = new ArrayList<>(decodedTBLUfile.getBlock0().size());
-            decodedTBLUfile.getBlock0().forEach(s -> {
+            subEntityNames = new ArrayList<>(decodedTBLUfile.getBlock0().size());
+            for (subEntity s : decodedTBLUfile.getBlock0()) {
                 subEntityNames.add(s.getName());
-            });
+            }
+
 
             if (decodedTBLUfile.getBlock0().size() == decodedTEMPfile.getSubEntities().size()) {
 
@@ -309,15 +312,12 @@ public class Main extends Application {
             treeView = (TreeView<subEntity>) this.tabs.get(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName());
         borderPane.setCenter(treeView);
         borderPane.setRight(detailList);
-
+        
 
         STemplateEntityFactory finalDecodedTEMPfile = decodedTEMPfile;
+        ArrayList<String> finalSubEntityNames = subEntityNames;
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("selected: " + newValue.getValue());
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            StringSelection stringSelection = new StringSelection(newValue.getValue().getName());
-            clipboard.setContents(stringSelection, null);
-            setDetailList(newValue.getValue().getCC_index(), newValue.getValue(), finalDecodedTEMPfile, detailList);
+            setDetailList(newValue.getValue().getCC_index(), newValue.getValue(), finalDecodedTEMPfile, detailList, finalSubEntityNames);
         });
     }
 
@@ -348,45 +348,108 @@ public class Main extends Application {
         return TBLUfile;
     }
 
-    public void setDetailList(int entityIndex, subEntity entity, STemplateEntityFactory decodedTEMPfile, ListView listView) {
+    public void setDetailList(int entityIndex, subEntity entity, STemplateEntityFactory decodedTEMPfile, ListView listView, ArrayList<String> subEntityNames) {
         listView.getItems().clear();
 
         Label nameLabel = new Label(entity.getName());
+        Label hashLabel = new Label(entity.getHash());
         nameLabel.setStyle("-fx-font-size: 17px;-fx-font-weight: bold;" + "-fx-text-fill: #FFFFFF;" + "-fx-font-family: helvetica, arial, sans-serif");
+        hashLabel.setStyle("-fx-font-size: 9px;-fx-font-weight: bold;" + "-fx-text-fill: #FFFFFF;" + "-fx-font-family: helvetica, arial, sans-serif");
         listView.getItems().add(nameLabel);
+        listView.getItems().add(hashLabel);
+
 
         for (STemplateFactorySubEntity subEntity : decodedTEMPfile.getSubEntities()) {
 
-            if (subEntity.getCC_index() == entityIndex) {
-
+            //if (subEntity.getCC_index() == entityIndex && subEntity.getEntityTypeResourceIndex() == Integer.parseInt(entity.getType(), 16) && subEntity.getLogicalParent().getEntityIndex() == entity.getParentIndex()) {
+            if (subEntity.getCC_index() == entityIndex){
                 listView.getItems().add("entityTypeResourceIndex: " + subEntity.getEntityTypeResourceIndex());
                 if (subEntity.getPropertyValues().size() > 0) {
+                    //add label
                     Label subEntityLabel = new Label("subEntities:");
                     subEntityLabel.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;" + "-fx-text-fill: #FFFFFF;" + "-fx-font-family: helvetica, arial, sans-serif");
                     listView.getItems().add(subEntityLabel);
                     for (SEntityTemplateProperty property : subEntity.getPropertyValues()) {
-                        if (property.getType().equals("SColorRGB")) {
-                            Label colorPropertyLabel = new Label(property.getnPropertyID() + ":\n" + property.getnProperty());
-                            SColorRGB color = (SColorRGB) property.getnProperty();
-                            Color colorValue = new Color(color.getR(), color.getG(), color.getB());
-                            String colorHex = "#" + Integer.toHexString(colorValue.getRGB()).substring(2);
-                            colorPropertyLabel.setStyle("-fx-font-size: 13px;-fx-font-weight: bold;" + "-fx-text-fill:" + colorHex + ";" + "-fx-font-family: helvetica, arial, sans-serif");
-                            listView.getItems().add(colorPropertyLabel);
-                        } else listView.getItems().add(property.getnPropertyID() + ":\n" + property.getnProperty());
+
+                        switch (property.getType()) {
+
+                            case "SColorRGB":
+                                Label colorPropertyLabel = new Label(property.getnPropertyID() + ":\n" + property.getnProperty());
+                                SColorRGB color = (SColorRGB) property.getnProperty();
+                                Color colorValue = new Color(color.getR(), color.getG(), color.getB());
+                                String colorHex = "#" + Integer.toHexString(colorValue.getRGB()).substring(2);
+                                colorPropertyLabel.setStyle("-fx-font-size: 13px;-fx-font-weight: bold;" + "-fx-text-fill:" + colorHex + ";" + "-fx-font-family: helvetica, arial, sans-serif");
+                                listView.getItems().add(colorPropertyLabel);
+                                break;
+                            case "SEntityTemplateReference":
+                                SEntityTemplateReferenceProperty reference = (SEntityTemplateReferenceProperty) property.getnProperty();
+                                listView.getItems().add(property.getnPropertyID() + ":\n" + subEntityNames.get(reference.getSEntityTemplateReference().getEntityIndex()));
+                                break;
+                            case "TArray<SEntityTemplateReference>":
+                                if ((TArray) property.getnProperty() != null) {
+                                    TArray referenceArray = (TArray) property.getnProperty();
+                                    for (nProperty Areference : referenceArray.getProperties()) {
+                                        SEntityTemplateReferenceProperty Treference = (SEntityTemplateReferenceProperty) Areference;
+                                        listView.getItems().add(property.getnPropertyID() + ":\n" + subEntityNames.get(Treference.getSEntityTemplateReference().getEntityIndex()));
+                                    }
+                                }
+                                break;
+                            default:
+                                listView.getItems().add(property.getnPropertyID() + ":\n" + property.getnProperty());
+
+
+                        }
                     }
                 }
+
                 if (subEntity.getPostInitPropertyValues().size() > 0) {
+                    //add label
                     Label postInitPropertyLabel = new Label("PostInitPropertyValues:");
                     postInitPropertyLabel.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;" + "-fx-text-fill: #FFFFFF;" + "-fx-font-family: helvetica, arial, sans-serif");
                     listView.getItems().add(postInitPropertyLabel);
-
+                    //check PostinitProperties
                     for (SEntityTemplateProperty property : subEntity.getPostInitPropertyValues()) {
-                        listView.getItems().add(property.getnPropertyID() + ":\n" + property.getnProperty());
+                        switch (property.getType()) {
+
+                            case "SColorRGB":
+                                Label colorPropertyLabel = new Label(property.getnPropertyID() + ":\n" + property.getnProperty());
+                                SColorRGB color = (SColorRGB) property.getnProperty();
+                                Color colorValue = new Color(color.getR(), color.getG(), color.getB());
+                                String colorHex = "#" + Integer.toHexString(colorValue.getRGB()).substring(2);
+                                colorPropertyLabel.setStyle("-fx-font-size: 13px;-fx-font-weight: bold;" + "-fx-text-fill:" + colorHex + ";" + "-fx-font-family: helvetica, arial, sans-serif");
+                                listView.getItems().add(colorPropertyLabel);
+                                break;
+                            case "SEntityTemplateReference":
+                                SEntityTemplateReferenceProperty reference = (SEntityTemplateReferenceProperty) property.getnProperty();
+                                listView.getItems().add(property.getnPropertyID() + ":\n" + subEntityNames.get(reference.getSEntityTemplateReference().getEntityIndex()));
+
+                                break;
+                            case "TArray<SEntityTemplateReference>":
+                                if ((TArray) property.getnProperty() != null) {
+                                    TArray referenceArray = (TArray) property.getnProperty();
+                                    for (nProperty Areference : referenceArray.getProperties()) {
+                                        SEntityTemplateReferenceProperty Treference = (SEntityTemplateReferenceProperty) Areference;
+                                        listView.getItems().add(property.getnPropertyID() + ":\n" + subEntityNames.get(Treference.getSEntityTemplateReference().getEntityIndex()));
+                                    }
+                                }
+                                break;
+                            default:
+                                listView.getItems().add(property.getnPropertyID() + ":\n" + property.getnProperty());
+                        }
                     }
                 }
-
             }
         }
+
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+
+            if (newValue != null) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                StringSelection stringSelection = new StringSelection(newValue.toString());
+                clipboard.setContents(stringSelection, null);
+            }
+        });
+
     }
 
     public File getFile(String fileType) {

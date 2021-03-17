@@ -12,6 +12,9 @@ public class TArray implements nProperty{
         this.properties = properties;
     }
 
+    public TArray() {
+    }
+
     @Override
     public String toString() {
         String returnString = "";
@@ -21,5 +24,9 @@ public class TArray implements nProperty{
 
         }
         return returnString;
+    }
+
+    public ArrayList<nProperty> getProperties() {
+        return properties;
     }
 }

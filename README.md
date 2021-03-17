@@ -12,4 +12,5 @@ HBrick Explorer is a javaFX application made to view the .brick files found in t
 
 ## to-do
 - convert SEntityTemplateReference to the name of the entity referenced
-- store offset of values
+- store the offset of values
+- convert ZRuntimeResourceID to hash

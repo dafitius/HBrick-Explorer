@@ -203,6 +203,8 @@ public class TBLUDecoder {
             atOffset += (0x18 * 4);
 
             Decoder.TBLU.BlockTypes.subEntity entity = new subEntity(parentName, parentHash, entityType, hash, name, propertyAliases, block0_1, block0_2, entitySubsets);
+            if(Tools.isParsable(parentIndex, 16)) entity.setParentIndex(Integer.parseInt(parentIndex, 16));
+            else entity.setParentIndex(-1);
             entity.setCC_index(i);
             blocks.add(entity);
 

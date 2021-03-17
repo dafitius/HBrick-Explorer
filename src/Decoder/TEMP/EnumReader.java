@@ -9,9 +9,7 @@ public class EnumReader {
         try {
             BufferedReader Reader =
                     new BufferedReader(new InputStreamReader(EnumReader.class.getResourceAsStream("/Logic/resources/enums.txt")));
-            //File enumFile = new File("src/Logic/resources/enums.txt");
-            //Scanner Reader = new Scanner(enumFile);
-            String line = "notNull";
+            String line;
             while ((line = Reader.readLine()) != null) {
                 if(line.startsWith("enum")) {
                     if (line.contains(dataType)) {
