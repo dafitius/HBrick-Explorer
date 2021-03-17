@@ -2,7 +2,7 @@
 hitman edition: H2
 
 //can be blank
-default file path: D:\David\Hitman-modding\brick\versus_items
+default file path: D:\David\Hitman-modding\brick
 
 //highly recommended...
 use dark-mode: true

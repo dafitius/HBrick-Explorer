@@ -309,10 +309,11 @@ public class Main extends Application {
             detailList.setMaxWidth(450);
 
             this.tabs.put(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName(), new AbstractMap.SimpleEntry(treeView, detailList));
-        } else
-            treeView = (TreeView<subEntity>) this.tabs.get(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName());
-        borderPane.setCenter(treeView);
-        borderPane.setRight(detailList);
+            borderPane.setCenter(treeView);
+            borderPane.setRight(detailList);
+        }
+            //treeView = this.tabs.get(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName());
+
 
 
         STemplateEntityFactory finalDecodedTEMPfile = decodedTEMPfile;
@@ -376,8 +377,8 @@ public class Main extends Application {
 
                             case "SColorRGB":
                                 Label colorPropertyLabel = new Label(property.getnPropertyID() + ":\n" + property.getnProperty());
-                                SColorRGB color = (SColorRGB) property.getnProperty();
-                                Color colorValue = new Color(color.getR(), color.getG(), color.getB());
+                                SColorRGB Scolor = (SColorRGB) property.getnProperty();
+                                Color colorValue = new Color(Scolor.getR(), Scolor.getG(), Scolor.getB());
                                 String colorHex = "#" + Integer.toHexString(colorValue.getRGB()).substring(2);
                                 colorPropertyLabel.setStyle("-fx-font-size: 13px;-fx-font-weight: bold;" + "-fx-text-fill:" + colorHex + ";" + "-fx-font-family: helvetica, arial, sans-serif");
                                 listView.getItems().add(colorPropertyLabel);
@@ -397,7 +398,9 @@ public class Main extends Application {
                                 break;
                             case "ZRuntimeResourceID":
                                 ZRuntimeResourceID runtimeResourceID = (ZRuntimeResourceID) property.getnProperty();
-                                listView.getItems().add(property.getnPropertyID() + ":\n" + decodedTEMPfile.getCC_Dependencies().get((int)runtimeResourceID.getM_IDLow()));
+                                if(decodedTEMPfile.getCC_Dependencies().size() > 0){
+                                    listView.getItems().add(property.getnPropertyID() + ":\n" + decodedTEMPfile.getCC_Dependencies().get((int)runtimeResourceID.getM_IDLow()));
+                                } else listView.getItems().add(property.getnPropertyID() + ":\n" + property.getnProperty());
                                 break;
                             default:
                                 listView.getItems().add(property.getnPropertyID() + ":\n" + property.getnProperty());
@@ -427,7 +430,6 @@ public class Main extends Application {
                             case "SEntityTemplateReference":
                                 SEntityTemplateReferenceProperty reference = (SEntityTemplateReferenceProperty) property.getnProperty();
                                 listView.getItems().add(property.getnPropertyID() + ":\n" + subEntityNames.get(reference.getSEntityTemplateReference().getEntityIndex()));
-
                                 break;
                             case "TArray<SEntityTemplateReference>":
                                 if ((TArray) property.getnProperty() != null) {
