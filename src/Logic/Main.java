@@ -3,6 +3,7 @@ package Logic;
 import Decoder.DataTypes.SColorRGB;
 import Decoder.DataTypes.SEntityTemplateReferenceProperty;
 import Decoder.DataTypes.TArray;
+import Decoder.DataTypes.ZRuntimeResourceID;
 import Decoder.TBLU.TBLUDecoder;
 
 import Decoder.TEMP.TEMPDecoder;
@@ -312,7 +313,7 @@ public class Main extends Application {
             treeView = (TreeView<subEntity>) this.tabs.get(selectedTEMPFile.getName() + "/" + selectedTBLUFile.getName());
         borderPane.setCenter(treeView);
         borderPane.setRight(detailList);
-        
+
 
         STemplateEntityFactory finalDecodedTEMPfile = decodedTEMPfile;
         ArrayList<String> finalSubEntityNames = subEntityNames;
@@ -393,6 +394,10 @@ public class Main extends Application {
                                         listView.getItems().add(property.getnPropertyID() + ":\n" + subEntityNames.get(Treference.getSEntityTemplateReference().getEntityIndex()));
                                     }
                                 }
+                                break;
+                            case "ZRuntimeResourceID":
+                                ZRuntimeResourceID runtimeResourceID = (ZRuntimeResourceID) property.getnProperty();
+                                listView.getItems().add(property.getnPropertyID() + ":\n" + decodedTEMPfile.getCC_Dependencies().get((int)runtimeResourceID.getM_IDLow()));
                                 break;
                             default:
                                 listView.getItems().add(property.getnPropertyID() + ":\n" + property.getnProperty());

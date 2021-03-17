@@ -1,6 +1,5 @@
 package Decoder.TEMP;
 
-import Decoder.DataTypes.SEntityTemplateReferenceProperty;
 import Decoder.TEMP.BlockTypes.*;
 import Decoder.Tools;
 import Files.STemplateEntityFactory;
@@ -15,7 +14,7 @@ import java.util.Map;
 
 
 public class TEMPDecoder {
-    File TBLUfile;
+    File TEMPfile;
     byte[] fileInBytes;
     String hitmanVersion;
     private Map<Long,String> g_propertiesValues = new HashMap<>();
@@ -253,11 +252,26 @@ public class TEMPDecoder {
 
     }
 
+    private void checkForDependencies(STemplateEntityFactory TEMP) throws IOException {
+        File metaFile = new File(this.TEMPfile.getPath() + ".meta");
+
+        if(metaFile.exists()){
+            byte[] metaFileinBytes = Files.readAllBytes(Paths.get(metaFile.getPath()));
+            int amountOfDependencies = Integer.parseInt(Tools.readHexAsString(metaFileinBytes, 0x2c, 0x3 ), 16);
+            int atOffset = 0x30;
+            atOffset += amountOfDependencies;
+            for (int i = 0; i < amountOfDependencies; i++) {
+                TEMP.addDependency(Tools.readHexAsString(metaFileinBytes, atOffset, 0x8));
+                atOffset += 0x8;
+            }
+        }
+    }
+
 
     public STemplateEntityFactory decode(File file, String hitmanVersion) throws IOException{
         long start = System.currentTimeMillis();
         this.hitmanVersion = hitmanVersion;
-        this.TBLUfile = file;
+        this.TEMPfile = file;
         this.fileInBytes = Files.readAllBytes(Paths.get(file.getPath()));
         this.CC_dataTypes = getDataTypes();
         this.g_propertiesValues = fillPropertyMap();
@@ -269,7 +283,7 @@ public class TEMPDecoder {
         this.subType = readSubType();
 
         STemplateEntityFactory templateEntity = new STemplateEntityFactory(blueprintIndexInResourceHeader, externalSceneTypeIndicesInResourceHeader, propertyOverrides, rootEntity, subEntities, subType, CC_dataTypes);
-        //System.out.println(templateEntity);
+        checkForDependencies(templateEntity);
 
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;

@@ -15,6 +15,7 @@ public class STemplateEntityFactory {
     private ArrayList<STemplateFactorySubEntity> subEntities;
     private int subType;
     private ArrayList<String> CC_Types;
+    private ArrayList<String> CC_Dependencies = new ArrayList<>();
 
     public STemplateEntityFactory(int blueprintIndexInResourceHeader, int[] externalSceneTypeIndicesInResourceHeader, ArrayList<SEntityTemplatePropertyOverride> propertyOverrides, int rootEntity, ArrayList<STemplateFactorySubEntity> subEntities, int subType, ArrayList<String> types) {
         this.blueprintIndexInResourceHeader = blueprintIndexInResourceHeader;
@@ -24,6 +25,15 @@ public class STemplateEntityFactory {
         this.subEntities = subEntities;
         this.subType = subType;
         this.CC_Types = types;
+    }
+
+
+    public ArrayList<String> getCC_Dependencies() {
+        return CC_Dependencies;
+    }
+
+    public void addDependency(String dependency){
+        this.getCC_Dependencies().add(dependency);
     }
 
     @Override
