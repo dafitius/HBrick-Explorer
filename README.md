@@ -10,7 +10,8 @@ HBrick Explorer is a javaFX application made to view the .brick files found in t
 1. set the preferred settings inside the settings.txt file.
 2. open the .jar file inside the same folder the settings.txt is in.
 
-## to-do
-- convert SEntityTemplateReference to the name of the entity referenced
-- store the offset of values
-- convert ZRuntimeResourceID to hash
+
+
+## controls
+- use the import button to import files
+- use left-click to copy values from the details list

@@ -37,6 +37,8 @@ public class PropertyDecoder {
                     return readZGameTime(atOffset, file);
                 case "uint32":
                     return readUint32(atOffset, file);
+                case "SVector2":
+                    return readSVector2(atOffset, file);
             }
 
         }
@@ -154,6 +156,15 @@ public class PropertyDecoder {
 
 
         return new ZString(Tools.readStringFromOffset(file, atOffset + 0x8));
+    }
+
+    private static nProperty readSVector2(int atOffset, byte[] file){
+
+        Long i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x0, 0x4), 16);
+        float Sx = Float.intBitsToFloat(i.intValue());
+        i = Long.parseLong(Tools.readHexAsString(file, atOffset + 0x4, 0x4), 16);
+        float Sy = Float.intBitsToFloat(i.intValue());
+        return new SVector2(Sx, Sy);
     }
 
     private static nProperty readSVector3(int atOffset, byte[] file){

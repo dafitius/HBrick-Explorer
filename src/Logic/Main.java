@@ -552,9 +552,9 @@ public class Main extends Application {
         MenuItem addBrick = new MenuItem("add Brick");
 
         addMenu.getItems().addAll(addTBLU, addTEMP, addBrick);
-        Menu exportMenu = new Menu("export");
-        exportMenu.setStyle(menuItemStyle);
-        makeClickable(exportMenu);
+        //Menu exportMenu = new Menu("export");
+        //exportMenu.setStyle(menuItemStyle);
+        //makeClickable(exportMenu);
 
         addTBLU.setOnAction(e -> {
             File selectedFile = getFile("TBLU");
@@ -581,17 +581,17 @@ public class Main extends Application {
             displayBrickfile(selectedTEMPFile, selectedTBLUFile, mainPane);
         });
 
-        exportMenu.setOnAction(e -> {
-            if (mainPane.getCenter() != null) {
-                if (mainPane.getCenter() instanceof TreeView) {
-                    exportTreeView((TreeView) mainPane.getCenter());
-                }
-            }
-        });
+        //exportMenu.setOnAction(e -> {
+        //    if (mainPane.getCenter() != null) {
+        //        if (mainPane.getCenter() instanceof TreeView) {
+        //            exportTreeView((TreeView) mainPane.getCenter());
+        //        }
+        //    }
+        //});
 
         //add menu's to buildBar
-        menuBar.getMenus().addAll(addMenu, exportMenu);
-
+        //menuBar.getMenus().addAll(addMenu, exportMenu);
+        menuBar.getMenus().addAll(addMenu);
         return menuBar;
     }
 
