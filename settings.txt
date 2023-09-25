@@ -1,8 +1,8 @@
-//H2 or H3
+//The version you want to use. Can be H2 or H3
 hitman edition: H3
 
-//can be blank
+//Will be the starting path when selecting a file to open
 default file path:
 
-//highly recommended...
+//yes
 use dark-mode: true
