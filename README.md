@@ -14,7 +14,7 @@ Hbrick Explorer decodes TBLU and TEMP files, providing insights into their struc
 
 Explore the file structure through an intuitive tree-based view.
 
-![The application in use]("screenshots/application.png")
+![The application in use](screenshots/application.png)
 
 ## Usage
 
